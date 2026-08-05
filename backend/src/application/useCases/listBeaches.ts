@@ -6,7 +6,7 @@ export interface BeachSummary {
   lat: number;
   long: number;
   quirkNotes?: string;
-  mapImageDataUrl: string;
+  mapImageDataUrl?: string;
 }
 
 export async function listBeaches(repository: BeachRepository): Promise<BeachSummary[]> {
@@ -18,6 +18,8 @@ export async function listBeaches(repository: BeachRepository): Promise<BeachSum
     lat: beach.lat,
     long: beach.long,
     quirkNotes: beach.quirkNotes,
-    mapImageDataUrl: `data:${beach.mapImage.contentType};base64,${beach.mapImage.data.toString("base64")}`,
+    mapImageDataUrl: beach.mapImage
+      ? `data:${beach.mapImage.contentType};base64,${beach.mapImage.data.toString("base64")}`
+      : undefined,
   }));
 }

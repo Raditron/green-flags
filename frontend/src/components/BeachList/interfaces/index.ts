@@ -4,7 +4,7 @@ export interface BeachSummary {
   lat: number;
   long: number;
   quirkNotes?: string;
-  mapImageDataUrl: string;
+  mapImageDataUrl?: string;
 }
 
 export interface BeachListResponse {

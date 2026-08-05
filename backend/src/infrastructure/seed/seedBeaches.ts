@@ -1,7 +1,6 @@
 import "dotenv/config";
 import { BeachMapImage } from "../../domain/ports/beachRepository";
 import { connectToDatabase } from "../db/mongoClient";
-import { fetchStaticMapPin } from "../googleMaps/staticMapClient";
 import { BEACH_SEED_DATA } from "./beachSeedData";
 
 interface BeachDocument {
@@ -11,19 +10,17 @@ interface BeachDocument {
   long: number;
   quirkNotes?: string;
   order: number;
-  mapImage: BeachMapImage;
+  mapImage?: BeachMapImage;
 }
 
+// Google Maps Static API pin generation (ADR 0001) is disabled for now — no API key configured.
+// Seeded beaches go out without a mapImage until it's re-enabled.
 async function main(): Promise<void> {
   const MONGODB_URI = process.env.MONGODB_URI;
   const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME ?? "green-flags";
-  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
   if (!MONGODB_URI) {
     throw new Error("MONGODB_URI environment variable is required");
-  }
-  if (!GOOGLE_MAPS_API_KEY) {
-    throw new Error("GOOGLE_MAPS_API_KEY environment variable is required");
   }
 
   const { client, db } = await connectToDatabase(MONGODB_URI, MONGODB_DB_NAME);
@@ -32,7 +29,6 @@ async function main(): Promise<void> {
   try {
     for (const beach of BEACH_SEED_DATA) {
       console.log(`Seeding ${beach.name}...`);
-      const mapImage = await fetchStaticMapPin(beach.lat, beach.long, GOOGLE_MAPS_API_KEY);
 
       await collection.updateOne(
         { _id: beach.id },
@@ -43,7 +39,6 @@ async function main(): Promise<void> {
             long: beach.long,
             quirkNotes: beach.quirkNotes,
             order: beach.order,
-            mapImage,
           },
         },
         { upsert: true }

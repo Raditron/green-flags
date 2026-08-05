@@ -16,7 +16,9 @@ export function BeachList() {
         <ul className={styles.list}>
           {beaches.data.map((beach) => (
             <li key={beach.id} className={styles.row}>
-              <img src={beach.mapImageDataUrl} alt="" width={56} height={56} className={styles.pin} />
+              {beach.mapImageDataUrl && (
+                <img src={beach.mapImageDataUrl} alt="" width={56} height={56} className={styles.pin} />
+              )}
               <span className={styles.name}>{beach.name}</span>
             </li>
           ))}

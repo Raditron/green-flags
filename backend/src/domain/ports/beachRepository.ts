@@ -9,7 +9,7 @@ export interface Beach {
   lat: number;
   long: number;
   quirkNotes?: string;
-  mapImage: BeachMapImage;
+  mapImage?: BeachMapImage;
 }
 
 export interface BeachRepository {

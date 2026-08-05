@@ -34,7 +34,6 @@ describe("GET /api/beaches", () => {
         long: beach.long,
         quirkNotes: beach.quirkNotes,
         order: beach.order,
-        mapImage: { data: Buffer.from(`fake-pin-for-${beach.id}`), contentType: "image/png" },
       }))
     );
   });
@@ -53,7 +52,7 @@ describe("GET /api/beaches", () => {
     expect(response.body.beaches).toHaveLength(16);
   });
 
-  it("returns each beach's name, coordinates, and a static map pin image", async () => {
+  it("returns each beach's name, coordinates, and quirk notes", async () => {
     const response = await request(buildApp()).get("/api/beaches");
 
     const varna = response.body.beaches.find((beach: { id: string }) => beach.id === "varna-central-beach");
@@ -63,9 +62,7 @@ describe("GET /api/beaches", () => {
       long: 27.928,
       quirkNotes: "Bay-sheltered, generally calmer than open coast",
     });
-    expect(varna.mapImageDataUrl).toBe(
-      `data:image/png;base64,${Buffer.from("fake-pin-for-varna-central-beach").toString("base64")}`
-    );
+    expect(varna.mapImageDataUrl).toBeUndefined();
   });
 
   it("preserves the founder-curated north-to-south beach order", async () => {

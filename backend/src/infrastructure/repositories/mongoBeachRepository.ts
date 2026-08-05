@@ -8,7 +8,7 @@ interface BeachDocument {
   long: number;
   quirkNotes?: string;
   order: number;
-  mapImage: BeachMapImage;
+  mapImage?: BeachMapImage;
 }
 
 export class MongoBeachRepository implements BeachRepository {
