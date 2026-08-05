@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useBeaches } from "./hooks/useBeaches";
 import styles from "./styles/BeachList.module.css";
 
@@ -16,10 +17,16 @@ export function BeachList() {
         <ul className={styles.list}>
           {beaches.data.map((beach) => (
             <li key={beach.id} className={styles.row}>
-              {beach.mapImageDataUrl && (
-                <img src={beach.mapImageDataUrl} alt="" width={56} height={56} className={styles.pin} />
-              )}
-              <span className={styles.name}>{beach.name}</span>
+              <Link
+                to={`/beaches/${beach.id}`}
+                state={{ beachName: beach.name }}
+                className={styles.link}
+              >
+                {beach.mapImageDataUrl && (
+                  <img src={beach.mapImageDataUrl} alt="" width={56} height={56} className={styles.pin} />
+                )}
+                <span className={styles.name}>{beach.name}</span>
+              </Link>
             </li>
           ))}
         </ul>

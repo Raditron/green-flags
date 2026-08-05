@@ -34,4 +34,11 @@ export class MongoPredictionRepository implements PredictionRepository {
       { upsert: true }
     );
   }
+
+  async findByBeachAndDate(beachId: string, date: string): Promise<BeachDailyPredictions | null> {
+    const doc = await this.collection.findOne({ _id: documentId(beachId, date) });
+    if (!doc) return null;
+
+    return { beachId: doc.beachId, date: doc.date, hourlyPredictions: doc.hourlyPredictions };
+  }
 }

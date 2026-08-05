@@ -20,4 +20,6 @@ export interface BeachDailyPredictions {
 export interface PredictionRepository {
   /** Upserts by beach + date, so re-running the batch job for the same day replaces rather than duplicates. */
   saveDailyPredictions(predictions: BeachDailyPredictions): Promise<void>;
+  /** Point lookup by beach + date; resolves to null if no batch run has persisted predictions for that day yet. */
+  findByBeachAndDate(beachId: string, date: string): Promise<BeachDailyPredictions | null>;
 }

@@ -18,6 +18,7 @@ export function stubBatchDependencies(): {
     },
     predictionRepository: {
       saveDailyPredictions: async () => {},
+      findByBeachAndDate: async () => null,
     },
     batchTriggerSecret: "test-batch-secret",
   };

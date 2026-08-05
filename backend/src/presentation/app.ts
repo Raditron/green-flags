@@ -8,6 +8,7 @@ import { PredictionRepository } from "../domain/ports/predictionRepository";
 import { createHealthRouter } from "./routes/health.route";
 import { createBeachRouter } from "./routes/beach.route";
 import { createBatchRouter } from "./routes/batch.route";
+import { createPredictionRouter } from "./routes/prediction.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -25,6 +26,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use(express.json());
   app.use("/api", createHealthRouter(dependencies.healthcheckRepository));
   app.use("/api", createBeachRouter(dependencies.beachRepository));
+  app.use("/api", createPredictionRouter(dependencies.predictionRepository));
   app.use(
     "/api",
     createBatchRouter({

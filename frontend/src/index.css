@@ -4,6 +4,9 @@
   --bg: #ffffff;
   --border: #e4e4e7;
   --surface: #fafafa;
+  --flag-green: #16a34a;
+  --flag-yellow: #ca8a04;
+  --flag-red: #dc2626;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;
