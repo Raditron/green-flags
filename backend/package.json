@@ -10,7 +10,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed": "tsx src/infrastructure/seed/seedBeaches.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

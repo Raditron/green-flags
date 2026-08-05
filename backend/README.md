@@ -7,12 +7,15 @@ Express backend, organized into four DDD layers:
 - `src/domain` — framework-free business rules, entities, and ports (interfaces) that infrastructure implements.
 - `src/infrastructure` — concrete adapters (MongoDB repositories, the Mongo client, external HTTP clients).
 
-Currently the only endpoint is `GET /api/health`, which writes an incremented ping counter to MongoDB and reads it back, proving the full app-to-database path works.
+Endpoints:
+
+- `GET /api/health` — writes an incremented ping counter to MongoDB and reads it back, proving the full app-to-database path works.
+- `GET /api/beaches` — public, no auth required. Returns the founder-curated launch list of beaches (name, lat/long, optional quirk notes, and a static map pin image as a `data:` URL), read from the `beaches` collection.
 
 ## Local development
 
 ```bash
-cp .env.example .env   # fill in a real MONGODB_URI
+cp .env.example .env   # fill in a real MONGODB_URI and GOOGLE_MAPS_API_KEY
 npm install
 npm run dev             # tsx watch, serves on PORT (default 4000)
 ```
@@ -24,6 +27,7 @@ npm run dev             # tsx watch, serves on PORT (default 4000)
 - `npm start` — run the compiled build (`dist/server.js`)
 - `npm run typecheck` — `tsc --noEmit`
 - `npm test` — run the Vitest suite (spins up an ephemeral in-memory MongoDB via `mongodb-memory-server`, no real database needed)
+- `npm run seed` — populate the `beaches` collection against `MONGODB_URI` with the founder-curated launch list, calling the Google Maps Static API exactly once per beach to generate its map pin image (per [ADR 0001](../docs/adr/0001-static-beach-map-generated-at-seed-time.md)). Requires `GOOGLE_MAPS_API_KEY` (a Google Cloud project with the Maps Static API enabled and billing set up — it has a free monthly quota). Safe to re-run: upserts by beach id.
 
 ## Deploying to Render (free web service tier)
 

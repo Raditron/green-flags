@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { connectToDatabase } from "./infrastructure/db/mongoClient";
 import { MongoHealthcheckRepository } from "./infrastructure/repositories/mongoHealthcheckRepository";
+import { MongoBeachRepository } from "./infrastructure/repositories/mongoBeachRepository";
 import { createApp } from "./presentation/app";
 
 const PORT = process.env.PORT ?? 4000;
@@ -15,7 +16,8 @@ async function main(): Promise<void> {
 
   const { db } = await connectToDatabase(MONGODB_URI, MONGODB_DB_NAME);
   const healthcheckRepository = new MongoHealthcheckRepository(db);
-  const app = createApp(healthcheckRepository, FRONTEND_URL);
+  const beachRepository = new MongoBeachRepository(db);
+  const app = createApp({ healthcheckRepository, beachRepository }, FRONTEND_URL);
 
   app.listen(PORT, () => {
     console.log(`Green Flags API listening on port ${PORT}`);
