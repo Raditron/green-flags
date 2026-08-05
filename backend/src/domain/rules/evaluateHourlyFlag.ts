@@ -48,24 +48,30 @@ function computeOnshoreWindComponentMps(conditions: HourlyConditions): number {
   return Math.max(component, 0);
 }
 
-/**
- * No rip-current forecast exists for the Black Sea (see project research), so risk is derived
- * in-house from the same factors NOAA's own beach-forecast tool uses operationally: wave height,
- * wave period, and the onshore wind component. Each factor scores 0 (below its moderate
- * threshold), 1 (moderate), or 2 (at/above its high threshold); the scores are summed.
+/** Rip current risk thresholds: [moderate, high] per factor. No feed exists for the Black Sea
+ * (see project research), so these are project-chosen, derived from wave height/period and the
+ * onshore wind component — the same class of factors used to assess rip current hazard elsewhere.
  */
+const RIP_WAVE_HEIGHT_THRESHOLDS_M: [moderate: number, high: number] = [0.5, 1.0];
+const RIP_WAVE_PERIOD_THRESHOLDS_S: [moderate: number, high: number] = [6, 8];
+const RIP_ONSHORE_WIND_THRESHOLDS_MPS: [moderate: number, high: number] = [3, 8];
+const RIP_SCORE_MODERATE = 2;
+const RIP_SCORE_HIGH = 4;
+
 function deriveRipCurrentRisk(waveHeightM: number, wavePeriodS: number, onshoreWindComponentMps: number): RipCurrentRisk {
-  const scoreFactor = (value: number, moderateThreshold: number, highThreshold: number): number => {
+  const scoreFactor = (value: number, [moderateThreshold, highThreshold]: [number, number]): number => {
     if (value >= highThreshold) return 2;
     if (value >= moderateThreshold) return 1;
     return 0;
   };
 
   const score =
-    scoreFactor(waveHeightM, 0.5, 1.0) + scoreFactor(wavePeriodS, 6, 8) + scoreFactor(onshoreWindComponentMps, 3, 8);
+    scoreFactor(waveHeightM, RIP_WAVE_HEIGHT_THRESHOLDS_M) +
+    scoreFactor(wavePeriodS, RIP_WAVE_PERIOD_THRESHOLDS_S) +
+    scoreFactor(onshoreWindComponentMps, RIP_ONSHORE_WIND_THRESHOLDS_MPS);
 
-  if (score >= 4) return "high";
-  if (score >= 2) return "moderate";
+  if (score >= RIP_SCORE_HIGH) return "high";
+  if (score >= RIP_SCORE_MODERATE) return "moderate";
   return "low";
 }
 
