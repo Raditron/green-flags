@@ -9,6 +9,7 @@ interface BeachDocument {
   quirkNotes?: string;
   order: number;
   mapImage?: BeachMapImage;
+  onshoreWindDirectionDeg: number;
 }
 
 export class MongoBeachRepository implements BeachRepository {
@@ -28,6 +29,7 @@ export class MongoBeachRepository implements BeachRepository {
       long: doc.long,
       quirkNotes: doc.quirkNotes,
       mapImage: doc.mapImage,
+      onshoreWindDirectionDeg: doc.onshoreWindDirectionDeg,
     }));
   }
 }

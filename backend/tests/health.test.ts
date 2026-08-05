@@ -5,6 +5,7 @@ import { Db, MongoClient } from "mongodb";
 import { createApp } from "../src/presentation/app";
 import { MongoHealthcheckRepository } from "../src/infrastructure/repositories/mongoHealthcheckRepository";
 import { MongoBeachRepository } from "../src/infrastructure/repositories/mongoBeachRepository";
+import { stubBatchDependencies } from "./helpers/stubBatchDependencies";
 
 describe("GET /api/health", () => {
   let mongoServer: MongoMemoryServer;
@@ -29,7 +30,7 @@ describe("GET /api/health", () => {
 
   it("writes a ping to MongoDB and reads it back in the response", async () => {
     const repository = new MongoHealthcheckRepository(db);
-    const app = createApp({ healthcheckRepository: repository, beachRepository: new MongoBeachRepository(db) });
+    const app = createApp({ healthcheckRepository: repository, beachRepository: new MongoBeachRepository(db), ...stubBatchDependencies() });
 
     const response = await request(app).get("/api/health");
 
@@ -46,7 +47,7 @@ describe("GET /api/health", () => {
 
   it("increments the ping count on every subsequent call", async () => {
     const repository = new MongoHealthcheckRepository(db);
-    const app = createApp({ healthcheckRepository: repository, beachRepository: new MongoBeachRepository(db) });
+    const app = createApp({ healthcheckRepository: repository, beachRepository: new MongoBeachRepository(db), ...stubBatchDependencies() });
 
     await request(app).get("/api/health");
     await request(app).get("/api/health");
@@ -61,7 +62,7 @@ describe("GET /api/health", () => {
         throw new Error("connection lost");
       },
     };
-    const app = createApp({ healthcheckRepository: failingRepository, beachRepository: new MongoBeachRepository(db) });
+    const app = createApp({ healthcheckRepository: failingRepository, beachRepository: new MongoBeachRepository(db), ...stubBatchDependencies() });
 
     const response = await request(app).get("/api/health");
 

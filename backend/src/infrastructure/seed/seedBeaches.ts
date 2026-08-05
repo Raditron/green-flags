@@ -11,6 +11,7 @@ interface BeachDocument {
   quirkNotes?: string;
   order: number;
   mapImage?: BeachMapImage;
+  onshoreWindDirectionDeg: number;
 }
 
 // Google Maps Static API pin generation (ADR 0001) is disabled for now — no API key configured.
@@ -39,6 +40,7 @@ async function main(): Promise<void> {
             long: beach.long,
             quirkNotes: beach.quirkNotes,
             order: beach.order,
+            onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
           },
         },
         { upsert: true }

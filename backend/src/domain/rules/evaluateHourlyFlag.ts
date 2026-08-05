@@ -1,17 +1,11 @@
+import { ForecastReading } from "../forecastReading";
 import { windSpeedToBeaufortForce } from "./beaufortScale";
 import { waveHeightToDouglasSeaState } from "./douglasSeaState";
 
 export type FlagColor = "green" | "yellow" | "red";
 export type RipCurrentRisk = "low" | "moderate" | "high";
 
-export interface HourlyConditions {
-  windSpeedMps: number;
-  /** Meteorological convention: compass bearing the wind is blowing FROM. */
-  windDirectionDeg: number;
-  waveHeightM: number;
-  wavePeriodS: number;
-  /** Optional swell height on top of the wind-wave height, in metres. */
-  swellHeightM?: number;
+export interface HourlyConditions extends ForecastReading {
   /** Compass bearing the wind blows FROM when blowing straight onshore at this beach. */
   onshoreWindDirectionDeg: number;
   stormWarningActive: boolean;

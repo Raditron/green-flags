@@ -6,6 +6,7 @@ import { createApp } from "../src/presentation/app";
 import { MongoBeachRepository } from "../src/infrastructure/repositories/mongoBeachRepository";
 import { MongoHealthcheckRepository } from "../src/infrastructure/repositories/mongoHealthcheckRepository";
 import { BEACH_SEED_DATA } from "../src/infrastructure/seed/beachSeedData";
+import { stubBatchDependencies } from "./helpers/stubBatchDependencies";
 
 describe("GET /api/beaches", () => {
   let mongoServer: MongoMemoryServer;
@@ -34,6 +35,7 @@ describe("GET /api/beaches", () => {
         long: beach.long,
         quirkNotes: beach.quirkNotes,
         order: beach.order,
+        onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
       }))
     );
   });
@@ -42,6 +44,7 @@ describe("GET /api/beaches", () => {
     return createApp({
       healthcheckRepository: new MongoHealthcheckRepository(db),
       beachRepository: new MongoBeachRepository(db),
+      ...stubBatchDependencies(),
     });
   }
 
@@ -82,6 +85,7 @@ describe("GET /api/beaches", () => {
     const app = createApp({
       healthcheckRepository: new MongoHealthcheckRepository(db),
       beachRepository: failingRepository,
+      ...stubBatchDependencies(),
     });
 
     const response = await request(app).get("/api/beaches");
