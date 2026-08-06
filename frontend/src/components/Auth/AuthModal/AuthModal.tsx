@@ -4,7 +4,16 @@ import { useAuth } from "../../../auth/AuthContext";
 import type { AuthFormMode } from "./interfaces";
 import styles from "./styles/AuthModal.module.css";
 
-export function AuthModal({ onClose }: { onClose: () => void }) {
+interface AuthModalProps {
+  onClose: () => void;
+  /** Fired instead of onClose after a successful sign-in/sign-up, so a caller that needs to tell
+   * "closed because it succeeded" apart from "closed because it was cancelled" can do so — the
+   * AuthContext's user only updates asynchronously, so that distinction can't be inferred from
+   * watching `user` alone. Falls back to onClose when omitted (existing callers' behavior). */
+  onAuthenticated?: () => void;
+}
+
+export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
   const { signUp, logIn } = useAuth();
   const [mode, setMode] = useState<AuthFormMode>("login");
   const [email, setEmail] = useState("");
@@ -22,7 +31,11 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       } else {
         await logIn(email, password);
       }
-      onClose();
+      if (onAuthenticated) {
+        onAuthenticated();
+      } else {
+        onClose();
+      }
     } catch {
       setError(mode === "signup" ? "Could not create account. Try a different email." : "Invalid email or password.");
     } finally {

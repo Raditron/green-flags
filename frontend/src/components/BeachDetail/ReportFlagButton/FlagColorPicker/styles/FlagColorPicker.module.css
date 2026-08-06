@@ -1,0 +1,72 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.picker {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+
+.prompt {
+  margin: 0 0 16px;
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.option {
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  padding: 14px 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.option:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.option[data-flag="green"] {
+  background: var(--flag-green);
+}
+
+.option[data-flag="yellow"] {
+  background: var(--flag-yellow);
+}
+
+.option[data-flag="red"] {
+  background: var(--flag-red);
+}
+
+.close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text);
+}

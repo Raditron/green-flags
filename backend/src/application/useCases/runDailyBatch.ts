@@ -6,7 +6,7 @@ import { ReportRepository } from "../../domain/ports/reportRepository";
 import { evaluateHourlyFlag } from "../../domain/rules/evaluateHourlyFlag";
 import { isWithinLegalWindow } from "../../domain/rules/legalWindow";
 import { deriveConditionBucketKey } from "../../domain/rules/conditionBucket";
-import { calibrateConfidence, computeDistancePrior } from "../../domain/rules/confidence";
+import { computeHourConfidence } from "../computeHourConfidence";
 
 export interface RunDailyBatchDependencies {
   beachRepository: BeachRepository;
@@ -48,14 +48,13 @@ export async function runDailyBatch(deps: RunDailyBatchDependencies): Promise<Ru
             const conditions = { ...reading, onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg, stormWarningActive };
             const assessment = evaluateHourlyFlag(conditions);
             const bucketKey = deriveConditionBucketKey(assessment.beaufortForce, assessment.douglasSeaState);
-            const { prior, wellClear } = computeDistancePrior(conditions);
-
-            const [historicalStats, todaysReports] = await Promise.all([
-              reportRepository.getBucketStats(beach.id, bucketKey, dailyForecast.date),
-              reportRepository.getTodaysReports(beach.id, dailyForecast.date, hour),
-            ]);
-
-            const confidence = calibrateConfidence({ distancePrior: prior, wellClear, historicalStats, todaysReports });
+            const confidence = await computeHourConfidence(reportRepository, {
+              beachId: beach.id,
+              date: dailyForecast.date,
+              hour,
+              bucketKey,
+              conditions,
+            });
 
             return {
               hour,

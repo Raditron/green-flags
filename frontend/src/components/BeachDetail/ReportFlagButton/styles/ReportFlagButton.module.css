@@ -1,0 +1,38 @@
+.container {
+  margin: 16px 0 0;
+}
+
+.button {
+  border: none;
+  border-radius: 6px;
+  background: var(--text-h);
+  color: var(--bg);
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.reason {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.confirmation {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--flag-green);
+}
+
+.error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--error);
+}

@@ -26,9 +26,14 @@ export function resolvePredictionDate(rawDate: string | undefined, now: Date = n
   return DATE_PATTERN.test(rawDate) ? rawDate : null;
 }
 
+/** The current hour (0-23) in Europe/Sofia local time, unclamped. */
+export function currentSofiaHour(now: Date = new Date()): number {
+  return Number(SOFIA_HOUR_FORMATTER.format(now));
+}
+
 /** The current Sofia-local hour, clamped into the legal flag window — the hour a beach list row should show. */
 export function currentOrNearestLegalHour(now: Date = new Date()): number {
-  const hour = Number(SOFIA_HOUR_FORMATTER.format(now));
+  const hour = currentSofiaHour(now);
   if (hour < LEGAL_WINDOW_START_HOUR) return LEGAL_WINDOW_START_HOUR;
   if (hour > LEGAL_WINDOW_END_HOUR) return LEGAL_WINDOW_END_HOUR;
   return hour;

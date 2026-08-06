@@ -4,6 +4,7 @@ import { useBeachName } from "./hooks/useBeachName";
 import { isOutsideLegalWindow } from "./utils/legalWindow";
 import { DisclaimerBanner } from "./DisclaimerBanner/DisclaimerBanner";
 import { Timeline } from "./Timeline/Timeline";
+import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
 import styles from "./styles/BeachDetail.module.css";
 
 interface LocationState {
@@ -30,6 +31,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
       </Link>
       <h2>{beachName ?? "Beach"}</h2>
       <DisclaimerBanner />
+      <ReportFlagButton beachId={beachId} />
 
       {predictions.status === "loading" && <p>Loading predictions…</p>}
 

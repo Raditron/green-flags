@@ -13,6 +13,7 @@ import { createBeachRouter } from "./routes/beach.route";
 import { createBatchRouter } from "./routes/batch.route";
 import { createPredictionRouter } from "./routes/prediction.route";
 import { createMeRouter } from "./routes/me.route";
+import { createReportRouter } from "./routes/report.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -35,6 +36,15 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use("/api", createBeachRouter(dependencies.beachRepository, dependencies.predictionRepository));
   app.use("/api", createPredictionRouter(dependencies.predictionRepository));
   app.use("/api", createMeRouter(dependencies.authTokenVerifier, dependencies.userRepository));
+  app.use(
+    "/api",
+    createReportRouter(
+      dependencies.predictionRepository,
+      dependencies.reportRepository,
+      dependencies.authTokenVerifier,
+      dependencies.userRepository
+    )
+  );
   app.use(
     "/api",
     createBatchRouter({

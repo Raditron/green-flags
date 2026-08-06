@@ -29,6 +29,9 @@ export interface DistancePrior {
   wellClear: boolean;
 }
 
+/** The only fields the distance prior actually depends on — narrower than HourlyConditions so callers (e.g. re-scoring a stored prediction's forecast) don't need to fabricate an onshore wind direction. */
+export type DistancePriorConditions = Pick<HourlyConditions, "windSpeedMps" | "waveHeightM" | "swellHeightM" | "stormWarningActive">;
+
 function nearestBoundaryDistance(value: number, yellowBoundary: number, redBoundary: number): number {
   return Math.min(Math.abs(value - yellowBoundary), Math.abs(value - redBoundary));
 }
@@ -42,7 +45,7 @@ function boundaryCloseness(distance: number, margin: number): number {
  * feedback data required, deterministic. Reuses the exact mps/m crossing points the rule engine's
  * Beaufort/Douglas classification already uses, rather than inventing separate bin boundaries.
  */
-export function computeDistancePrior(conditions: HourlyConditions): DistancePrior {
+export function computeDistancePrior(conditions: DistancePriorConditions): DistancePrior {
   if (conditions.stormWarningActive) {
     return { prior: FULL_CERTAINTY_CONFIDENCE, wellClear: true };
   }

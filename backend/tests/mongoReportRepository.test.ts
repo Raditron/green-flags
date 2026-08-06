@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Db, MongoClient } from "mongodb";
 import { MongoReportRepository } from "../src/infrastructure/repositories/mongoReportRepository";
+import { DuplicateReportError } from "../src/domain/ports/reportRepository";
 
 const BEACH_ID = "beach-a";
 const BUCKET_KEY = "beaufort-4_douglas-3";
@@ -81,6 +82,92 @@ describe("MongoReportRepository", () => {
       const result = await repository.getTodaysReports(BEACH_ID, "2026-08-05", 12);
 
       expect(result).toEqual({ agree: 1, total: 2 });
+    });
+  });
+
+  describe("recordReport", () => {
+    it("persists a new report", async () => {
+      await repository.recordReport({
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      });
+
+      const stored = await db.collection("reports").findOne({ beachId: BEACH_ID, userId: "u1" });
+      expect(stored).toMatchObject({
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      });
+    });
+
+    it("throws DuplicateReportError on a second report from the same user for the same beach and date", async () => {
+      const report = {
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      };
+      await repository.recordReport(report);
+
+      await expect(repository.recordReport({ ...report, hour: 13, agreesWithPrediction: false })).rejects.toThrow(
+        DuplicateReportError
+      );
+    });
+
+    it("allows the same user to report the same beach again on a different date", async () => {
+      const report = {
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      };
+      await repository.recordReport(report);
+
+      await expect(repository.recordReport({ ...report, date: "2026-08-06" })).resolves.toBeUndefined();
+    });
+  });
+
+  describe("hasReportedToday", () => {
+    it("returns false when this user hasn't reported this beach on this date", async () => {
+      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-05")).toBe(false);
+    });
+
+    it("returns true once this user has reported this beach on this date", async () => {
+      await repository.recordReport({
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      });
+
+      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-05")).toBe(true);
+    });
+
+    it("ignores reports from other users or other dates", async () => {
+      await repository.recordReport({
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        hour: 12,
+        bucketKey: BUCKET_KEY,
+        agreesWithPrediction: true,
+      });
+
+      expect(await repository.hasReportedToday(BEACH_ID, "u2", "2026-08-05")).toBe(false);
+      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-06")).toBe(false);
     });
   });
 });

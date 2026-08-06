@@ -29,6 +29,8 @@ export function stubBatchDependencies(): {
     reportRepository: {
       getBucketStats: async () => ({ hits: 0, total: 0 }),
       getTodaysReports: async () => ({ agree: 0, total: 0 }),
+      hasReportedToday: async () => false,
+      recordReport: async () => {},
     },
     batchTriggerSecret: "test-batch-secret",
     authTokenVerifier: {
