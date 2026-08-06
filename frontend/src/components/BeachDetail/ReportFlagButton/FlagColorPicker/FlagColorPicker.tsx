@@ -1,5 +1,5 @@
 import type { FlagColor } from "../../interfaces";
-import styles from "./styles/FlagColorPicker.module.css";
+import { getFlagColorPickerStyles, getFlagColorOptionStyle } from "./styles/FlagColorPicker.styles";
 
 interface FlagColorPickerProps {
   submitting: boolean;
@@ -14,17 +14,18 @@ const OPTIONS: { flagColor: FlagColor; label: string }[] = [
 ];
 
 export function FlagColorPicker({ submitting, onPick, onClose }: FlagColorPickerProps) {
+  const styles = getFlagColorPickerStyles();
+
   return (
-    <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.picker} onClick={(event) => event.stopPropagation()} role="dialog" aria-label="Report the flag color">
-        <p className={styles.prompt}>What color is the flag right now?</p>
-        <div className={styles.options}>
+    <div style={styles.backdrop} onClick={onClose}>
+      <div style={styles.picker} onClick={(event) => event.stopPropagation()} role="dialog" aria-label="Report the flag color">
+        <p style={styles.prompt}>What color is the flag right now?</p>
+        <div style={styles.options}>
           {OPTIONS.map(({ flagColor, label }) => (
             <button
               key={flagColor}
               type="button"
-              className={styles.option}
-              data-flag={flagColor}
+              style={getFlagColorOptionStyle(flagColor, submitting)}
               disabled={submitting}
               onClick={() => onPick(flagColor)}
             >
@@ -33,7 +34,7 @@ export function FlagColorPicker({ submitting, onPick, onClose }: FlagColorPicker
           ))}
         </div>
 
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Close" disabled={submitting}>
+        <button type="button" style={styles.close} onClick={onClose} aria-label="Close" disabled={submitting}>
           ×
         </button>
       </div>

@@ -5,7 +5,7 @@ import { useReportEligibility } from "./hooks/useReportEligibility";
 import { ReportSubmissionError, submitFlagReport } from "./data/submitFlagReport";
 import { FlagColorPicker } from "./FlagColorPicker/FlagColorPicker";
 import type { FlagColor } from "../interfaces";
-import styles from "./styles/ReportFlagButton.module.css";
+import { getReportFlagButtonStyles } from "./styles/ReportFlagButton.styles";
 
 type Flow =
   | { step: "closed" }
@@ -71,21 +71,22 @@ export function ReportFlagButton({ beachId }: { beachId: string }) {
   }
 
   const disabled = eligibility.status === "ineligible" || eligibility.status === "checking";
+  const styles = getReportFlagButtonStyles({ disabled });
 
   return (
-    <div className={styles.container}>
-      <button type="button" className={styles.button} disabled={disabled} onClick={handleButtonClick}>
+    <div style={styles.container}>
+      <button type="button" style={styles.button} disabled={disabled} onClick={handleButtonClick}>
         Report the flag
       </button>
 
-      {eligibility.status === "ineligible" && <p className={styles.reason}>{eligibility.reason}</p>}
+      {eligibility.status === "ineligible" && <p style={styles.reason}>{eligibility.reason}</p>}
       {submission.status === "success" && (
-        <p className={styles.confirmation}>
+        <p style={styles.confirmation}>
           Thanks!{" "}
           {submission.agreesWithPrediction ? "That matches our prediction." : "Noted — that's different from our prediction."}
         </p>
       )}
-      {submission.status === "error" && <p className={styles.error}>{submission.message}</p>}
+      {submission.status === "error" && <p style={styles.error}>{submission.message}</p>}
 
       {flow.step === "authenticating" && (
         <AuthModal

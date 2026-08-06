@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import type { AuthFormMode } from "./interfaces";
-import styles from "./styles/AuthModal.module.css";
+import { getAuthModalStyles } from "./styles/AuthModal.styles";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -20,6 +20,7 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const styles = getAuthModalStyles({ submitting });
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -44,22 +45,22 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
   }
 
   return (
-    <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
-        <h2 className={styles.title}>{mode === "signup" ? "Create an account" : "Sign in"}</h2>
+    <div style={styles.backdrop} onClick={onClose}>
+      <div style={styles.modal} onClick={(event) => event.stopPropagation()}>
+        <h2 style={styles.title}>{mode === "signup" ? "Create an account" : "Sign in"}</h2>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <label className={styles.label}>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <label style={styles.label}>
             Email
             <input
               type="email"
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className={styles.input}
+              style={styles.input}
             />
           </label>
-          <label className={styles.label}>
+          <label style={styles.label}>
             Password
             <input
               type="password"
@@ -67,20 +68,20 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
               minLength={6}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className={styles.input}
+              style={styles.input}
             />
           </label>
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p style={styles.error}>{error}</p>}
 
-          <button type="submit" disabled={submitting} className={styles.submit}>
+          <button type="submit" disabled={submitting} style={styles.submit}>
             {mode === "signup" ? "Sign up" : "Log in"}
           </button>
         </form>
 
         <button
           type="button"
-          className={styles.toggle}
+          style={styles.toggle}
           onClick={() => {
             setError(null);
             setMode(mode === "signup" ? "login" : "signup");
@@ -89,7 +90,7 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
           {mode === "signup" ? "Already have an account? Log in" : "Need an account? Sign up"}
         </button>
 
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
+        <button type="button" style={styles.close} onClick={onClose} aria-label="Close">
           ×
         </button>
       </div>

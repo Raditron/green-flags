@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { usePredictions } from "./hooks/usePredictions";
 import { useBeachName } from "./hooks/useBeachName";
@@ -5,7 +6,7 @@ import { currentSofiaHour, isOutsideLegalWindow } from "./utils/legalWindow";
 import { DisclaimerBanner } from "./DisclaimerBanner/DisclaimerBanner";
 import { Timeline } from "./Timeline/Timeline";
 import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
-import styles from "./styles/BeachDetail.module.css";
+import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 
 interface LocationState {
   beachName?: string;
@@ -24,10 +25,17 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   const predictions = usePredictions(beachId);
   const outsideLegalWindow = isOutsideLegalWindow();
   const currentHour = outsideLegalWindow ? null : currentSofiaHour();
+  const [backHovered, setBackHovered] = useState(false);
+  const styles = getBeachDetailStyles({ backHovered });
 
   return (
     <section aria-label="Beach detail">
-      <Link to="/" className={styles.back}>
+      <Link
+        to="/"
+        style={styles.back}
+        onMouseEnter={() => setBackHovered(true)}
+        onMouseLeave={() => setBackHovered(false)}
+      >
         ← Back to beaches
       </Link>
       <h2>{beachName ?? "Beach"}</h2>
@@ -37,19 +45,19 @@ function BeachDetailView({ beachId }: { beachId: string }) {
       {predictions.status === "loading" && <p>Loading predictions…</p>}
 
       {predictions.status === "error" && (
-        <p className={styles.error}>Could not load predictions: {predictions.message}</p>
+        <p style={styles.error}>Could not load predictions: {predictions.message}</p>
       )}
 
       {predictions.status === "success" && (
         <>
-          <p className={styles.meta}>
+          <p style={styles.meta}>
             Predictions for {predictions.data.date} · Updated{" "}
             {new Date(predictions.updatedAt).toLocaleTimeString()}
-            {predictions.refreshing && <span className={styles.refreshing}>Refreshing…</span>}
+            {predictions.refreshing && <span style={styles.refreshing}>Refreshing…</span>}
           </p>
 
           {outsideLegalWindow && (
-            <p className={styles.offWindow}>No lifeguard on duty — estimate only</p>
+            <p style={styles.offWindow}>No lifeguard on duty — estimate only</p>
           )}
 
           <Timeline

@@ -1,27 +1,28 @@
 import { useHealthcheck } from "./hooks/useHealthcheck";
-import styles from "./styles/SystemStatus.module.css";
+import { getSystemStatusStyles } from "./styles/SystemStatus.styles";
 
 export function SystemStatus() {
   const healthcheck = useHealthcheck();
+  const styles = getSystemStatusStyles();
 
   return (
-    <section className={styles.card} aria-live="polite">
-      <h2 className={styles.title}>System status</h2>
+    <section style={styles.card} aria-live="polite">
+      <h2 style={styles.title}>System status</h2>
 
       {healthcheck.status === "loading" && <p>Checking API + database connection…</p>}
 
       {healthcheck.status === "error" && (
-        <p className={styles.error}>Could not reach the API: {healthcheck.message}</p>
+        <p style={styles.error}>Could not reach the API: {healthcheck.message}</p>
       )}
 
       {healthcheck.status === "success" && (
-        <dl className={styles.details}>
-          <dt>Status</dt>
-          <dd>{healthcheck.data.status}</dd>
-          <dt>Ping count</dt>
-          <dd>{healthcheck.data.pingCount}</dd>
-          <dt>Last ping</dt>
-          <dd>{new Date(healthcheck.data.lastPingAt).toLocaleString()}</dd>
+        <dl style={styles.details}>
+          <dt style={styles.detailsTerm}>Status</dt>
+          <dd style={styles.detailsDescription}>{healthcheck.data.status}</dd>
+          <dt style={styles.detailsTerm}>Ping count</dt>
+          <dd style={styles.detailsDescription}>{healthcheck.data.pingCount}</dd>
+          <dt style={styles.detailsTerm}>Last ping</dt>
+          <dd style={styles.detailsDescription}>{new Date(healthcheck.data.lastPingAt).toLocaleString()}</dd>
         </dl>
       )}
     </section>

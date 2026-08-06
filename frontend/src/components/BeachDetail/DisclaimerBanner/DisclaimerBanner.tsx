@@ -1,8 +1,10 @@
-import styles from "./styles/DisclaimerBanner.module.css";
+import { getDisclaimerBannerStyles } from "./styles/DisclaimerBanner.styles";
 
 export function DisclaimerBanner() {
+  const styles = getDisclaimerBannerStyles();
+
   return (
-    <p role="note" className={styles.banner}>
+    <p role="note" style={styles.banner}>
       Unofficial estimate — not the lifeguard's flag
     </p>
   );

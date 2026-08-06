@@ -1,5 +1,5 @@
 import type { Confidence, HourlyPrediction } from "../../interfaces";
-import styles from "./styles/HourDetail.module.css";
+import { getHourDetailStyles } from "./styles/HourDetail.styles";
 
 interface HourDetailProps {
   prediction: HourlyPrediction;
@@ -16,10 +16,12 @@ function confidenceLine({ percent, basis, sampleSize }: Confidence): string {
 }
 
 export function HourDetail({ prediction }: HourDetailProps) {
+  const styles = getHourDetailStyles();
+
   return (
-    <div className={styles.panel} role="status">
-      <span className={styles.hour}>{prediction.hour}:00</span>
-      <p className={styles.gloss}>{confidenceLine(prediction.confidence)}</p>
+    <div style={styles.panel} role="status">
+      <span style={styles.hour}>{prediction.hour}:00</span>
+      <p style={styles.gloss}>{confidenceLine(prediction.confidence)}</p>
     </div>
   );
 }
