@@ -6,6 +6,7 @@ import { createApp } from "../src/presentation/app";
 import { MongoHealthcheckRepository } from "../src/infrastructure/repositories/mongoHealthcheckRepository";
 import { MongoBeachRepository } from "../src/infrastructure/repositories/mongoBeachRepository";
 import { MongoPredictionRepository } from "../src/infrastructure/repositories/mongoPredictionRepository";
+import { MongoReportRepository } from "../src/infrastructure/repositories/mongoReportRepository";
 import { OpenMeteoForecastClient } from "../src/infrastructure/openMeteo/openMeteoForecastClient";
 import { MeteoalarmStormWarningClient } from "../src/infrastructure/meteoalarm/meteoalarmStormWarningClient";
 import { BEACH_SEED_DATA } from "../src/infrastructure/seed/beachSeedData";
@@ -114,6 +115,7 @@ describe("POST /api/batch", () => {
       healthcheckRepository: new MongoHealthcheckRepository(db),
       beachRepository: new MongoBeachRepository(db),
       predictionRepository: new MongoPredictionRepository(db),
+      reportRepository: new MongoReportRepository(db),
       forecastProvider: new OpenMeteoForecastClient(),
       stormWarningProvider: new MeteoalarmStormWarningClient(),
       batchTriggerSecret: BATCH_SECRET,

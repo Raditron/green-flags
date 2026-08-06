@@ -1,4 +1,7 @@
 import { BeachRepository } from "../../domain/ports/beachRepository";
+import { PredictionRepository } from "../../domain/ports/predictionRepository";
+import { FlagColor } from "../../domain/rules/evaluateHourlyFlag";
+import { currentOrNearestLegalHour, todayInSofia } from "../../domain/today";
 
 export interface BeachSummary {
   id: string;
@@ -7,19 +10,37 @@ export interface BeachSummary {
   long: number;
   quirkNotes?: string;
   mapImageDataUrl?: string;
+  /** The current (or nearest legal-window) hour's flag color; undefined if today's batch hasn't run yet. */
+  currentFlagColor?: FlagColor;
+  currentConfidencePercent?: number;
 }
 
-export async function listBeaches(repository: BeachRepository): Promise<BeachSummary[]> {
+export async function listBeaches(
+  repository: BeachRepository,
+  predictionRepository: PredictionRepository,
+  now: Date = new Date()
+): Promise<BeachSummary[]> {
   const beaches = await repository.listBeaches();
+  const date = todayInSofia(now);
+  const hour = currentOrNearestLegalHour(now);
 
-  return beaches.map((beach) => ({
-    id: beach.id,
-    name: beach.name,
-    lat: beach.lat,
-    long: beach.long,
-    quirkNotes: beach.quirkNotes,
-    mapImageDataUrl: beach.mapImage
-      ? `data:${beach.mapImage.contentType};base64,${beach.mapImage.data.toString("base64")}`
-      : undefined,
-  }));
+  return Promise.all(
+    beaches.map(async (beach) => {
+      const dailyPredictions = await predictionRepository.findByBeachAndDate(beach.id, date);
+      const hourlyPrediction = dailyPredictions?.hourlyPredictions.find((prediction) => prediction.hour === hour);
+
+      return {
+        id: beach.id,
+        name: beach.name,
+        lat: beach.lat,
+        long: beach.long,
+        quirkNotes: beach.quirkNotes,
+        mapImageDataUrl: beach.mapImage
+          ? `data:${beach.mapImage.contentType};base64,${beach.mapImage.data.toString("base64")}`
+          : undefined,
+        currentFlagColor: hourlyPrediction?.flagColor,
+        currentConfidencePercent: hourlyPrediction?.confidence.percent,
+      };
+    })
+  );
 }

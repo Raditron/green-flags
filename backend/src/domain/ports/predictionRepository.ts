@@ -1,5 +1,6 @@
 import { ForecastReading } from "../forecastReading";
 import { FlagColor, RipCurrentRisk } from "../rules/evaluateHourlyFlag";
+import { ConfidenceResult } from "../rules/confidence";
 
 export interface HourlyPrediction {
   /** Local hour of day (0-23) this prediction applies to. */
@@ -8,6 +9,7 @@ export interface HourlyPrediction {
   ripCurrentRisk: RipCurrentRisk;
   /** The forecast inputs the rule engine evaluated for this hour, kept alongside the result for auditability. */
   forecast: ForecastReading & { stormWarningActive: boolean };
+  confidence: ConfidenceResult;
 }
 
 export interface BeachDailyPredictions {

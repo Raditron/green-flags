@@ -26,6 +26,14 @@ export function BeachList() {
                   <img src={beach.mapImageDataUrl} alt="" width={56} height={56} className={styles.pin} />
                 )}
                 <span className={styles.name}>{beach.name}</span>
+                {beach.currentFlagColor && (
+                  <span className={styles.flagBadge}>
+                    <span className={styles.flagDot} data-flag={beach.currentFlagColor} />
+                    {beach.currentConfidencePercent !== undefined && (
+                      <span className={styles.confidence}>{beach.currentConfidencePercent}%</span>
+                    )}
+                  </span>
+                )}
               </Link>
             </li>
           ))}

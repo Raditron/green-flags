@@ -14,16 +14,23 @@ export interface HourlyConditions extends ForecastReading {
 export interface FlagAssessment {
   flagColor: FlagColor;
   ripCurrentRisk: RipCurrentRisk;
+  beaufortForce: number;
+  douglasSeaState: number;
 }
 
 /** Beaufort force at/above which conditions are red, regardless of sea state. */
-const RED_BEAUFORT_FORCE = 6;
+export const RED_BEAUFORT_FORCE = 6;
 /** Douglas sea state at/above which conditions are red, regardless of wind. */
-const RED_DOUGLAS_SEA_STATE = 5;
+export const RED_DOUGLAS_SEA_STATE = 5;
 /** Beaufort force at/above which conditions are at least yellow. */
-const YELLOW_BEAUFORT_FORCE = 4;
+export const YELLOW_BEAUFORT_FORCE = 4;
 /** Douglas sea state at/above which conditions are at least yellow. */
-const YELLOW_DOUGLAS_SEA_STATE = 3;
+export const YELLOW_DOUGLAS_SEA_STATE = 3;
+
+/** Effective sea-state height: the taller of wind-wave height and swell height on top of it. */
+export function effectiveWaveHeightM(conditions: Pick<HourlyConditions, "waveHeightM" | "swellHeightM">): number {
+  return Math.max(conditions.waveHeightM, conditions.swellHeightM ?? 0);
+}
 
 function deriveFlagColor(beaufortForce: number, douglasSeaState: number, stormWarningActive: boolean): FlagColor {
   if (stormWarningActive || beaufortForce >= RED_BEAUFORT_FORCE || douglasSeaState >= RED_DOUGLAS_SEA_STATE) {
@@ -70,14 +77,14 @@ function deriveRipCurrentRisk(waveHeightM: number, wavePeriodS: number, onshoreW
 }
 
 export function evaluateHourlyFlag(conditions: HourlyConditions): FlagAssessment {
-  const effectiveWaveHeightM = Math.max(conditions.waveHeightM, conditions.swellHeightM ?? 0);
-
   const beaufortForce = windSpeedToBeaufortForce(conditions.windSpeedMps);
-  const douglasSeaState = waveHeightToDouglasSeaState(effectiveWaveHeightM);
+  const douglasSeaState = waveHeightToDouglasSeaState(effectiveWaveHeightM(conditions));
   const onshoreWindComponentMps = computeOnshoreWindComponentMps(conditions);
 
   return {
     flagColor: deriveFlagColor(beaufortForce, douglasSeaState, conditions.stormWarningActive),
     ripCurrentRisk: deriveRipCurrentRisk(conditions.waveHeightM, conditions.wavePeriodS, onshoreWindComponentMps),
+    beaufortForce,
+    douglasSeaState,
   };
 }

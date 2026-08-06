@@ -4,6 +4,7 @@ import { Beach } from "../src/domain/ports/beachRepository";
 import { DailyForecast, ForecastProvider } from "../src/domain/ports/forecastProvider";
 import { StormWarningProvider } from "../src/domain/ports/stormWarningProvider";
 import { BeachDailyPredictions, PredictionRepository } from "../src/domain/ports/predictionRepository";
+import { ReportRepository } from "../src/domain/ports/reportRepository";
 
 const BEACHES: Beach[] = [
   { id: "beach-a", name: "Beach A", lat: 43.2, long: 27.9, onshoreWindDirectionDeg: 90 },
@@ -27,6 +28,14 @@ function buildFakeBeachRepository(beaches: Beach[]) {
   return { listBeaches: async () => beaches };
 }
 
+function buildFakeReportRepository(overrides: Partial<ReportRepository> = {}): ReportRepository {
+  return {
+    getBucketStats: async () => ({ hits: 0, total: 0 }),
+    getTodaysReports: async () => ({ agree: 0, total: 0 }),
+    ...overrides,
+  };
+}
+
 describe("runDailyBatch", () => {
   it("evaluates only hours within the legal window (09:00-18:00) and persists them per beach", async () => {
     const forecastProvider: ForecastProvider = {
@@ -47,6 +56,7 @@ describe("runDailyBatch", () => {
       forecastProvider,
       stormWarningProvider,
       predictionRepository,
+      reportRepository: buildFakeReportRepository(),
       now: new Date("2026-08-05T12:00:00Z"),
     });
 
@@ -80,6 +90,7 @@ describe("runDailyBatch", () => {
       forecastProvider,
       stormWarningProvider,
       predictionRepository,
+      reportRepository: buildFakeReportRepository(),
       now: new Date("2026-08-05T12:00:00Z"),
     });
 
@@ -106,6 +117,7 @@ describe("runDailyBatch", () => {
       forecastProvider,
       stormWarningProvider,
       predictionRepository,
+      reportRepository: buildFakeReportRepository(),
       now: new Date("2026-08-05T12:00:00Z"),
     });
 
@@ -137,6 +149,7 @@ describe("runDailyBatch", () => {
       forecastProvider,
       stormWarningProvider,
       predictionRepository,
+      reportRepository: buildFakeReportRepository(),
       now: new Date("2026-08-05T12:00:00Z"),
     });
 
@@ -165,6 +178,7 @@ describe("runDailyBatch", () => {
       forecastProvider,
       stormWarningProvider,
       predictionRepository,
+      reportRepository: buildFakeReportRepository(),
       now: new Date("2026-08-05T12:00:00Z"),
     });
 
@@ -172,5 +186,89 @@ describe("runDailyBatch", () => {
     expect(result.failures).toEqual([{ beachId: "beach-a", message: "upstream forecast API timed out" }]);
     expect(saved).toHaveLength(1);
     expect(saved[0].beachId).toBe("beach-b");
+  });
+
+  it("attaches a 'certain' confidence to calm hours that are well clear of every threshold", async () => {
+    const forecastProvider: ForecastProvider = {
+      fetchDailyForecast: async () => makeFullDayForecast("2026-08-05"),
+    };
+    const stormWarningProvider: StormWarningProvider = { checkActiveStormWarning: async () => false };
+    const saved: BeachDailyPredictions[] = [];
+    const predictionRepository: PredictionRepository = {
+      saveDailyPredictions: async (predictions) => {
+        saved.push(predictions);
+      },
+    };
+
+    await runDailyBatch({
+      beachRepository: buildFakeBeachRepository([BEACHES[0]]),
+      forecastProvider,
+      stormWarningProvider,
+      predictionRepository,
+      reportRepository: buildFakeReportRepository(),
+      now: new Date("2026-08-05T12:00:00Z"),
+    });
+
+    for (const prediction of saved[0].hourlyPredictions) {
+      expect(prediction.confidence.basis).toBe("certain");
+    }
+  });
+
+  it("attaches a 'prior' confidence to borderline hours when the bucket has no feedback history", async () => {
+    const forecastProvider: ForecastProvider = {
+      fetchDailyForecast: async () => ({
+        date: "2026-08-05",
+        hours: [{ hour: 10, windSpeedMps: 12, windDirectionDeg: 0, waveHeightM: 0.1, wavePeriodS: 3 }],
+      }),
+    };
+    const stormWarningProvider: StormWarningProvider = { checkActiveStormWarning: async () => false };
+    const saved: BeachDailyPredictions[] = [];
+    const predictionRepository: PredictionRepository = {
+      saveDailyPredictions: async (predictions) => {
+        saved.push(predictions);
+      },
+    };
+
+    await runDailyBatch({
+      beachRepository: buildFakeBeachRepository([BEACHES[0]]),
+      forecastProvider,
+      stormWarningProvider,
+      predictionRepository,
+      reportRepository: buildFakeReportRepository(),
+      now: new Date("2026-08-05T12:00:00Z"),
+    });
+
+    expect(saved[0].hourlyPredictions[0].confidence.basis).toBe("prior");
+  });
+
+  it("attaches a 'blended' confidence to borderline hours when the report repository has feedback data", async () => {
+    const forecastProvider: ForecastProvider = {
+      fetchDailyForecast: async () => ({
+        date: "2026-08-05",
+        hours: [{ hour: 10, windSpeedMps: 12, windDirectionDeg: 0, waveHeightM: 0.1, wavePeriodS: 3 }],
+      }),
+    };
+    const stormWarningProvider: StormWarningProvider = { checkActiveStormWarning: async () => false };
+    const saved: BeachDailyPredictions[] = [];
+    const predictionRepository: PredictionRepository = {
+      saveDailyPredictions: async (predictions) => {
+        saved.push(predictions);
+      },
+    };
+
+    await runDailyBatch({
+      beachRepository: buildFakeBeachRepository([BEACHES[0]]),
+      forecastProvider,
+      stormWarningProvider,
+      predictionRepository,
+      reportRepository: buildFakeReportRepository({
+        getBucketStats: async () => ({ hits: 8, total: 10 }),
+        getTodaysReports: async () => ({ agree: 2, total: 2 }),
+      }),
+      now: new Date("2026-08-05T12:00:00Z"),
+    });
+
+    expect(saved[0].hourlyPredictions[0].confidence.basis).toBe("blended");
+    expect(saved[0].hourlyPredictions[0].confidence.sampleSize).toBe(12);
   });
 });

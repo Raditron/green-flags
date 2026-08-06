@@ -7,15 +7,22 @@
   overflow-x: auto;
 }
 
-.segment {
+.segmentItem {
   flex: 1 0 44px;
+}
+
+.segment {
+  width: 100%;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
+  border: none;
   border-radius: 6px;
   color: #fff;
   font-size: 12px;
+  font: inherit;
+  cursor: pointer;
 }
 
 .segment[data-flag="green"] {
@@ -28,6 +35,11 @@
 
 .segment[data-flag="red"] {
   background: var(--flag-red);
+}
+
+.segment[data-selected="true"] {
+  outline: 3px solid var(--text-h);
+  outline-offset: -3px;
 }
 
 .desaturated {

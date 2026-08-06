@@ -5,6 +5,7 @@ import { BeachRepository } from "../domain/ports/beachRepository";
 import { ForecastProvider } from "../domain/ports/forecastProvider";
 import { StormWarningProvider } from "../domain/ports/stormWarningProvider";
 import { PredictionRepository } from "../domain/ports/predictionRepository";
+import { ReportRepository } from "../domain/ports/reportRepository";
 import { createHealthRouter } from "./routes/health.route";
 import { createBeachRouter } from "./routes/beach.route";
 import { createBatchRouter } from "./routes/batch.route";
@@ -16,6 +17,7 @@ export interface AppDependencies {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
+  reportRepository: ReportRepository;
   batchTriggerSecret: string;
 }
 
@@ -25,7 +27,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use(cors(frontendUrl ? { origin: frontendUrl } : undefined));
   app.use(express.json());
   app.use("/api", createHealthRouter(dependencies.healthcheckRepository));
-  app.use("/api", createBeachRouter(dependencies.beachRepository));
+  app.use("/api", createBeachRouter(dependencies.beachRepository, dependencies.predictionRepository));
   app.use("/api", createPredictionRouter(dependencies.predictionRepository));
   app.use(
     "/api",
@@ -34,6 +36,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
       forecastProvider: dependencies.forecastProvider,
       stormWarningProvider: dependencies.stormWarningProvider,
       predictionRepository: dependencies.predictionRepository,
+      reportRepository: dependencies.reportRepository,
       batchTriggerSecret: dependencies.batchTriggerSecret,
     })
   );

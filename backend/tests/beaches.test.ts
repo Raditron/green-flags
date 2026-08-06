@@ -5,7 +5,9 @@ import { Db, MongoClient } from "mongodb";
 import { createApp } from "../src/presentation/app";
 import { MongoBeachRepository } from "../src/infrastructure/repositories/mongoBeachRepository";
 import { MongoHealthcheckRepository } from "../src/infrastructure/repositories/mongoHealthcheckRepository";
+import { MongoPredictionRepository } from "../src/infrastructure/repositories/mongoPredictionRepository";
 import { BEACH_SEED_DATA } from "../src/infrastructure/seed/beachSeedData";
+import { currentOrNearestLegalHour, todayInSofia } from "../src/domain/today";
 import { stubBatchDependencies } from "./helpers/stubBatchDependencies";
 
 describe("GET /api/beaches", () => {
@@ -74,6 +76,51 @@ describe("GET /api/beaches", () => {
     expect(response.body.beaches.map((beach: { id: string }) => beach.id)).toEqual(
       BEACH_SEED_DATA.map((beach) => beach.id)
     );
+  });
+
+  it("leaves currentFlagColor and currentConfidencePercent undefined when today's batch hasn't run yet", async () => {
+    const response = await request(buildApp()).get("/api/beaches");
+
+    const varna = response.body.beaches.find((beach: { id: string }) => beach.id === "varna-central-beach");
+    expect(varna.currentFlagColor).toBeUndefined();
+    expect(varna.currentConfidencePercent).toBeUndefined();
+  });
+
+  it("shows a beach's current-hour flag color and confidence once today's batch has persisted predictions", async () => {
+    await db.collection("predictions").deleteMany({});
+    const now = new Date();
+    const date = todayInSofia(now);
+    const hour = currentOrNearestLegalHour(now);
+    await db.collection("predictions").insertOne({
+      _id: `varna-central-beach_${date}`,
+      beachId: "varna-central-beach",
+      date,
+      hourlyPredictions: [
+        {
+          hour,
+          flagColor: "yellow",
+          ripCurrentRisk: "moderate",
+          forecast: { windSpeedMps: 8, windDirectionDeg: 90, waveHeightM: 0.6, wavePeriodS: 6, stormWarningActive: false },
+          confidence: { percent: 76, basis: "prior", sampleSize: 0 },
+        },
+      ],
+      computedAt: now,
+    });
+
+    const app = createApp({
+      healthcheckRepository: new MongoHealthcheckRepository(db),
+      beachRepository: new MongoBeachRepository(db),
+      ...stubBatchDependencies(),
+      predictionRepository: new MongoPredictionRepository(db),
+    });
+
+    const response = await request(app).get("/api/beaches");
+
+    const varna = response.body.beaches.find((beach: { id: string }) => beach.id === "varna-central-beach");
+    expect(varna.currentFlagColor).toBe("yellow");
+    expect(varna.currentConfidencePercent).toBe(76);
+
+    await db.collection("predictions").deleteMany({});
   });
 
   it("returns 503 when the database is unreachable", async () => {

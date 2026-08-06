@@ -3,6 +3,7 @@ import { connectToDatabase } from "./infrastructure/db/mongoClient";
 import { MongoHealthcheckRepository } from "./infrastructure/repositories/mongoHealthcheckRepository";
 import { MongoBeachRepository } from "./infrastructure/repositories/mongoBeachRepository";
 import { MongoPredictionRepository } from "./infrastructure/repositories/mongoPredictionRepository";
+import { MongoReportRepository } from "./infrastructure/repositories/mongoReportRepository";
 import { OpenMeteoForecastClient } from "./infrastructure/openMeteo/openMeteoForecastClient";
 import { MeteoalarmStormWarningClient } from "./infrastructure/meteoalarm/meteoalarmStormWarningClient";
 import { createApp } from "./presentation/app";
@@ -25,6 +26,7 @@ async function main(): Promise<void> {
   const healthcheckRepository = new MongoHealthcheckRepository(db);
   const beachRepository = new MongoBeachRepository(db);
   const predictionRepository = new MongoPredictionRepository(db);
+  const reportRepository = new MongoReportRepository(db);
   const forecastProvider = new OpenMeteoForecastClient();
   const stormWarningProvider = new MeteoalarmStormWarningClient();
 
@@ -33,6 +35,7 @@ async function main(): Promise<void> {
       healthcheckRepository,
       beachRepository,
       predictionRepository,
+      reportRepository,
       forecastProvider,
       stormWarningProvider,
       batchTriggerSecret: BATCH_TRIGGER_SECRET,
