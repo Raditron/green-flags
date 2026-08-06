@@ -7,6 +7,7 @@
   --flag-green: #16a34a;
   --flag-yellow: #ca8a04;
   --flag-red: #dc2626;
+  --error: #b91c1c;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;

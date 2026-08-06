@@ -6,10 +6,13 @@ import { ForecastProvider } from "../domain/ports/forecastProvider";
 import { StormWarningProvider } from "../domain/ports/stormWarningProvider";
 import { PredictionRepository } from "../domain/ports/predictionRepository";
 import { ReportRepository } from "../domain/ports/reportRepository";
+import { AuthTokenVerifier } from "../domain/ports/authTokenVerifier";
+import { UserRepository } from "../domain/ports/userRepository";
 import { createHealthRouter } from "./routes/health.route";
 import { createBeachRouter } from "./routes/beach.route";
 import { createBatchRouter } from "./routes/batch.route";
 import { createPredictionRouter } from "./routes/prediction.route";
+import { createMeRouter } from "./routes/me.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -19,6 +22,8 @@ export interface AppDependencies {
   predictionRepository: PredictionRepository;
   reportRepository: ReportRepository;
   batchTriggerSecret: string;
+  authTokenVerifier: AuthTokenVerifier;
+  userRepository: UserRepository;
 }
 
 export function createApp(dependencies: AppDependencies, frontendUrl?: string): Express {
@@ -29,6 +34,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use("/api", createHealthRouter(dependencies.healthcheckRepository));
   app.use("/api", createBeachRouter(dependencies.beachRepository, dependencies.predictionRepository));
   app.use("/api", createPredictionRouter(dependencies.predictionRepository));
+  app.use("/api", createMeRouter(dependencies.authTokenVerifier, dependencies.userRepository));
   app.use(
     "/api",
     createBatchRouter({

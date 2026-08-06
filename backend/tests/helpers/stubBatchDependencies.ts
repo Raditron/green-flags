@@ -2,14 +2,18 @@ import { ForecastProvider } from "../../src/domain/ports/forecastProvider";
 import { StormWarningProvider } from "../../src/domain/ports/stormWarningProvider";
 import { PredictionRepository } from "../../src/domain/ports/predictionRepository";
 import { ReportRepository } from "../../src/domain/ports/reportRepository";
+import { AuthTokenVerifier } from "../../src/domain/ports/authTokenVerifier";
+import { UserRepository } from "../../src/domain/ports/userRepository";
 
-/** Batch-related AppDependencies fields, stubbed out for tests (e.g. health/beaches) that don't exercise the batch route. */
+/** Batch- and auth-related AppDependencies fields, stubbed out for tests (e.g. health/beaches) that don't exercise those routes. */
 export function stubBatchDependencies(): {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
   reportRepository: ReportRepository;
   batchTriggerSecret: string;
+  authTokenVerifier: AuthTokenVerifier;
+  userRepository: UserRepository;
 } {
   return {
     forecastProvider: {
@@ -27,5 +31,13 @@ export function stubBatchDependencies(): {
       getTodaysReports: async () => ({ agree: 0, total: 0 }),
     },
     batchTriggerSecret: "test-batch-secret",
+    authTokenVerifier: {
+      verifyIdToken: async () => {
+        throw new Error("not stubbed");
+      },
+    },
+    userRepository: {
+      findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified }),
+    },
   };
 }
