@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import { usePredictions } from "./hooks/usePredictions";
 import { useBeachName } from "./hooks/useBeachName";
-import { isOutsideLegalWindow } from "./utils/legalWindow";
+import { currentSofiaHour, isOutsideLegalWindow } from "./utils/legalWindow";
 import { DisclaimerBanner } from "./DisclaimerBanner/DisclaimerBanner";
 import { Timeline } from "./Timeline/Timeline";
 import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
@@ -23,6 +23,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   const beachName = useBeachName(beachId, (location.state as LocationState | null)?.beachName);
   const predictions = usePredictions(beachId);
   const outsideLegalWindow = isOutsideLegalWindow();
+  const currentHour = outsideLegalWindow ? null : currentSofiaHour();
 
   return (
     <section aria-label="Beach detail">
@@ -54,6 +55,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
           <Timeline
             hourlyPredictions={predictions.data.hourlyPredictions}
             desaturated={outsideLegalWindow}
+            currentHour={currentHour}
           />
         </>
       )}

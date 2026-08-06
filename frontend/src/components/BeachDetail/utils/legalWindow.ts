@@ -6,6 +6,12 @@ const SOFIA_PARTS_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   hour12: false,
 });
 
+const SOFIA_HOUR_FORMATTER = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Sofia",
+  hour: "2-digit",
+  hourCycle: "h23",
+});
+
 const LEGAL_WINDOW_START_MINUTES = 9 * 60;
 const LEGAL_WINDOW_END_MINUTES = 18 * 60 + 30;
 const SEASON_START_MONTH = 6;
@@ -23,4 +29,9 @@ export function isOutsideLegalWindow(now: Date = new Date()): boolean {
   const outsideHours = minutesOfDay < LEGAL_WINDOW_START_MINUTES || minutesOfDay >= LEGAL_WINDOW_END_MINUTES;
 
   return outsideSeason || outsideHours;
+}
+
+/** The current hour (0-23) in Europe/Sofia local time, unclamped. */
+export function currentSofiaHour(now: Date = new Date()): number {
+  return Number(SOFIA_HOUR_FORMATTER.format(now));
 }

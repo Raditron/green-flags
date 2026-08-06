@@ -1,14 +1,5 @@
 import "dotenv/config";
-import { connectToDatabase } from "./infrastructure/db/mongoClient";
-import { MongoHealthcheckRepository } from "./infrastructure/repositories/mongoHealthcheckRepository";
-import { MongoBeachRepository } from "./infrastructure/repositories/mongoBeachRepository";
-import { MongoPredictionRepository } from "./infrastructure/repositories/mongoPredictionRepository";
-import { MongoReportRepository } from "./infrastructure/repositories/mongoReportRepository";
-import { MongoUserRepository } from "./infrastructure/repositories/mongoUserRepository";
-import { OpenMeteoForecastClient } from "./infrastructure/openMeteo/openMeteoForecastClient";
-import { MeteoalarmStormWarningClient } from "./infrastructure/meteoalarm/meteoalarmStormWarningClient";
-import { initializeFirebaseAdminApp } from "./infrastructure/firebase/firebaseAdminApp";
-import { FirebaseAdminAuthVerifier } from "./infrastructure/firebase/firebaseAdminAuthVerifier";
+import { buildDependencies } from "./composition";
 import { createApp } from "./presentation/app";
 
 const PORT = process.env.PORT ?? 4000;
@@ -29,31 +20,14 @@ async function main(): Promise<void> {
     throw new Error("FIREBASE_SERVICE_ACCOUNT environment variable is required");
   }
 
-  const { db } = await connectToDatabase(MONGODB_URI, MONGODB_DB_NAME);
-  const healthcheckRepository = new MongoHealthcheckRepository(db);
-  const beachRepository = new MongoBeachRepository(db);
-  const predictionRepository = new MongoPredictionRepository(db);
-  const reportRepository = new MongoReportRepository(db);
-  const userRepository = new MongoUserRepository(db);
-  const forecastProvider = new OpenMeteoForecastClient();
-  const stormWarningProvider = new MeteoalarmStormWarningClient();
-  const firebaseApp = initializeFirebaseAdminApp(FIREBASE_SERVICE_ACCOUNT);
-  const authTokenVerifier = new FirebaseAdminAuthVerifier(firebaseApp);
+  const dependencies = await buildDependencies({
+    mongoUri: MONGODB_URI,
+    mongoDbName: MONGODB_DB_NAME,
+    batchTriggerSecret: BATCH_TRIGGER_SECRET,
+    firebaseServiceAccount: FIREBASE_SERVICE_ACCOUNT,
+  });
 
-  const app = createApp(
-    {
-      healthcheckRepository,
-      beachRepository,
-      predictionRepository,
-      reportRepository,
-      forecastProvider,
-      stormWarningProvider,
-      batchTriggerSecret: BATCH_TRIGGER_SECRET,
-      authTokenVerifier,
-      userRepository,
-    },
-    FRONTEND_URL
-  );
+  const app = createApp(dependencies, FRONTEND_URL);
 
   app.listen(PORT, () => {
     console.log(`Green Flags API listening on port ${PORT}`);
