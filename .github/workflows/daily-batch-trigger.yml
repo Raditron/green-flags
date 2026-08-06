@@ -1,0 +1,36 @@
+name: Daily batch trigger
+
+# Runs once a day so hourly predictions refresh without anyone visiting the
+# app first (issue #10). 04:00 UTC = 06:00 EET / 07:00 EEST, comfortably
+# ahead of the 09:00 Bulgaria legal window the predictions cover.
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call POST /api/batch
+        env:
+          BATCH_TRIGGER_URL: ${{ secrets.BATCH_TRIGGER_URL }}
+          BATCH_TRIGGER_SECRET: ${{ secrets.BATCH_TRIGGER_SECRET }}
+        run: |
+          # Render's free tier spins the service down when idle, so the first
+          # request of the day can take 50s+ to cold-start. Retry generously
+          # (instead of relying on the workflow's own timeout) so a cold
+          # start doesn't read as a failed run, while --fail-with-body still
+          # fails the job on a genuine non-2xx response.
+          curl --request POST "$BATCH_TRIGGER_URL" \
+            --header "X-Batch-Secret: $BATCH_TRIGGER_SECRET" \
+            --fail-with-body \
+            --silent --show-error \
+            --max-time 120 \
+            --retry 5 \
+            --retry-all-errors \
+            --retry-delay 15

@@ -47,3 +47,14 @@ The three managed services below each require their own dashboard/account setup,
 3. **Vercel** — deploy `frontend/` as a static SPA. See [frontend/README.md](frontend/README.md#deploying-to-vercel) for exact settings.
 
 Once all three are live, the deployed frontend's "System status" card confirms the full Vercel↔Render↔Atlas path works, satisfying the issue #2 acceptance criteria.
+
+## Daily batch trigger (GitHub Actions)
+
+[`.github/workflows/daily-batch-trigger.yml`](.github/workflows/daily-batch-trigger.yml) calls the deployed backend's `POST /api/batch` once a day (04:00 UTC), so predictions refresh without depending on user traffic to wake a cold-started Render instance. It retries through Render's free-tier cold start (up to ~5 attempts, 15s apart, 120s per attempt) and fails the Actions run on any non-2xx response.
+
+Set these as repository secrets (**Settings > Secrets and variables > Actions**):
+
+- `BATCH_TRIGGER_URL` — the deployed backend's batch endpoint, e.g. `https://<service-name>.onrender.com/api/batch`
+- `BATCH_TRIGGER_SECRET` — must match the `BATCH_TRIGGER_SECRET` env var set on Render
+
+Trigger a run manually from the Actions tab (`workflow_dispatch`) to verify the wiring without waiting for the schedule.

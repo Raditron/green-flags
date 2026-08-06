@@ -45,3 +45,4 @@ npm run dev             # tsx watch, serves on PORT (default 4000)
 4. Start command: `npm start`
 5. Add environment variables (Render dashboard, not a committed file): `MONGODB_URI`, `MONGODB_DB_NAME`, `FRONTEND_URL` (the deployed Vercel URL), `BATCH_TRIGGER_SECRET` (a long random string; whoever/whatever schedules the daily batch job needs the same value to call `POST /api/batch`), `FIREBASE_SERVICE_ACCOUNT` (the service account JSON, as a single-line string). Render sets `PORT` itself.
 6. Deploy. The service will be reachable at `https://<service-name>.onrender.com`; confirm with `GET /api/health`.
+7. Point the repo's `BATCH_TRIGGER_URL` GitHub Actions secret at `https://<service-name>.onrender.com/api/batch` and `BATCH_TRIGGER_SECRET` at the same value set above — see the root [README](../README.md#daily-batch-trigger-github-actions) for the scheduled workflow that calls it once a day.
