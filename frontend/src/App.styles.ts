@@ -7,7 +7,7 @@ export function getAppStyles(): Record<"app", CSSProperties> {
       margin: "0 auto",
       padding: "48px 24px",
       textAlign: "center",
-      backgroundColor: "var(--snow-drift)",
+      backgroundColor: "var(--bg)",
     },
   };
 }

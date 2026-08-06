@@ -1,9 +1,14 @@
 :root {
-  --text: #3f3f46;
-  --text-h: #18181b;
-  --bg: #ffffff;
-  --border: #e4e4e7;
-  --surface: #fafafa;
+  /* chathamsBlue */
+  --text: #134074;
+  /* downriver */
+  --text-h: #0b2545;
+  /* neutrals.linen */
+  --bg: #f2eee2;
+  /* neutrals.nepalMist */
+  --border: #ccd8e4;
+  /* neutrals.mistWhite */
+  --surface: #f9fbfc;
   --flag-green: #16a34a;
   --flag-yellow: #ca8a04;
   --flag-red: #dc2626;
@@ -17,11 +22,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #d4d4d8;
-    --text-h: #fafafa;
-    --bg: #18181b;
-    --border: #3f3f46;
-    --surface: #27272a;
+    /* nepal */
+    --text: #8da9c4;
+    /* snowDrift */
+    --text-h: #eef4ed;
+    /* neutrals.duskSlate */
+    --bg: #1c2633;
+    /* nepal, for visible contrast against the darker surface below */
+    --border: #8da9c4;
+    /* blueZodiac */
+    --surface: #13315c;
   }
 }
 

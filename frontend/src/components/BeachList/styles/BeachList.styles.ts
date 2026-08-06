@@ -9,7 +9,7 @@ export function getBeachListStyles(): Record<"list" | "error", CSSProperties> {
       textAlign: "left",
     },
     error: {
-      color: "#b91c1c",
+      color: "var(--error)",
     },
   };
 }
