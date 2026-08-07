@@ -50,20 +50,30 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
 
 // Unselected chips stay outlined in the flag's own color so the option
 // reads at a glance; selecting one fills it, matching the filled treatment
-// the flag-color picker uses when reporting.
+// the flag-color picker uses when reporting. The chip shows the same flag
+// glyph used in the report popup rather than a color name.
 export function getFlagFilterChipStyle(flagColor: string, isSelected: boolean): CSSProperties {
   const color = flagColorVar(flagColor);
 
   return {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 36,
+    height: 36,
     border: `1.5px solid ${color}`,
     borderRadius: 100,
-    padding: "6px 14px",
-    font: "inherit",
-    fontSize: 13,
-    fontWeight: 600,
+    padding: 0,
     cursor: "pointer",
-    color: isSelected ? "#fff" : color,
     background: isSelected ? color : "transparent",
-    transition: "background 0.12s ease, color 0.12s ease",
+    transition: "background 0.12s ease",
+  };
+}
+
+export function getFlagFilterIconStyle(flagColor: string, isSelected: boolean): CSSProperties {
+  return {
+    width: 16,
+    height: 16,
+    color: isSelected ? "#fff" : flagColorVar(flagColor),
   };
 }

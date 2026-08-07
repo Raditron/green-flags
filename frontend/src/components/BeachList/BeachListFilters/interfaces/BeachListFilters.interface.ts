@@ -1,4 +1,4 @@
-import type { FlagColor } from "../../interfaces";
+import type { FlagColor } from "../../../../shared/types/Beach";
 
 export interface BeachListFiltersProps {
   searchQuery: string;

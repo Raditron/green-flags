@@ -1,21 +1,34 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { getToastStyles } from "./styles/Toast.styles";
 
-const AUTO_DISMISS_MS = 4000;
+export const AUTO_DISMISS_MS = 4000;
 
-export function Toast({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+export function Toast({
+  content,
+  autoDismiss,
+  version,
+  onDismiss,
+}: {
+  content: ReactNode;
+  autoDismiss: boolean;
+  version: number;
+  onDismiss: () => void;
+}) {
   const styles = getToastStyles();
 
-  // Runs once per toast instance (each toast has a stable key), so a fresh timer starts
-  // when it mounts and is cleared if it's dismissed manually before it fires.
+  // Restarts whenever `version` changes (i.e. the toast's content was just replaced), so a
+  // toast that swaps content in place — a prompt turning into a confirmation message, say —
+  // gets its own full countdown rather than inheriting whatever time was left before.
   useEffect(() => {
+    if (!autoDismiss) return;
     const timer = setTimeout(onDismiss, AUTO_DISMISS_MS);
     return () => clearTimeout(timer);
-  }, [onDismiss]);
+  }, [autoDismiss, version, onDismiss]);
 
   return (
     <div style={styles.toast} role="status">
-      <span style={styles.message}>{message}</span>
+      <div style={styles.content}>{content}</div>
       <button type="button" style={styles.close} onClick={onDismiss} aria-label="Dismiss">
         ×
       </button>

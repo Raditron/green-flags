@@ -1,16 +1,7 @@
-export type FlagColor = "green" | "yellow" | "red";
+import type { Beach } from "../../../shared/types/Beach";
 
-export interface BeachSummary {
-  id: string;
-  name: string;
-  lat: number;
-  long: number;
-  quirkNotes?: string;
-  mapImageDataUrl?: string;
-  currentFlagColor?: FlagColor;
-  currentConfidencePercent?: number;
-}
+export type { Beach, FlagColor } from "../../../shared/types/Beach";
 
 export interface BeachListResponse {
-  beaches: BeachSummary[];
+  beaches: Beach[];
 }

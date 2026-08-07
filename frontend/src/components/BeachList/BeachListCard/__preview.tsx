@@ -6,6 +6,8 @@ const mockBeaches: Beach[] = [
   {
     id: "1",
     name: "Sunset Cove",
+    lat: 42.65,
+    long: 27.73,
     mapImageDataUrl:
       "data:image/svg+xml;base64," +
       btoa(
@@ -17,12 +19,16 @@ const mockBeaches: Beach[] = [
   {
     id: "2",
     name: "Windy Point",
+    lat: 42.66,
+    long: 27.74,
     currentFlagColor: "yellow",
     currentConfidencePercent: 61,
   },
   {
     id: "3",
     name: "Harborview Beach With A Genuinely Long Name",
+    lat: 42.67,
+    long: 27.75,
     mapImageDataUrl:
       "data:image/svg+xml;base64," +
       btoa(
@@ -32,6 +38,8 @@ const mockBeaches: Beach[] = [
   {
     id: "4",
     name: "Red Rock Bay",
+    lat: 42.68,
+    long: 27.76,
     currentFlagColor: "red",
     currentConfidencePercent: 88,
   },

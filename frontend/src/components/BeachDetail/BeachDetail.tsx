@@ -12,7 +12,7 @@ import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 interface LocationState {
   beachName?: string;
   mapImageDataUrl?: string;
-  openReportPicker?: boolean;
+  quirkNotes?: string;
 }
 
 const DISCLAIMER_MESSAGE = "Unofficial estimate — not the lifeguard's flag";
@@ -27,9 +27,14 @@ export function BeachDetail() {
 function BeachDetailView({ beachId }: { beachId: string }) {
   const location = useLocation();
   const locationState = location.state as LocationState | null;
-  const { name: beachName, mapImageDataUrl } = useBeach(beachId, {
+  const {
+    name: beachName,
+    mapImageDataUrl,
+    quirkNotes,
+  } = useBeach(beachId, {
     name: locationState?.beachName,
     mapImageDataUrl: locationState?.mapImageDataUrl,
+    quirkNotes: locationState?.quirkNotes,
   });
   const predictions = usePredictions(beachId);
   const outsideLegalWindow = isOutsideLegalWindow();
@@ -44,69 +49,90 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   useEffect(() => {
     showToast(DISCLAIMER_MESSAGE);
   }, [beachId, showToast]);
-
   return (
     <section aria-label="Beach detail">
-      <div style = {styles.backContainer}>
-        <Link
-          to="/"
-          style={styles.back}
-          aria-label="Back to beaches"
-          onMouseEnter={() => setBackHovered(true)}
-          onMouseLeave={() => setBackHovered(false)}
-        >
-          <FaArrowLeft style={styles.backIcon} />
-        </Link>
-      </div>
-
-      <div style={styles.content}>
-        <div style={styles.imageArea}>
-          {mapImageDataUrl ? (
-            <img src={mapImageDataUrl} alt="" style={styles.image} />
-          ) : (
-            <div style={styles.iconChip}>
-              <FaWater style={styles.icon} />
-            </div>
-          )}
+      <div style={styles.page}>
+        <div style={styles.backContainer}>
+          <Link
+            to="/"
+            style={styles.back}
+            aria-label="Back to beaches"
+            onMouseEnter={() => setBackHovered(true)}
+            onMouseLeave={() => setBackHovered(false)}
+          >
+            <FaArrowLeft style={styles.backIcon} />
+          </Link>
         </div>
 
-        <h2>{beachName ?? "Beach"}</h2>
-        <ReportFlagButton
-          beachId={beachId}
-          autoOpen={locationState?.openReportPicker ?? false}
-        />
+        <div style={styles.main}>
+          <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
 
-        {predictions.status === "loading" && <p>Loading predictions…</p>}
+          <div style={styles.heroRow}>
+            <div
+              style={{
+                display: "flex",
+                flex: 1,
+                flexDirection: "row",
+                gap: 16,
+                alignItems: "stretch",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  flex: 3,
+                }}
+              >
+                <div style={styles.imageArea}>
+                  {mapImageDataUrl ? (
+                    <img src={mapImageDataUrl} alt="" style={styles.image} />
+                  ) : (
+                    <div style={styles.iconChip}>
+                      <FaWater style={styles.icon} />
+                    </div>
+                  )}
+                </div>{" "}
+                {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
+              </div>
 
-        {predictions.status === "error" && (
-          <p style={styles.error}>
-            Could not load predictions: {predictions.message}
-          </p>
-        )}
+              <div style={styles.badges}>
+                {predictions.status === "success" && (
+                  <>
+                    {outsideLegalWindow && (
+                      <p style={styles.offWindow}>
+                        No lifeguard on duty — estimate only
+                      </p>
+                    )}
+                    <Timeline
+                      hourlyPredictions={predictions.data.hourlyPredictions}
+                      desaturated={outsideLegalWindow}
+                      currentHour={currentHour}
+                      updatedAt={predictions.updatedAt}
+                    />
+                    <p style={styles.meta}>
+                      Predictions for {predictions.data.date}
+                      {predictions.refreshing && (
+                        <span style={styles.refreshing}>Refreshing…</span>
+                      )}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
 
-        {predictions.status === "success" && (
-          <>
-            <p style={styles.meta}>
-              Predictions for {predictions.data.date} · Updated{" "}
-              {new Date(predictions.updatedAt).toLocaleTimeString()}
-              {predictions.refreshing && (
-                <span style={styles.refreshing}>Refreshing…</span>
-              )}
+          <ReportFlagButton beachId={beachId} />
+
+          {predictions.status === "loading" && <p>Loading predictions…</p>}
+
+          {predictions.status === "error" && (
+            <p style={styles.error}>
+              Could not load predictions: {predictions.message}
             </p>
-
-            {outsideLegalWindow && (
-              <p style={styles.offWindow}>
-                No lifeguard on duty — estimate only
-              </p>
-            )}
-
-            <Timeline
-              hourlyPredictions={predictions.data.hourlyPredictions}
-              desaturated={outsideLegalWindow}
-              currentHour={currentHour}
-            />
-          </>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

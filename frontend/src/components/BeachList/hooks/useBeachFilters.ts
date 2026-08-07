@@ -1,15 +1,15 @@
 import { useMemo, useState } from "react";
-import type { BeachSummary, FlagColor } from "../interfaces";
+import type { Beach, FlagColor } from "../../../shared/types/Beach";
 
 export interface UseBeachFiltersResult {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   selectedFlags: FlagColor[];
   toggleFlag: (flagColor: FlagColor) => void;
-  filteredBeaches: BeachSummary[];
+  filteredBeaches: Beach[];
 }
 
-export function useBeachFilters(beaches: BeachSummary[]): UseBeachFiltersResult {
+export function useBeachFilters(beaches: Beach[]): UseBeachFiltersResult {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFlags, setSelectedFlags] = useState<FlagColor[]>([]);
 

@@ -1,13 +1,18 @@
 import type { CSSProperties } from "react";
 
-export function getToastStyles(): Record<"toast" | "message" | "close", CSSProperties> {
+export function getToastStyles(): Record<"toast" | "content" | "close", CSSProperties> {
   return {
     toast: {
       display: "flex",
-      alignItems: "center",
+      // flex-start rather than center: interactive content (a prompt plus a row of option
+      // buttons) stacks taller than a single line of text, and top-aligning the close button
+      // against it reads better than vertically centering it against the whole block.
+      alignItems: "flex-start",
       gap: 10,
       minWidth: 240,
-      maxWidth: 360,
+      // Widened from the original 360 to comfortably fit three flag-icon+label option buttons
+      // side by side without wrapping.
+      maxWidth: 420,
       padding: "10px 12px",
       borderRadius: 8,
       background: "var(--surface)",
@@ -16,8 +21,9 @@ export function getToastStyles(): Record<"toast" | "message" | "close", CSSPrope
       color: "var(--text)",
       fontSize: 13,
     },
-    message: {
+    content: {
       flex: 1,
+      minWidth: 0,
     },
     close: {
       flexShrink: 0,

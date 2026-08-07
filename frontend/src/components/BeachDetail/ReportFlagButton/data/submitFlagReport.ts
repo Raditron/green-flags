@@ -1,6 +1,6 @@
 import type { User } from "firebase/auth";
 import { API_BASE_URL } from "../../../../apiBaseUrl";
-import type { FlagColor } from "../../interfaces";
+import type { FlagColor } from "../../../../shared/types/Beach";
 
 export interface SubmitFlagReportResult {
   agreesWithPrediction: boolean;

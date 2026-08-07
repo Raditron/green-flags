@@ -12,7 +12,7 @@ type BeachListCardStyleKey =
   | "content"
   | "name"
   | "statusRow"
-  | "flagDot"
+  | "flagIcon"
   | "statusText"
   | "divider"
   | "actions"
@@ -118,10 +118,9 @@ export function getBeachListCardStyles({
       fontSize: 13,
       color: "var(--text)",
     },
-    flagDot: {
-      width: 9,
-      height: 9,
-      borderRadius: "50%",
+    flagIcon: {
+      width: 12,
+      height: 12,
       flexShrink: 0,
     },
     statusText: {
@@ -162,6 +161,6 @@ export function getBeachListCardStyles({
   };
 }
 
-export function getFlagDotStyle(flagColor: string | undefined): CSSProperties {
-  return { background: flagColorVar(flagColor) };
+export function getFlagIconColorStyle(flagColor: string | undefined): CSSProperties {
+  return { color: flagColorVar(flagColor) };
 }

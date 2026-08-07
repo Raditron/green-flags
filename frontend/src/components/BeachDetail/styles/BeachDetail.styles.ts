@@ -1,18 +1,24 @@
 import type { CSSProperties } from "react";
 
 type BeachDetailStyleKey =
-  | "content"
+  | "page"
   | "back"
   | "backContainer"
   | "backIcon"
+  | "main"
+  | "heroRow"
   | "imageArea"
   | "image"
   | "iconChip"
   | "icon"
+  | "badges"
+  | "description"
   | "error"
   | "meta"
   | "refreshing"
-  | "offWindow";
+  | "offWindow"
+  | "title"
+  ;
 
 // On the card grid this ratio sits in a ~440px-wide column; stretched to the
 // full page width it makes the image absurdly tall, so the detail page caps
@@ -26,18 +32,38 @@ export function getBeachDetailStyles({
   backHovered: boolean;
 }): Record<BeachDetailStyleKey, CSSProperties> {
   return {
-    // Caps content width to match the beach list's card grid (see BeachList.styles.ts)
-    // instead of letting the image and text stretch full-bleed on wide viewports.
-    content: {
+    // Back arrow sits in its own column to the left of everything else, so title,
+    // hero image and description all share one left edge (the main column's) instead
+    // of the arrow's — only the arrow overhangs further left.
+    page: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 12,
       width: "100%",
       maxWidth: 900,
       margin: "0 auto",
     },
+    main: {
+      display: "flex",
+      flexDirection: "column",
+      flex: "1 1 auto",
+      minWidth: 0,
+    },
+    title: {
+      margin: "0 0 16px",
+      fontSize: "2rem",
+      fontWeight: 700,
+      letterSpacing: "-0.01em",
+      color: "var(--text-h)",
+    },
     // Icon-only control (no visible "Back to beaches" label — that lives in aria-label
     // instead); hover swaps in a subtle circular background rather than an underline.
+    // A small top offset optically centers the 36px circle against the title's cap-height.
     backContainer: {
       display: "flex",
-      borderWidth: 1,
+      flexShrink: 0,
+      marginTop: 4,
     },
     back: {
       display: "flex",
@@ -45,7 +71,6 @@ export function getBeachDetailStyles({
       justifyContent: "center",
       width: 36,
       height: 36,
-      marginBottom: 12,
       borderRadius: "50%",
       background: backHovered ? "var(--surface)" : "transparent",
       color: "var(--text)",
@@ -55,14 +80,22 @@ export function getBeachDetailStyles({
       width: 18,
       height: 18,
     },
+    // Image takes ~3/4 of the row, the prediction badges take the remaining ~1/4 —
+    // description then flexes full-width below this row (see `description`).
+    heroRow: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "stretch",
+      gap: 16,
+    },
     imageArea: {
       position: "relative",
-      width: "100%",
+      flex: "3 1 0%",
+      minWidth: 0,
       aspectRatio: IMAGE_ASPECT_RATIO,
       maxHeight: IMAGE_MAX_HEIGHT,
       borderRadius: 12,
       overflow: "hidden",
-      marginBottom: 12,
     },
     image: {
       display: "block",
@@ -83,11 +116,26 @@ export function getBeachDetailStyles({
       height: 64,
       color: "var(--icon-chip-fg)",
     },
+    // Prediction meta + Timeline card + confidence ring stack vertically here instead of
+    // competing for row space with the image — each is full-width within this column.
+    badges: {
+      flex: "1 1 0%",
+      minWidth: 140,
+      display: "flex",
+      flexDirection: "column",
+      gap: 16,
+    },
+    description: {
+      margin: "16px 0 0",
+      fontSize: 14,
+      lineHeight: 1.5,
+      color: "var(--text)",
+    },
     error: {
       color: "#b91c1c",
     },
     meta: {
-      margin: "4px 0 0",
+      margin: 0,
       fontSize: 13,
       color: "var(--text)",
     },
@@ -97,7 +145,7 @@ export function getBeachDetailStyles({
       opacity: 0.7,
     },
     offWindow: {
-      margin: "12px 0 0",
+      margin: 0,
       fontSize: 13,
       color: "var(--text)",
       opacity: 0.8,

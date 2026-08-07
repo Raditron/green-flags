@@ -1,51 +1,44 @@
 import type { CSSProperties } from "react";
 
-type HourDetailStyleKey = "panel" | "hour" | "meterRow" | "meterTrack" | "meterFill" | "percent" | "caption";
+type HourDetailStyleKey = "panel" | "hour" | "ringWrap" | "ringTrack" | "ringProgress" | "percent" | "caption";
 
 export function getHourDetailStyles(): Record<HourDetailStyleKey, CSSProperties> {
   return {
     panel: {
-      marginTop: 12,
       padding: "12px 16px",
       borderRadius: 8,
       background: "var(--surface)",
       border: "1px solid var(--border)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      textAlign: "center",
     },
     hour: {
       fontWeight: 600,
       color: "var(--text-h)",
     },
-    meterRow: {
+    ringWrap: {
+      position: "relative",
       display: "flex",
       alignItems: "center",
-      gap: 10,
+      justifyContent: "center",
       marginTop: 8,
     },
-    meterTrack: {
-      flex: 1,
-      height: 8,
-      borderRadius: 999,
-      background: "var(--border)",
-      overflow: "hidden",
+    ringTrack: {
+      opacity: 0.25,
     },
-    // Neutral blue rather than the flag palette — this measures how much data backs
-    // the prediction, not whether the water is safe, so it deliberately reads as a
-    // different signal than the red/yellow/green flag it sits next to (ADR-0004).
-    meterFill: {
-      height: "100%",
-      borderRadius: 999,
-      background: "var(--text)",
-      transition: "width 0.2s ease",
+    ringProgress: {
+      transition: "stroke-dashoffset 0.2s ease",
     },
     percent: {
-      minWidth: 34,
-      textAlign: "right",
+      position: "absolute",
       fontWeight: 700,
-      fontSize: 13,
+      fontSize: 16,
       color: "var(--text-h)",
     },
     caption: {
-      margin: "6px 0 0",
+      margin: "8px 0 0",
       fontSize: 12.5,
       color: "var(--text)",
       opacity: 0.75,

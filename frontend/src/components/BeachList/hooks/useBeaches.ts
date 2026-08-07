@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchBeaches } from "../data/fetchBeaches";
-import type { BeachSummary } from "../interfaces";
+import type { Beach } from "../../../shared/types/Beach";
 
 export type BeachListState =
   | { status: "loading" }
-  | { status: "success"; data: BeachSummary[] }
+  | { status: "success"; data: Beach[] }
   | { status: "error"; message: string };
 
 export function useBeaches(): BeachListState {

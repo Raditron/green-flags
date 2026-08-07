@@ -1,10 +1,6 @@
 import { Toast } from "./Toast";
+import type { ToastMessage } from "./ToastContext";
 import { getToastViewportStyles } from "./styles/ToastViewport.styles";
-
-interface ToastMessage {
-  id: number;
-  message: string;
-}
 
 export function ToastViewport({
   toasts,
@@ -20,7 +16,13 @@ export function ToastViewport({
   return (
     <div style={styles.viewport} aria-live="polite">
       {toasts.map((toast) => (
-        <Toast key={toast.id} message={toast.message} onDismiss={() => onDismiss(toast.id)} />
+        <Toast
+          key={toast.id}
+          content={toast.content}
+          autoDismiss={toast.autoDismiss}
+          version={toast.version}
+          onDismiss={() => onDismiss(toast.id)}
+        />
       ))}
     </div>
   );

@@ -1,7 +1,11 @@
-import type { FlagColor } from "../interfaces";
+import type { FlagColor } from "../../../shared/types/Beach";
 import type { BeachListFiltersProps } from "./interfaces/BeachListFilters.interface";
-import { getBeachListFiltersStyles, getFlagFilterChipStyle } from "./styles/BeachListFilters.styles";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import {
+  getBeachListFiltersStyles,
+  getFlagFilterChipStyle,
+  getFlagFilterIconStyle,
+} from "./styles/BeachListFilters.styles";
+import { FaFlag, FaMagnifyingGlass } from "react-icons/fa6";
 
 const FLAG_OPTIONS: { flagColor: FlagColor; label: string }[] = [
   { flagColor: "green", label: "Green" },
@@ -39,10 +43,12 @@ export function BeachListFilters({
               key={flagColor}
               type="button"
               aria-pressed={isSelected}
+              aria-label={`${label} flag`}
+              title={`${label} flag`}
               style={getFlagFilterChipStyle(flagColor, isSelected)}
               onClick={() => onToggleFlag(flagColor)}
             >
-              {label}
+              <FaFlag style={getFlagFilterIconStyle(flagColor, isSelected)} />
             </button>
           );
         })}

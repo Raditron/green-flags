@@ -1,4 +1,7 @@
-export type FlagColor = "green" | "yellow" | "red";
+import type { FlagColor } from "../../../shared/types/Beach";
+
+export type { FlagColor };
+
 export type RipCurrentRisk = "low" | "moderate" | "high";
 export type ConfidenceBasis = "certain" | "prior" | "blended";
 
