@@ -2,16 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import { BeachList } from "./components/BeachList/BeachList";
 import { SystemStatus } from "./components/SystemStatus/SystemStatus";
 import { BeachDetail } from "./components/BeachDetail/BeachDetail";
-import { AuthStatus } from "./components/Auth/AuthStatus";
-import { getAppStyles } from "./App.styles";
+import { Layout } from "./components/Layout/Layout";
+import { BeachListCardPreview } from "./components/BeachList/BeachListCard/__preview";
+import { BeachDetailPreview } from "./components/BeachDetail/__preview";
 
 function App() {
-  const styles = getAppStyles();
-
   return (
-    <main style={styles.app}>
-      <h1>Green Flags</h1>
-      <AuthStatus />
+    <Layout>
       <Routes>
         <Route
           path="/"
@@ -23,8 +20,10 @@ function App() {
           }
         />
         <Route path="/beaches/:beachId" element={<BeachDetail />} />
+        <Route path="/dev/preview" element={<BeachListCardPreview />} />
+        <Route path="/dev/preview-detail" element={<BeachDetailPreview />} />
       </Routes>
-    </main>
+    </Layout>
   );
 }
 
