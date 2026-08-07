@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { AuthModal } from "../../Auth/AuthModal/AuthModal";
 import { useReportEligibility } from "./hooks/useReportEligibility";
@@ -21,11 +21,20 @@ type SubmissionState =
 
 const ALREADY_REPORTED_CODE = "already_reported";
 
-export function ReportFlagButton({ beachId }: { beachId: string }) {
+export function ReportFlagButton({
+  beachId,
+  autoOpen = false,
+}: {
+  beachId: string;
+  // Set when arriving from the "Report" action on a beach card, to jump
+  // straight into the flow instead of making the visitor click again.
+  autoOpen?: boolean;
+}) {
   const { user, loading: authLoading } = useAuth();
   const [eligibility, markReportedToday] = useReportEligibility(beachId, user, authLoading);
   const [flow, setFlow] = useState<Flow>({ step: "closed" });
   const [submission, setSubmission] = useState<SubmissionState>({ status: "idle" });
+  const autoOpenTriggered = useRef(false);
 
   // After a successful sign-in/sign-up, the same eligibility rules apply as for an
   // already-authenticated user — wait for eligibility to finish resolving (it may still be
@@ -37,7 +46,7 @@ export function ReportFlagButton({ beachId }: { beachId: string }) {
     setFlow(eligibility.status === "eligible" ? { step: "picking" } : { step: "closed" });
   }, [flow.step, user, eligibility.status]);
 
-  function handleButtonClick() {
+  const handleButtonClick = useCallback(() => {
     if (!user) {
       setFlow({ step: "authenticating" });
       return;
@@ -46,7 +55,17 @@ export function ReportFlagButton({ beachId }: { beachId: string }) {
       setSubmission({ status: "idle" });
       setFlow({ step: "picking" });
     }
-  }
+  }, [user, eligibility.status]);
+
+  // Fires once, as soon as auth/eligibility have settled enough to know whether to open
+  // the auth modal or the picker directly — never again after that, so dismissing either
+  // one doesn't cause it to keep popping back up.
+  useEffect(() => {
+    if (!autoOpen || autoOpenTriggered.current) return;
+    if (authLoading || eligibility.status === "checking") return;
+    autoOpenTriggered.current = true;
+    handleButtonClick();
+  }, [autoOpen, authLoading, eligibility.status, handleButtonClick]);
 
   async function handlePick(flagColor: FlagColor) {
     if (!user) return;

@@ -19,6 +19,6 @@ export const colors = {
     nepalMist: "#ccd8e4",
     // Muted, desaturated dark neutral derived from `downriver`, for the
     // dark-mode page background.
-    duskSlate: "#1c2633",
+    duskSlate: "#1A1C22",
   },
 };

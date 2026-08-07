@@ -13,6 +13,16 @@
   --flag-yellow: #ca8a04;
   --flag-red: #dc2626;
   --error: #b91c1c;
+  /* nepal, for the fallback icon chip */
+  --icon-chip: #8da9c4;
+  /* downriver, for contrast against the icon chip */
+  --icon-chip-fg: #0b2545;
+  /* downriver, translucent — badges overlaid on photos (e.g. confidence).
+     Held constant across themes so it reads against arbitrary photo
+     content instead of flipping with the page chrome. */
+  --media-badge-bg: rgba(11, 37, 69, 0.72);
+  /* mistWhite, for contrast against the badge background */
+  --media-badge-fg: #f9fbfc;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;
@@ -27,11 +37,16 @@
     /* snowDrift */
     --text-h: #eef4ed;
     /* neutrals.duskSlate */
-    --bg: #1c2633;
+    --bg: #1A1C22;
     /* nepal, for visible contrast against the darker surface below */
     --border: #8da9c4;
     /* blueZodiac */
     --surface: #13315c;
+    /* chathamsBlue, a shade lighter than the dark surface so the fallback
+       icon chip reads as a subtle sliver instead of a jarring block */
+    --icon-chip: #134074;
+    /* nepal, for a light icon against the dark chip */
+    --icon-chip-fg: #8da9c4;
   }
 }
 
