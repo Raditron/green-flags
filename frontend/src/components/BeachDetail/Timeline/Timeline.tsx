@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { HourlyPrediction } from "../interfaces";
 import { HourDetail } from "./HourDetail/HourDetail";
+import { SeaConditions } from "./SeaConditions/SeaConditions";
 import { TimePicker } from "./TimePicker/TimePicker";
 import { useLiveClock } from "./hooks/useLiveClock";
 import { getTimelineStyles } from "./styles/Timeline.styles";
@@ -40,35 +41,41 @@ export function Timeline({
 
   return (
     <>
-      <div style={styles.card}>
-        <span style={styles.liveClock}>{liveClock.label}</span>
+      <div style={{ display: "flex", gap: 16, alignItems: "stretch" }}>
+        <div style={styles.card}>
+          <span style={styles.liveClock}>{liveClock.label}</span>
 
-        <button
-          type="button"
-          style={styles.selectedTime}
-          onClick={() => setPickerOpen(true)}
-          onMouseEnter={() => setTimeHovered(true)}
-          onMouseLeave={() => setTimeHovered(false)}
-          aria-haspopup="dialog"
-          aria-label="Choose prediction hour"
-        >
-          {selectedHour !== null
-            ? `${String(selectedHour).padStart(2, "0")}:00`
-            : "Select hour"}
-        </button>
+          <button
+            type="button"
+            style={styles.selectedTime}
+            onClick={() => setPickerOpen(true)}
+            onMouseEnter={() => setTimeHovered(true)}
+            onMouseLeave={() => setTimeHovered(false)}
+            aria-haspopup="dialog"
+            aria-label="Choose prediction hour"
+          >
+            {selectedHour !== null
+              ? `${String(selectedHour).padStart(2, "0")}:00`
+              : "Select hour"}
+          </button>
 
-        {updatedAt && (
-          <span style={styles.updatedAt}>
-            Updated{" "}
-            {new Date(updatedAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
+          {updatedAt && (
+            <span style={styles.updatedAt}>
+              Updated{" "}
+              {new Date(updatedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
+        </div>
+        {selectedPrediction && (
+          <>
+            <HourDetail prediction={selectedPrediction} />
+            <SeaConditions prediction={selectedPrediction} />
+          </>
         )}
       </div>
-
-      {selectedPrediction && <HourDetail prediction={selectedPrediction} />}
 
       {pickerOpen && (
         <TimePicker

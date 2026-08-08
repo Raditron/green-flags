@@ -22,8 +22,11 @@ export function getTimelineStyles({
   return {
     card: {
       display: "flex",
+      flex: "1 1 0%",
+      minWidth: 0,
       flexDirection: "column",
       alignItems: "center",
+      justifyContent: "center",
       gap: 6,
       padding: "20px 16px",
       borderRadius: 12,

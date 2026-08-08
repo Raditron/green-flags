@@ -1,6 +1,6 @@
 import { ForecastReading } from "../forecastReading";
-import { windSpeedToBeaufortForce } from "./beaufortScale";
-import { waveHeightToDouglasSeaState } from "./douglasSeaState";
+import { beaufortForceToReadable, windSpeedToBeaufortForce, WindSpeedReadable } from "./beaufortScale";
+import { douglasSeaStateToReadable, waveHeightToDouglasSeaState, SeaStateReadable } from "./douglasSeaState";
 
 export type FlagColor = "green" | "yellow" | "red";
 export type RipCurrentRisk = "low" | "moderate" | "high";
@@ -16,6 +16,8 @@ export interface FlagAssessment {
   ripCurrentRisk: RipCurrentRisk;
   beaufortForce: number;
   douglasSeaState: number;
+  readableWindSpeed: WindSpeedReadable;
+  readableSeaState: SeaStateReadable;
 }
 
 /** Beaufort force at/above which conditions are red, regardless of sea state. */
@@ -80,11 +82,14 @@ export function evaluateHourlyFlag(conditions: HourlyConditions): FlagAssessment
   const beaufortForce = windSpeedToBeaufortForce(conditions.windSpeedMps);
   const douglasSeaState = waveHeightToDouglasSeaState(effectiveWaveHeightM(conditions));
   const onshoreWindComponentMps = computeOnshoreWindComponentMps(conditions);
-
+  const readableWindSpeed = beaufortForceToReadable(beaufortForce);
+  const readableSeaState = douglasSeaStateToReadable(douglasSeaState);
   return {
     flagColor: deriveFlagColor(beaufortForce, douglasSeaState, conditions.stormWarningActive),
     ripCurrentRisk: deriveRipCurrentRisk(conditions.waveHeightM, conditions.wavePeriodS, onshoreWindComponentMps),
     beaufortForce,
     douglasSeaState,
+    readableWindSpeed,
+    readableSeaState,
   };
 }

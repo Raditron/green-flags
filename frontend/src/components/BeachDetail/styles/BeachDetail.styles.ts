@@ -20,11 +20,11 @@ type BeachDetailStyleKey =
   | "title"
   ;
 
-// On the card grid this ratio sits in a ~440px-wide column; stretched to the
-// full page width it makes the image absurdly tall, so the detail page caps
-// it with a max-height instead of letting aspect-ratio alone drive height.
-const IMAGE_ASPECT_RATIO = "37 / 20";
-const IMAGE_MAX_HEIGHT = "min(320px, 40vh)";
+// The hero image now spans the full page width (data cards moved below it),
+// so it reads as a wide banner rather than the old 3/4-column crop — a wider
+// ratio plus a taller cap keeps it a real focal point instead of a sliver.
+const IMAGE_ASPECT_RATIO = "12 / 5";
+const IMAGE_MAX_HEIGHT = "min(400px, 46vh)";
 
 export function getBeachDetailStyles({
   backHovered,
@@ -80,18 +80,18 @@ export function getBeachDetailStyles({
       width: 18,
       height: 18,
     },
-    // Image takes ~3/4 of the row, the prediction badges take the remaining ~1/4 —
-    // description then flexes full-width below this row (see `description`).
+    // Image spans the full row on top; the prediction cards (time, confidence,
+    // conditions) sit as their own full-width row underneath (see `badges`) —
+    // description then flexes full-width below all of that (see `description`).
     heroRow: {
       display: "flex",
-      flexDirection: "row",
+      flexDirection: "column",
       alignItems: "stretch",
       gap: 16,
     },
     imageArea: {
       position: "relative",
-      flex: "3 1 0%",
-      minWidth: 0,
+      width: "100%",
       aspectRatio: IMAGE_ASPECT_RATIO,
       maxHeight: IMAGE_MAX_HEIGHT,
       borderRadius: 12,
@@ -116,11 +116,11 @@ export function getBeachDetailStyles({
       height: 64,
       color: "var(--icon-chip-fg)",
     },
-    // Prediction meta + Timeline card + confidence ring stack vertically here instead of
-    // competing for row space with the image — each is full-width within this column.
+    // Off-window notice / Timeline (time, confidence ring, conditions — laid out
+    // horizontally inside Timeline itself) / meta text stack vertically here, full-width
+    // below the image rather than squeezed into a narrow side column.
     badges: {
-      flex: "1 1 0%",
-      minWidth: 140,
+      width: "100%",
       display: "flex",
       flexDirection: "column",
       gap: 16,

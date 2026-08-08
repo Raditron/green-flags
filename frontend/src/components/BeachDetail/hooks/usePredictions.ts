@@ -14,7 +14,7 @@ interface CachedPredictions {
 
 // Bump whenever BeachDailyPredictions/HourlyPrediction's shape changes, so cached entries written
 // by an older build (e.g. missing the confidence field) are ignored instead of crashing the reader.
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 
 function cacheKey(beachId: string): string {
   return `green-flags:predictions:${beachId}`;

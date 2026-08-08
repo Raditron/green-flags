@@ -62,6 +62,8 @@ export async function runDailyBatch(deps: RunDailyBatchDependencies): Promise<Ru
               ripCurrentRisk: assessment.ripCurrentRisk,
               forecast: { ...reading, stormWarningActive },
               confidence,
+              readableWindSpeed: assessment.readableWindSpeed,
+              readableSeaState: assessment.readableSeaState,
             };
           })
       );

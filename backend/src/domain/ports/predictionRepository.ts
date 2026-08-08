@@ -1,5 +1,7 @@
 import { ForecastReading } from "../forecastReading";
 import { FlagColor, RipCurrentRisk } from "../rules/evaluateHourlyFlag";
+import { WindSpeedReadable } from "../rules/beaufortScale";
+import { SeaStateReadable } from "../rules/douglasSeaState";
 import { ConfidenceResult } from "../rules/confidence";
 
 export interface HourlyPrediction {
@@ -10,6 +12,8 @@ export interface HourlyPrediction {
   /** The forecast inputs the rule engine evaluated for this hour, kept alongside the result for auditability. */
   forecast: ForecastReading & { stormWarningActive: boolean };
   confidence: ConfidenceResult;
+  readableWindSpeed: WindSpeedReadable;
+  readableSeaState: SeaStateReadable;
 }
 
 export interface BeachDailyPredictions {

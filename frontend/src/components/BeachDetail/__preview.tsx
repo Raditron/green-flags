@@ -10,10 +10,10 @@ import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 import type { HourlyPrediction } from "./interfaces";
 
 const mockPredictions: HourlyPrediction[] = [
-  { hour: 9, flagColor: "green", ripCurrentRisk: "low", confidence: { percent: 92, basis: "certain", sampleSize: 0 } },
-  { hour: 10, flagColor: "green", ripCurrentRisk: "low", confidence: { percent: 78, basis: "blended", sampleSize: 4 } },
-  { hour: 11, flagColor: "yellow", ripCurrentRisk: "moderate", confidence: { percent: 45, basis: "blended", sampleSize: 1 } },
-  { hour: 12, flagColor: "red", ripCurrentRisk: "high", confidence: { percent: 15, basis: "prior", sampleSize: 0 } },
+  { hour: 9, flagColor: "green", ripCurrentRisk: "low", confidence: { percent: 92, basis: "certain", sampleSize: 0 }, readableWindSpeed: "calm", readableSeaState: "calm" },
+  { hour: 10, flagColor: "green", ripCurrentRisk: "low", confidence: { percent: 78, basis: "blended", sampleSize: 4 }, readableWindSpeed: "light breeze", readableSeaState: "rippled" },
+  { hour: 11, flagColor: "yellow", ripCurrentRisk: "moderate", confidence: { percent: 45, basis: "blended", sampleSize: 1 }, readableWindSpeed: "moderate breeze", readableSeaState: "slight" },
+  { hour: 12, flagColor: "red", ripCurrentRisk: "high", confidence: { percent: 15, basis: "prior", sampleSize: 0 }, readableWindSpeed: "strong gale", readableSeaState: "high" },
 ];
 
 function MockDetailSection({ withImage, quirkNotes }: { withImage: boolean; quirkNotes?: string }) {

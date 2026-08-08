@@ -68,60 +68,42 @@ function BeachDetailView({ beachId }: { beachId: string }) {
           <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
 
           <div style={styles.heroRow}>
-            <div
-              style={{
-                display: "flex",
-                flex: 1,
-                flexDirection: "row",
-                gap: 16,
-                alignItems: "stretch",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 8,
-                  flex: 3,
-                }}
-              >
-                <div style={styles.imageArea}>
-                  {mapImageDataUrl ? (
-                    <img src={mapImageDataUrl} alt="" style={styles.image} />
-                  ) : (
-                    <div style={styles.iconChip}>
-                      <FaWater style={styles.icon} />
-                    </div>
-                  )}
-                </div>{" "}
-                {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
-              </div>
+            <div style={styles.imageArea}>
+              {mapImageDataUrl ? (
+                <img src={mapImageDataUrl} alt="" style={styles.image} />
+              ) : (
+                <div style={styles.iconChip}>
+                  <FaWater style={styles.icon} />
+                </div>
+              )}
+            </div>
 
-              <div style={styles.badges}>
-                {predictions.status === "success" && (
-                  <>
-                    {outsideLegalWindow && (
-                      <p style={styles.offWindow}>
-                        No lifeguard on duty — estimate only
-                      </p>
-                    )}
-                    <Timeline
-                      hourlyPredictions={predictions.data.hourlyPredictions}
-                      desaturated={outsideLegalWindow}
-                      currentHour={currentHour}
-                      updatedAt={predictions.updatedAt}
-                    />
-                    <p style={styles.meta}>
-                      Predictions for {predictions.data.date}
-                      {predictions.refreshing && (
-                        <span style={styles.refreshing}>Refreshing…</span>
-                      )}
+            <div style={styles.badges}>
+              {predictions.status === "success" && (
+                <>
+                  {outsideLegalWindow && (
+                    <p style={styles.offWindow}>
+                      No lifeguard on duty — estimate only
                     </p>
-                  </>
-                )}
-              </div>
+                  )}
+                  <Timeline
+                    hourlyPredictions={predictions.data.hourlyPredictions}
+                    desaturated={outsideLegalWindow}
+                    currentHour={currentHour}
+                    updatedAt={predictions.updatedAt}
+                  />
+                  <p style={styles.meta}>
+                    Predictions for {predictions.data.date}
+                    {predictions.refreshing && (
+                      <span style={styles.refreshing}>Refreshing…</span>
+                    )}
+                  </p>
+                </>
+              )}
             </div>
           </div>
+
+          {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
 
           <ReportFlagButton beachId={beachId} />
 
