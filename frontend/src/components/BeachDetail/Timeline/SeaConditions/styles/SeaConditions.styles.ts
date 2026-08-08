@@ -1,9 +1,19 @@
 import type { CSSProperties } from "react";
 
-type SeaConditionsStyleKey = "panel" | "row" | "icon" | "textCol" | "label" | "caption";
+type SeaConditionsStyleKey = "stack" | "panel" | "icon" | "textCol" | "label" | "caption";
 
+// Wind and sea each get their own card now, stacked vertically inside one wrapper —
+// `stack` is the single flex item Timeline's row sees (alongside the time and
+// confidence cards); `panel` is applied to each of the two cards inside it.
 export function getSeaConditionsStyles(): Record<SeaConditionsStyleKey, CSSProperties> {
   return {
+    stack: {
+      flex: "1 1 0%",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: 12,
+    },
     panel: {
       flex: "1 1 0%",
       minWidth: 0,
@@ -11,12 +21,6 @@ export function getSeaConditionsStyles(): Record<SeaConditionsStyleKey, CSSPrope
       borderRadius: 8,
       background: "var(--surface)",
       border: "1px solid var(--border)",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      gap: 10,
-    },
-    row: {
       display: "flex",
       alignItems: "flex-start",
       gap: 8,

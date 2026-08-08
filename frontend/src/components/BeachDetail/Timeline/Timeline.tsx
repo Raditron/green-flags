@@ -3,6 +3,7 @@ import type { HourlyPrediction } from "../interfaces";
 import { HourDetail } from "./HourDetail/HourDetail";
 import { SeaConditions } from "./SeaConditions/SeaConditions";
 import { TimePicker } from "./TimePicker/TimePicker";
+import { Verdict } from "./Verdict/Verdict";
 import { useLiveClock } from "./hooks/useLiveClock";
 import { getTimelineStyles } from "./styles/Timeline.styles";
 
@@ -41,6 +42,8 @@ export function Timeline({
 
   return (
     <>
+      <Verdict prediction={selectedPrediction} desaturated={desaturated} />
+
       <div style={{ display: "flex", gap: 16, alignItems: "stretch" }}>
         <div style={styles.card}>
           <span style={styles.liveClock}>{liveClock.label}</span>
