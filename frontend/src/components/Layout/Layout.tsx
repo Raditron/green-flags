@@ -13,7 +13,16 @@ export function Layout({ children }: { children: ReactNode }) {
   const [resendState, setResendState] = useState<
     "idle" | "sending" | "sent" | "error"
   >("idle");
-  const styles = getLayoutStyles();
+  const [isDashboardHovered, setIsDashboardHovered] = useState(false);
+  const [isDashboardFocused, setIsDashboardFocused] = useState(false);
+  const [isBeachesHovered, setIsBeachesHovered] = useState(false);
+  const [isBeachesFocused, setIsBeachesFocused] = useState(false);
+  const styles = getLayoutStyles({
+    isDashboardHovered,
+    isDashboardFocused,
+    isBeachesHovered,
+    isBeachesFocused,
+  });
 
   async function handleResend() {
     setResendState("sending");
@@ -34,7 +43,6 @@ export function Layout({ children }: { children: ReactNode }) {
         <header style={styles.header}>
           <div style={styles.left}>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {" "}
               <Link to="/" style={styles.title}>
                 Green Flags
               </Link>
@@ -42,6 +50,26 @@ export function Layout({ children }: { children: ReactNode }) {
                 <span style={styles.greeting}>Hello, {greetingName}</span>
               )}
             </div>
+            <Link
+              to="/"
+              style={styles.dashboardLink}
+              onMouseEnter={() => setIsDashboardHovered(true)}
+              onMouseLeave={() => setIsDashboardHovered(false)}
+              onFocus={() => setIsDashboardFocused(true)}
+              onBlur={() => setIsDashboardFocused(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/beaches"
+              style={styles.beachesLink}
+              onMouseEnter={() => setIsBeachesHovered(true)}
+              onMouseLeave={() => setIsBeachesHovered(false)}
+              onFocus={() => setIsBeachesFocused(true)}
+              onBlur={() => setIsBeachesFocused(false)}
+            >
+              Beaches
+            </Link>
           </div>
 
           <div style={styles.right}>

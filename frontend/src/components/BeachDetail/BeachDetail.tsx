@@ -14,6 +14,7 @@ interface LocationState {
   beachName?: string;
   mapImageDataUrl?: string;
   quirkNotes?: string;
+  isUnguarded?: boolean;
 }
 
 const DISCLAIMER_MESSAGE = "Unofficial estimate — not the lifeguard's flag";
@@ -32,10 +33,12 @@ function BeachDetailView({ beachId }: { beachId: string }) {
     name: beachName,
     mapImageDataUrl,
     quirkNotes,
+    isUnguarded,
   } = useBeach(beachId, {
     name: locationState?.beachName,
     mapImageDataUrl: locationState?.mapImageDataUrl,
     quirkNotes: locationState?.quirkNotes,
+    isUnguarded: locationState?.isUnguarded,
   });
   const predictions = usePredictions(beachId);
   const outsideLegalWindow = isOutsideLegalWindow();
@@ -110,7 +113,10 @@ function BeachDetailView({ beachId }: { beachId: string }) {
 
           {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
 
-          <ReportFlagButton beachId={beachId} />
+          {/* Gated on isUnguarded === false rather than !isUnguarded: while it's still
+              unknown (undefined, before useBeach resolves it) this fails closed and keeps
+              the report flow off screen instead of flashing it for an unguarded beach. */}
+          {isUnguarded === false && <ReportFlagButton beachId={beachId} />}
 
           {predictions.status === "loading" && <p>Loading predictions…</p>}
 

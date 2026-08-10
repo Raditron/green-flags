@@ -61,6 +61,7 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
             beachName: beach.name,
             mapImageDataUrl: beach.mapImageDataUrl,
             quirkNotes: beach.quirkNotes,
+            isUnguarded: beach.isUnguarded,
           }}
           style={styles.mediaLink}
         >
@@ -134,6 +135,7 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
               beachName: beach.name,
               mapImageDataUrl: beach.mapImageDataUrl,
               quirkNotes: beach.quirkNotes,
+              isUnguarded: beach.isUnguarded,
             }}
             style={styles.reportButton}
             onMouseEnter={() => setIsReportHovered(true)}

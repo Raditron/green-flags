@@ -5,7 +5,8 @@ type LayoutStyleKey =
   | "header"
   | "left"
   | "title"
-  | "navLink"
+  | "dashboardLink"
+  | "beachesLink"
   | "greeting"
   | "right"
   | "signInButton"
@@ -14,7 +15,38 @@ type LayoutStyleKey =
   | "error"
   | "main";
 
-export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
+// Shared pill treatment for the Dashboard/Beaches nav links: a button-style
+// outline that's invisible at rest and a drop shadow that lifts in on
+// hover/focus, so the header reads as clickable chips rather than plain text.
+function navLinkStyle(isRaised: boolean, isFocused: boolean): CSSProperties {
+  return {
+    color: "var(--text)",
+    fontSize: 14,
+    fontWeight: 600,
+    textDecoration: "none",
+    padding: "6px 12px",
+    borderRadius: 6,
+    border: `1px solid ${isRaised ? "var(--text-h)" : "transparent"}`,
+    outline: isFocused ? "2px solid var(--text-h)" : "2px solid transparent",
+    outlineOffset: 2,
+    boxShadow: isRaised ? "0 4px 10px rgba(0, 0, 0, 0.22)" : "none",
+    transform: isRaised ? "translateY(-1px)" : "none",
+    transition:
+      "border-color 0.15s ease, transform 0.15s ease, outline-color 0.15s ease, box-shadow 0.15s ease",
+  };
+}
+
+export function getLayoutStyles({
+  isDashboardHovered = false,
+  isDashboardFocused = false,
+  isBeachesHovered = false,
+  isBeachesFocused = false,
+}: {
+  isDashboardHovered?: boolean;
+  isDashboardFocused?: boolean;
+  isBeachesHovered?: boolean;
+  isBeachesFocused?: boolean;
+} = {}): Record<LayoutStyleKey, CSSProperties> {
   return {
     page: {
       minHeight: "100vh",
@@ -43,12 +75,14 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
       letterSpacing: "-0.01em",
       textDecoration: "none",
     },
-    navLink: {
-      color: "var(--text)",
-      fontSize: 14,
-      fontWeight: 600,
-      textDecoration: "none",
-    },
+    dashboardLink: navLinkStyle(
+      isDashboardHovered || isDashboardFocused,
+      isDashboardFocused,
+    ),
+    beachesLink: navLinkStyle(
+      isBeachesHovered || isBeachesFocused,
+      isBeachesFocused,
+    ),
     greeting: {
       color: "var(--text)",
       fontSize: 14,
