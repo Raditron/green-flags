@@ -7,6 +7,7 @@ import {
 } from "./styles/BeachListCard.styles";
 import { getBeachListStyles } from "../styles/BeachList.styles";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
+import { getBeachImage } from "../../../shared/data/images";
 import { FaWater, FaFlag } from "react-icons/fa6";
 
 export const BeachListCard = ({ beach }: BeachListCardProps) => {
@@ -20,6 +21,10 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
   });
   const listStyles = getBeachListStyles();
   const flagStatusText = getFlagStatusText(beach.currentFlagColor);
+  // Curated beach photo takes priority over the seeded map-pin image (see
+  // ADR 0001) — it's the more informative thumbnail — falling back to the
+  // pin, then the generic icon, if a beach has neither.
+  const imageSrc = getBeachImage(beach.id) ?? beach.mapImageDataUrl;
   // Focus bubbles up from either the media link or the report link below, so
   // the raised/outline treatment reads as one card regardless of which
   // control has keyboard focus. Only clear it once focus actually leaves
@@ -49,8 +54,8 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
           style={styles.mediaLink}
         >
           <div style={styles.imageArea}>
-            {beach.mapImageDataUrl ? (
-              <img src={beach.mapImageDataUrl} alt="" style={styles.image} />
+            {imageSrc ? (
+              <img src={imageSrc} alt="" style={styles.image} />
             ) : (
               <div style={styles.iconChip}>
                 <FaWater style={styles.icon} />
