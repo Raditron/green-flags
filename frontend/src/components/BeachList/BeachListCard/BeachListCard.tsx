@@ -8,6 +8,7 @@ import {
 import { getBeachListStyles } from "../styles/BeachList.styles";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
 import { getBeachImage } from "../../../shared/data/images";
+import { formatDistanceKm } from "../../../shared/data/utils/geo";
 import { FaWater, FaFlag } from "react-icons/fa6";
 
 export const BeachListCard = ({ beach }: BeachListCardProps) => {
@@ -85,6 +86,9 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
                 <span style={styles.statusText}>No report yet</span>
               )}
             </div>
+            {beach.distanceKm !== undefined && (
+              <span style={styles.distanceText}>{formatDistanceKm(beach.distanceKm)}</span>
+            )}
           </div>
         </Link>
 

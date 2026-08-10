@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { flagColorVar } from "../../../../shared/styles/flagColor";
+import { neutralHintTextStyle } from "../../../../shared/styles/neutralHint";
 
 type BeachListCardStyleKey =
   | "card"
@@ -14,6 +15,7 @@ type BeachListCardStyleKey =
   | "statusRow"
   | "flagIcon"
   | "statusText"
+  | "distanceText"
   | "divider"
   | "actions"
   | "reportButton"
@@ -128,6 +130,7 @@ export function getBeachListCardStyles({
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
     },
+    distanceText: neutralHintTextStyle,
     divider: {
       height: 1,
       background: "var(--border)",

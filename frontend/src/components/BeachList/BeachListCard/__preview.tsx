@@ -15,6 +15,7 @@ const mockBeaches: Beach[] = [
       ),
     currentFlagColor: "green",
     currentConfidencePercent: 92,
+    area: "Burgas",
   },
   {
     id: "2",
@@ -23,6 +24,7 @@ const mockBeaches: Beach[] = [
     long: 27.74,
     currentFlagColor: "yellow",
     currentConfidencePercent: 61,
+    area: "Burgas",
   },
   {
     id: "3",
@@ -34,6 +36,7 @@ const mockBeaches: Beach[] = [
       btoa(
         '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="#134074"/><rect x="20" y="20" width="80" height="80" fill="#eef4ed"/></svg>'
       ),
+    area: "Burgas",
   },
   {
     id: "4",
@@ -42,6 +45,7 @@ const mockBeaches: Beach[] = [
     long: 27.76,
     currentFlagColor: "red",
     currentConfidencePercent: 88,
+    area: "Burgas",
   },
 ];
 
