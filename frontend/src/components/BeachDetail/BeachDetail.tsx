@@ -59,7 +59,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
       <div style={styles.page}>
         <div style={styles.backContainer}>
           <Link
-            to="/"
+            to="/beaches"
             style={styles.back}
             aria-label="Back to beaches"
             onMouseEnter={() => setBackHovered(true)}

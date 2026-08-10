@@ -5,6 +5,7 @@ type LayoutStyleKey =
   | "header"
   | "left"
   | "title"
+  | "navLink"
   | "greeting"
   | "right"
   | "signInButton"
@@ -40,6 +41,12 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
       fontSize: 20,
       fontWeight: 700,
       letterSpacing: "-0.01em",
+      textDecoration: "none",
+    },
+    navLink: {
+      color: "var(--text)",
+      fontSize: 14,
+      fontWeight: 600,
       textDecoration: "none",
     },
     greeting: {

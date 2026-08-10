@@ -34,6 +34,9 @@ export function Layout({ children }: { children: ReactNode }) {
             <Link to="/" style={styles.title}>
               Green Flags
             </Link>
+            <Link to="/beaches" style={styles.navLink}>
+              Beaches
+            </Link>
             {!loading && greetingName && <span style={styles.greeting}>Hello, {greetingName}</span>}
           </div>
 

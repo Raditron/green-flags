@@ -18,6 +18,9 @@ export class MongoPredictionRepository implements PredictionRepository {
 
   constructor(db: Db) {
     this.collection = db.collection<PredictionDocument>("predictions");
+    // Backs getDailyPredictions()'s `{ date }` filter; fire-and-forget since createIndex is
+    // idempotent and the driver queues operations until the connection is ready.
+    void this.collection.createIndex({ date: 1 }).catch(() => {});
   }
 
   async saveDailyPredictions(predictions: BeachDailyPredictions): Promise<void> {
@@ -40,5 +43,17 @@ export class MongoPredictionRepository implements PredictionRepository {
     if (!doc) return null;
 
     return { beachId: doc.beachId, date: doc.date, hourlyPredictions: doc.hourlyPredictions };
+  }
+  async getDailyPredictions(date: string): Promise<BeachDailyPredictions[] | null> {
+    // Filtered by Mongo, not fetched in full and filtered in app code — this collection accrues
+    // one document per beach per day forever, so an unfiltered find() grows without bound.
+    const docs = await this.collection.find({ date }).toArray();
+    if (!docs || docs.length === 0) return null;
+
+    return docs.map(doc => ({
+      beachId: doc.beachId,
+      date: doc.date,
+      hourlyPredictions: doc.hourlyPredictions,
+    }));
   }
 }

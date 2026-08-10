@@ -28,4 +28,9 @@ export interface PredictionRepository {
   saveDailyPredictions(predictions: BeachDailyPredictions): Promise<void>;
   /** Point lookup by beach + date; resolves to null if no batch run has persisted predictions for that day yet. */
   findByBeachAndDate(beachId: string, date: string): Promise<BeachDailyPredictions | null>;
+
+  /** Every beach's predictions for a single calendar date, filtered at the data source rather than
+   * in application code — the predictions collection accumulates one batch run per beach per day
+   * forever, so this must never come back as an unfiltered full-collection fetch. */
+  getDailyPredictions(date: string): Promise<BeachDailyPredictions[] | null>;
 }
