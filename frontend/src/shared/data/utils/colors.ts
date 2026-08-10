@@ -10,13 +10,17 @@ export const colors = {
   // desaturation of one of the five brand colors above rather than an
   // independent color.
   neutrals: {
-    // Warm muted off-white, desaturating `snowDrift`'s cool/green bias and
-    // warming it, for the light-mode page background.
-    linen: "#f2eee2",
-    // Cool near-white tint of `nepal`, for light-mode card surfaces.
-    mistWhite: "#f9fbfc",
-    // Light tint of `nepal`, for light-mode card borders.
-    nepalMist: "#ccd8e4",
+    // Monochromatic tint at the brand blues' shared ~211° hue, for the
+    // light-mode page background. Replaces the former `linen` (a warm
+    // beige off-hue from the rest of the palette) — renamed since "linen"
+    // no longer describes a blue.
+    seaHaze: "#eaf0f6",
+    // Cool near-white tint of `nepal`, hue-tightened onto the shared ~211°
+    // brand hue, for light-mode card surfaces.
+    mistWhite: "#f8fafb",
+    // Light tint of `nepal`, hue-tightened onto the shared ~211° brand hue,
+    // for light-mode card borders.
+    nepalMist: "#c1d1e1",
     // Muted, desaturated dark neutral derived from `downriver`, for the
     // dark-mode page background.
     duskSlate: "#1A1C22",

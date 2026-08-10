@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
+    <script>
+      // Blocking, pre-mount: applies an explicit theme choice before first
+      // paint so there's no flash of the wrong theme. No stored choice yet
+      // (first-time visitor) → leave `data-theme` unset and let the
+      // `prefers-color-scheme` fallback in index.css decide. See ADR 0006.
+      (function () {
+        var stored = localStorage.getItem("green-flags-theme");
+        if (stored === "light" || stored === "dark") {
+          document.documentElement.setAttribute("data-theme", stored);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
