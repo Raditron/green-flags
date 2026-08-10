@@ -8,8 +8,8 @@ type SeaConditionsStyleKey = "stack" | "panel" | "icon" | "textCol" | "label" | 
 export function getSeaConditionsStyles(): Record<SeaConditionsStyleKey, CSSProperties> {
   return {
     stack: {
-      flex: "1 1 0%",
-      minWidth: 0,
+      flex: "1 1 220px",
+      minWidth: 220,
       display: "flex",
       flexDirection: "column",
       gap: 12,

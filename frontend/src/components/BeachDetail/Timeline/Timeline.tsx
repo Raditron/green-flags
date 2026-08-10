@@ -44,7 +44,7 @@ export function Timeline({
     <>
       <Verdict prediction={selectedPrediction} desaturated={desaturated} />
 
-      <div style={{ display: "flex", gap: 16, alignItems: "stretch" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "stretch" }}>
         <div style={styles.card}>
           <span style={styles.liveClock}>{liveClock.label}</span>
 

@@ -5,8 +5,8 @@ type HourDetailStyleKey = "panel" | "hour" | "ringWrap" | "ringTrack" | "ringPro
 export function getHourDetailStyles(): Record<HourDetailStyleKey, CSSProperties> {
   return {
     panel: {
-      flex: "1 1 0%",
-      minWidth: 0,
+      flex: "1 1 160px",
+      minWidth: 160,
       padding: "12px 16px",
       borderRadius: 8,
       background: "var(--surface)",
