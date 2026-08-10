@@ -25,6 +25,7 @@ export function stubBatchDependencies(): {
     predictionRepository: {
       saveDailyPredictions: async () => {},
       findByBeachAndDate: async () => null,
+      getDailyPredictions: async () => null,
     },
     reportRepository: {
       getBucketStats: async () => ({ hits: 0, total: 0 }),
