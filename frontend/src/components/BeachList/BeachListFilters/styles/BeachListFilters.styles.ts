@@ -1,12 +1,16 @@
 import type { CSSProperties } from "react";
 import { flagColorVar } from "../../../../shared/styles/flagColor";
+import { neutralHintTextStyle } from "../../../../shared/styles/neutralHint";
 
 type BeachListFiltersStyleKey =
   | "container"
   | "searchWrapper"
   | "searchIcon"
   | "searchInput"
-  | "flagRow";
+  | "flagRow"
+  | "areaRow"
+  | "areaSelect"
+  | "areaHint";
 
 export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CSSProperties> {
   return {
@@ -45,6 +49,24 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
       display: "flex",
       gap: 8,
     },
+    areaRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      flexWrap: "wrap",
+    },
+    areaSelect: {
+      padding: "9px 12px",
+      borderRadius: 10,
+      border: "1px solid var(--border)",
+      background: "var(--surface)",
+      color: "var(--text-h)",
+      font: "inherit",
+      fontSize: 14,
+      cursor: "pointer",
+    },
+    // Confirms the area was picked for the visitor rather than by them.
+    areaHint: neutralHintTextStyle,
   };
 }
 

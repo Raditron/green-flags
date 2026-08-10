@@ -1,3 +1,4 @@
+import { BeachRepository } from "../../domain/ports/beachRepository";
 import { PredictionRepository } from "../../domain/ports/predictionRepository";
 import { ReportRepository } from "../../domain/ports/reportRepository";
 import { FlagColor } from "../../domain/rules/evaluateHourlyFlag";
@@ -9,6 +10,8 @@ import { waveHeightToDouglasSeaState } from "../../domain/rules/douglasSeaState"
 import { effectiveWaveHeightM } from "../../domain/rules/evaluateHourlyFlag";
 import { currentSofiaHour, todayInSofia } from "../../domain/today";
 
+/** Thrown for a beach with no official lifeguard station — there's no lifeguard-raised flag to report on. */
+export class BeachUnguardedError extends Error {}
 /** Thrown outside the June-September lifeguard season (see .scratch/green-flags-mvp/issues/08-feedback-window-and-off-season.md). */
 export class OutsideSeasonError extends Error {}
 /** Thrown within season but outside the daily 09:00-18:30 window. */
@@ -34,12 +37,20 @@ export interface SubmitReportResult {
  * it right away rather than waiting for tomorrow's batch run.
  */
 export async function submitReport(
+  beachRepository: BeachRepository,
   predictionRepository: PredictionRepository,
   reportRepository: ReportRepository,
   input: SubmitReportInput
 ): Promise<SubmitReportResult> {
   const date = todayInSofia(input.now);
   const hour = currentSofiaHour(input.now);
+
+  // Beaches not found in the repository are treated as guarded (fall through to the checks below)
+  // rather than rejected here — beach existence isn't otherwise validated in this use case.
+  const beach = (await beachRepository.listBeaches()).find((candidate) => candidate.id === input.beachId);
+  if (beach?.isUnguarded) {
+    throw new BeachUnguardedError();
+  }
 
   if (!isWithinLegalSeason(date)) {
     throw new OutsideSeasonError();

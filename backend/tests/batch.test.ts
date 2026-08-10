@@ -102,6 +102,7 @@ describe("POST /api/batch", () => {
         quirkNotes: beach.quirkNotes,
         order: beach.order,
         onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
+        area: beach.area,
       }))
     );
   });

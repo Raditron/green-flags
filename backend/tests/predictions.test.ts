@@ -57,6 +57,7 @@ describe("GET /api/beaches/:beachId/predictions", () => {
         quirkNotes: beach.quirkNotes,
         order: beach.order,
         onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
+        area: beach.area,
       }))
     );
   });

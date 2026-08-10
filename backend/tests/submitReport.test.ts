@@ -1,16 +1,28 @@
 import { describe, expect, it } from "vitest";
 import {
+  BeachUnguardedError,
   NoPredictionAvailableError,
   OutsideSeasonError,
   OutsideWindowError,
   submitReport,
 } from "../src/application/useCases/submitReport";
+import { Beach, BeachAreas, BeachRepository } from "../src/domain/ports/beachRepository";
 import { BeachDailyPredictions, PredictionRepository } from "../src/domain/ports/predictionRepository";
 import { DuplicateReportError, ReportInput, ReportRepository } from "../src/domain/ports/reportRepository";
 
 const BEACH_ID = "beach-a";
 const USER_ID = "uid-1";
 const IN_SEASON_IN_WINDOW = new Date("2026-08-05T12:00:00Z"); // 15:00 Sofia
+
+const GUARDED_BEACH: Beach = {
+  id: BEACH_ID,
+  name: "Beach A",
+  lat: 0,
+  long: 0,
+  onshoreWindDirectionDeg: 75,
+  area: BeachAreas.Varna,
+  isUnguarded: false,
+};
 
 const CALM_PREDICTION: BeachDailyPredictions = {
   beachId: BEACH_ID,
@@ -42,6 +54,13 @@ const BORDERLINE_PREDICTION: BeachDailyPredictions = {
   ],
 };
 
+function buildFakeBeachRepository(overrides: Partial<BeachRepository> = {}): BeachRepository {
+  return {
+    listBeaches: async () => [GUARDED_BEACH],
+    ...overrides,
+  };
+}
+
 function buildFakePredictionRepository(overrides: Partial<PredictionRepository> = {}): PredictionRepository {
   return {
     saveDailyPredictions: async () => {},
@@ -64,6 +83,7 @@ describe("submitReport", () => {
   it("records the report and reports whether it agreed with the rule engine's call", async () => {
     const recorded: ReportInput[] = [];
     const result = await submitReport(
+      buildFakeBeachRepository(),
       buildFakePredictionRepository(),
       buildFakeReportRepository({
         recordReport: async (report) => {
@@ -87,7 +107,7 @@ describe("submitReport", () => {
   });
 
   it("marks disagreement when the reported color differs from the rule engine's call", async () => {
-    const result = await submitReport(buildFakePredictionRepository(), buildFakeReportRepository(), {
+    const result = await submitReport(buildFakeBeachRepository(), buildFakePredictionRepository(), buildFakeReportRepository(), {
       beachId: BEACH_ID,
       userId: USER_ID,
       flagColor: "red",
@@ -100,6 +120,7 @@ describe("submitReport", () => {
   it("re-blends and persists the hour's confidence using freshly-recorded today's reports", async () => {
     const saved: BeachDailyPredictions[] = [];
     await submitReport(
+      buildFakeBeachRepository(),
       buildFakePredictionRepository({
         findByBeachAndDate: async () => BORDERLINE_PREDICTION,
         saveDailyPredictions: async (predictions) => {
@@ -120,10 +141,39 @@ describe("submitReport", () => {
     expect(saved[0].hourlyPredictions[0].flagColor).toBe("yellow");
   });
 
+  it("throws BeachUnguardedError for a beach with no lifeguard coverage, without recording a report", async () => {
+    const recorded: ReportInput[] = [];
+    await expect(
+      submitReport(
+        buildFakeBeachRepository({ listBeaches: async () => [{ ...GUARDED_BEACH, isUnguarded: true }] }),
+        buildFakePredictionRepository(),
+        buildFakeReportRepository({
+          recordReport: async (report) => {
+            recorded.push(report);
+          },
+        }),
+        { beachId: BEACH_ID, userId: USER_ID, flagColor: "green", now: IN_SEASON_IN_WINDOW }
+      )
+    ).rejects.toBeInstanceOf(BeachUnguardedError);
+    expect(recorded).toHaveLength(0);
+  });
+
+  it("treats a beachId absent from the repository as guarded rather than rejecting it", async () => {
+    const result = await submitReport(
+      buildFakeBeachRepository({ listBeaches: async () => [] }),
+      buildFakePredictionRepository(),
+      buildFakeReportRepository(),
+      { beachId: BEACH_ID, userId: USER_ID, flagColor: "green", now: IN_SEASON_IN_WINDOW }
+    );
+
+    expect(result.agreesWithPrediction).toBe(true);
+  });
+
   it("throws OutsideSeasonError outside June-September, without recording a report", async () => {
     const recorded: ReportInput[] = [];
     await expect(
       submitReport(
+        buildFakeBeachRepository(),
         buildFakePredictionRepository(),
         buildFakeReportRepository({
           recordReport: async (report) => {
@@ -140,6 +190,7 @@ describe("submitReport", () => {
     const recorded: ReportInput[] = [];
     await expect(
       submitReport(
+        buildFakeBeachRepository(),
         buildFakePredictionRepository(),
         buildFakeReportRepository({
           recordReport: async (report) => {
@@ -155,6 +206,7 @@ describe("submitReport", () => {
   it("throws NoPredictionAvailableError when no prediction has been persisted for this beach and date", async () => {
     await expect(
       submitReport(
+        buildFakeBeachRepository(),
         buildFakePredictionRepository({ findByBeachAndDate: async () => null }),
         buildFakeReportRepository(),
         { beachId: BEACH_ID, userId: USER_ID, flagColor: "green", now: IN_SEASON_IN_WINDOW }
@@ -165,6 +217,7 @@ describe("submitReport", () => {
   it("throws NoPredictionAvailableError when the prediction exists but has no entry for the current hour", async () => {
     await expect(
       submitReport(
+        buildFakeBeachRepository(),
         buildFakePredictionRepository({
           findByBeachAndDate: async () => ({ ...CALM_PREDICTION, hourlyPredictions: [] }),
         }),
@@ -177,6 +230,7 @@ describe("submitReport", () => {
   it("propagates DuplicateReportError from the report repository as-is", async () => {
     await expect(
       submitReport(
+        buildFakeBeachRepository(),
         buildFakePredictionRepository(),
         buildFakeReportRepository({
           recordReport: async () => {

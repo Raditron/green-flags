@@ -1,11 +1,13 @@
 import type { FlagColor } from "../../../shared/types/Beach";
+import { BEACH_AREAS } from "../../../shared/types/Beach";
 import type { BeachListFiltersProps } from "./interfaces/BeachListFilters.interface";
+import type { SelectedArea } from "../hooks/useBeachFilters";
 import {
   getBeachListFiltersStyles,
   getFlagFilterChipStyle,
   getFlagFilterIconStyle,
 } from "./styles/BeachListFilters.styles";
-import { FaFlag, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaFlag, FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
 
 const FLAG_OPTIONS: { flagColor: FlagColor; label: string }[] = [
   { flagColor: "green", label: "Green" },
@@ -18,6 +20,9 @@ export function BeachListFilters({
   onSearchChange,
   selectedFlags,
   onToggleFlag,
+  selectedArea,
+  onAreaChange,
+  isAreaAutoDetected,
 }: BeachListFiltersProps) {
   const styles = getBeachListFiltersStyles();
 
@@ -33,6 +38,29 @@ export function BeachListFilters({
           aria-label="Search beaches by name"
           style={styles.searchInput}
         />
+      </div>
+
+      <div style={styles.areaRow}>
+        <select
+          value={selectedArea}
+          onChange={event => onAreaChange(event.target.value as SelectedArea)}
+          aria-label="Filter by area"
+          style={styles.areaSelect}
+        >
+          <option value="all">All Areas</option>
+          {BEACH_AREAS.map(area => (
+            <option key={area} value={area}>
+              {area}
+            </option>
+          ))}
+        </select>
+
+        {isAreaAutoDetected && (
+          <span style={styles.areaHint}>
+            <FaLocationDot style={{ verticalAlign: "-1.5px", marginRight: 4 }} />
+            Near you
+          </span>
+        )}
       </div>
 
       <div style={styles.flagRow} role="group" aria-label="Filter by flag color">
