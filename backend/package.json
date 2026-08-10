@@ -11,7 +11,8 @@
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "seed": "tsx src/infrastructure/seed/seedBeaches.ts"
+    "seed": "tsx src/infrastructure/seed/seedBeaches.ts",
+    "seed:unguarded": "tsx src/infrastructure/seed/seedUnguardedBeaches.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

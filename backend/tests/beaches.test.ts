@@ -38,6 +38,7 @@ describe("GET /api/beaches", () => {
         quirkNotes: beach.quirkNotes,
         order: beach.order,
         onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
+        area: beach.area,
       }))
     );
   });
@@ -50,11 +51,11 @@ describe("GET /api/beaches", () => {
     });
   }
 
-  it("requires no authentication and returns all 16 seeded beaches", async () => {
+  it("requires no authentication and returns all seeded beaches", async () => {
     const response = await request(buildApp()).get("/api/beaches");
 
     expect(response.status).toBe(200);
-    expect(response.body.beaches).toHaveLength(16);
+    expect(response.body.beaches).toHaveLength(BEACH_SEED_DATA.length);
   });
 
   it("returns each beach's name, coordinates, and quirk notes", async () => {

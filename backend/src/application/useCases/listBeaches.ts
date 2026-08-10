@@ -2,6 +2,7 @@ import { BeachRepository } from "../../domain/ports/beachRepository";
 import { PredictionRepository } from "../../domain/ports/predictionRepository";
 import { FlagColor } from "../../domain/rules/evaluateHourlyFlag";
 import { currentOrNearestLegalHour, todayInSofia } from "../../domain/today";
+import { BeachAreas } from "../../domain/ports/beachRepository";
 
 export interface BeachSummary {
   id: string;
@@ -13,6 +14,9 @@ export interface BeachSummary {
   /** The current (or nearest legal-window) hour's flag color; undefined if today's batch hasn't run yet. */
   currentFlagColor?: FlagColor;
   currentConfidencePercent?: number;
+  area : BeachAreas;
+  /** True when the beach has no official lifeguard station — frontend should label the flag as a prediction only. */
+  isUnguarded: boolean;
 }
 
 export async function listBeaches(
@@ -40,6 +44,8 @@ export async function listBeaches(
           : undefined,
         currentFlagColor: hourlyPrediction?.flagColor,
         currentConfidencePercent: hourlyPrediction?.confidence.percent,
+        area: beach.area,
+        isUnguarded: beach.isUnguarded,
       };
     })
   );

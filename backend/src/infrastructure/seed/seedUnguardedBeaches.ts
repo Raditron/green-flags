@@ -2,6 +2,7 @@ import "dotenv/config";
 import { BeachAreas, BeachMapImage } from "../../domain/ports/beachRepository";
 import { connectToDatabase } from "../db/mongoClient";
 import { BEACH_SEED_DATA } from "./beachSeedData";
+import { UNGUARDED_BEACH_SEED_DATA } from "./unguardedBeachSeedData";
 
 interface BeachDocument {
   _id: string;
@@ -16,8 +17,20 @@ interface BeachDocument {
   isUnguarded: boolean;
 }
 
-// Google Maps Static API pin generation (ADR 0001) is disabled for now — no API key configured.
-// Seeded beaches go out without a mapImage until it's re-enabled.
+/**
+ * Seeds/updates beaches from the Ministry of Tourism's unguarded-beach order (Заповед № Т-РД-16-221/
+ * 13.07.2026 — see unguardedBeachSeedData.ts for provenance and the exact-match caveat). Two sources
+ * feed the same upsert loop, kept separate so isUnguarded curation for the launch-list beaches lives
+ * in one place (beachSeedData.ts) rather than duplicated here:
+ *
+ *  - beachSeedData.ts entries already flagged isUnguarded: true (Shabla, Elenite, Irakli, Rezovo —
+ *    exact-matched official beaches — plus Durankulak, inferred unguarded) — re-upserted here so
+ *    this script is self-sufficient even if `npm run seed` hasn't been (re-)run since those flags
+ *    were added.
+ *  - unguardedBeachSeedData.ts — official beaches with no corresponding launch-list entry.
+ *
+ * Independent from `npm run seed` (seedBeaches.ts): run either in any order, any number of times.
+ */
 async function main(): Promise<void> {
   const MONGODB_URI = process.env.MONGODB_URI;
   const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME ?? "green-flags";
@@ -29,9 +42,11 @@ async function main(): Promise<void> {
   const { client, db } = await connectToDatabase(MONGODB_URI, MONGODB_DB_NAME);
   const collection = db.collection<BeachDocument>("beaches");
 
+  const beaches = [...BEACH_SEED_DATA.filter((beach) => beach.isUnguarded), ...UNGUARDED_BEACH_SEED_DATA];
+
   try {
-    for (const beach of BEACH_SEED_DATA) {
-      console.log(`Seeding ${beach.name}...`);
+    for (const beach of beaches) {
+      console.log(`Seeding unguarded beach ${beach.name}...`);
 
       await collection.updateOne(
         { _id: beach.id },
@@ -44,20 +59,20 @@ async function main(): Promise<void> {
             order: beach.order,
             onshoreWindDirectionDeg: beach.onshoreWindDirectionDeg,
             area: beach.area,
-            isUnguarded: beach.isUnguarded ?? false,
+            isUnguarded: beach.isUnguarded ?? true,
           },
         },
         { upsert: true }
       );
     }
 
-    console.log(`Seeded ${BEACH_SEED_DATA.length} beaches.`);
+    console.log(`Seeded ${beaches.length} unguarded beaches.`);
   } finally {
     await client.close();
   }
 }
 
 main().catch((error) => {
-  console.error("Failed to seed beaches", error);
+  console.error("Failed to seed unguarded beaches", error);
   process.exit(1);
 });

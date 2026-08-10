@@ -135,6 +135,30 @@ describe("feedback submission (POST /api/beaches/:beachId/reports, GET /api/beac
       expect(response.body).toMatchObject({ code: "invalid_flag_color" });
     });
 
+    it("rejects with 403 beach_unguarded when the beach has no lifeguard coverage", async () => {
+      await db.collection("predictions").insertOne(GREEN_PREDICTION_DOC);
+      await db.collection("beaches").insertOne({
+        _id: BEACH_ID,
+        name: "Beach A",
+        lat: 0,
+        long: 0,
+        order: 0,
+        onshoreWindDirectionDeg: 75,
+        area: "Varna",
+        isUnguarded: true,
+      });
+
+      const response = await request(buildApp())
+        .post(`/api/beaches/${BEACH_ID}/reports`)
+        .set("Authorization", "Bearer verified-token")
+        .send({ flagColor: "green" });
+
+      expect(response.status).toBe(403);
+      expect(response.body).toMatchObject({ code: "beach_unguarded" });
+
+      await db.collection("beaches").deleteMany({});
+    });
+
     it("rejects with 403 outside_window outside the 09:00-18:30 window, in season", async () => {
       vi.setSystemTime(new Date("2026-08-05T04:00:00Z")); // 07:00 Sofia
 

@@ -1,8 +1,10 @@
 import { RequestHandler } from "express";
+import { BeachRepository } from "../../domain/ports/beachRepository";
 import { PredictionRepository } from "../../domain/ports/predictionRepository";
 import { ReportRepository, DuplicateReportError } from "../../domain/ports/reportRepository";
 import { FlagColor } from "../../domain/rules/evaluateHourlyFlag";
 import {
+  BeachUnguardedError,
   NoPredictionAvailableError,
   OutsideSeasonError,
   OutsideWindowError,
@@ -18,6 +20,7 @@ function isFlagColor(value: unknown): value is FlagColor {
 }
 
 export interface ReportControllerDependencies {
+  beachRepository: BeachRepository;
   predictionRepository: PredictionRepository;
   reportRepository: ReportRepository;
 }
@@ -33,15 +36,26 @@ export function createReportController(
       }
 
       try {
-        const result = await submitReportUseCase(dependencies.predictionRepository, dependencies.reportRepository, {
-          beachId: req.params.beachId,
-          userId: req.user!.uid,
-          flagColor: req.body.flagColor,
-          now: new Date(),
-        });
+        const result = await submitReportUseCase(
+          dependencies.beachRepository,
+          dependencies.predictionRepository,
+          dependencies.reportRepository,
+          {
+            beachId: req.params.beachId,
+            userId: req.user!.uid,
+            flagColor: req.body.flagColor,
+            now: new Date(),
+          }
+        );
         res.status(200).json(result);
       } catch (error) {
-        if (error instanceof OutsideSeasonError) {
+        if (error instanceof BeachUnguardedError) {
+          res.status(403).json({
+            status: "error",
+            code: "beach_unguarded",
+            message: "This beach has no lifeguard coverage — flag reports aren't collected here",
+          });
+        } else if (error instanceof OutsideSeasonError) {
           res.status(403).json({
             status: "error",
             code: "outside_season",

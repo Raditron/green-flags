@@ -32,6 +32,7 @@ export interface Beach {
   currentFlagColor?: FlagColor;
   currentConfidencePercent?: number;
   area: BeachArea;
+  isUnguarded: boolean;
 }
 
 /** A Beach annotated with its Distance from the visitor; undefined when the visitor's location isn't known. See CONTEXT.md's "Distance". */

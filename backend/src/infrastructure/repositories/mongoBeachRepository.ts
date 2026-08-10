@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { Beach, BeachMapImage, BeachRepository } from "../../domain/ports/beachRepository";
+import { Beach, BeachAreas, BeachMapImage, BeachRepository } from "../../domain/ports/beachRepository";
 
 interface BeachDocument {
   _id: string;
@@ -10,6 +10,8 @@ interface BeachDocument {
   order: number;
   mapImage?: BeachMapImage;
   onshoreWindDirectionDeg: number;
+  area: BeachAreas;
+  isUnguarded?: boolean;
 }
 
 export class MongoBeachRepository implements BeachRepository {
@@ -30,6 +32,9 @@ export class MongoBeachRepository implements BeachRepository {
       quirkNotes: doc.quirkNotes,
       mapImage: doc.mapImage,
       onshoreWindDirectionDeg: doc.onshoreWindDirectionDeg,
+      area: doc.area,
+      // Defaults false for existing/not-yet-curated documents that predate this field.
+      isUnguarded: doc.isUnguarded ?? false,
     }));
   }
 }

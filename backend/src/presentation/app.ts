@@ -39,6 +39,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use(
     "/api",
     createReportRouter(
+      dependencies.beachRepository,
       dependencies.predictionRepository,
       dependencies.reportRepository,
       dependencies.authTokenVerifier,
