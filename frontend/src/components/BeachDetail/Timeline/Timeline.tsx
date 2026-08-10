@@ -3,6 +3,7 @@ import type { HourlyPrediction } from "../interfaces";
 import { HourDetail } from "./HourDetail/HourDetail";
 import { SeaConditions } from "./SeaConditions/SeaConditions";
 import { TimePicker } from "./TimePicker/TimePicker";
+import { UnguardedNotice } from "./UnguardedNotice/UnguardedNotice";
 import { Verdict } from "./Verdict/Verdict";
 import { useLiveClock } from "./hooks/useLiveClock";
 import { getTimelineStyles } from "./styles/Timeline.styles";
@@ -12,6 +13,7 @@ interface TimelineProps {
   desaturated?: boolean;
   currentHour?: number | null;
   updatedAt?: string;
+  isUnguarded?: boolean;
 }
 
 export function Timeline({
@@ -19,6 +21,7 @@ export function Timeline({
   desaturated = false,
   currentHour = null,
   updatedAt,
+  isUnguarded = false,
 }: TimelineProps) {
   // null = still tracking "now" as the live clock ticks; the moment the visitor manually
   // picks an hour from the popup, this locks in and stops following the clock.
@@ -43,6 +46,8 @@ export function Timeline({
   return (
     <>
       <Verdict prediction={selectedPrediction} desaturated={desaturated} />
+
+      {isUnguarded && <UnguardedNotice />}
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "stretch" }}>
         <div style={styles.card}>

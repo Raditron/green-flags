@@ -99,6 +99,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
                     desaturated={outsideLegalWindow}
                     currentHour={currentHour}
                     updatedAt={predictions.updatedAt}
+                    isUnguarded={isUnguarded}
                   />
                   <p style={styles.meta}>
                     Predictions for {predictions.data.date}
