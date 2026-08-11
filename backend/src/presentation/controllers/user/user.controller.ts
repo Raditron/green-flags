@@ -5,11 +5,13 @@ import { saveBeach as saveBeachUseCase } from "../../../application/useCases/use
 import { unsaveBeach as unsaveBeachUseCase } from "../../../application/useCases/user/unsaveBeach";
 import { getSavedBeaches } from "../../../application/useCases/user/getSavedBeaches";
 import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { PredictionRepository } from "../../../domain/ports/prediction/predictionRepository";
 import { AuthenticatedRequest } from "../../middleware/requireAuth";
 
 export interface UserControllerDependencies {
   userRepository: UserRepository;
   beachRepository: BeachRepository;
+  predictionRepository: PredictionRepository;
 }
 
 export function createUserController(
@@ -79,6 +81,7 @@ export function createUserController(
         const beaches = await getSavedBeaches(
           dependencies.userRepository,
           dependencies.beachRepository,
+          dependencies.predictionRepository,
           req.user!.uid,
         );
         res.status(200).json(beaches);

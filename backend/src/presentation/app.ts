@@ -52,7 +52,12 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   );
   app.use(
     "/api",
-    createUserRouter(dependencies.userRepository, dependencies.beachRepository, dependencies.authTokenVerifier)
+    createUserRouter(
+      dependencies.userRepository,
+      dependencies.beachRepository,
+      dependencies.predictionRepository,
+      dependencies.authTokenVerifier
+    )
   );
   app.use(
     "/api",
