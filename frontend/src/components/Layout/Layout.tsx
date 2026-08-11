@@ -5,6 +5,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { AuthModal } from "../Auth/AuthModal/AuthModal";
 import { UserMenu } from "./UserMenu/UserMenu";
 import { ToastProvider } from "./Toast/ToastContext";
+import { ThemeProvider } from "./Theme/ThemeContext";
+import { ThemeToggle } from "./Theme/ThemeToggle";
 import { getLayoutStyles } from "./styles/Layout.styles";
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -38,82 +40,85 @@ export function Layout({ children }: { children: ReactNode }) {
   const greetingName = user?.email?.split("@")[0] ?? null;
 
   return (
-    <ToastProvider>
-      <div style={styles.page}>
-        <header style={styles.header}>
-          <div style={styles.left}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Link to="/" style={styles.title}>
-                Green Flags
+    <ThemeProvider>
+      <ToastProvider>
+        <div style={styles.page}>
+          <header style={styles.header}>
+            <div style={styles.left}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Link to="/" style={styles.title}>
+                  Green Flags
+                </Link>
+                {!loading && greetingName && (
+                  <span style={styles.greeting}>Hello, {greetingName}</span>
+                )}
+              </div>
+              <Link
+                to="/"
+                style={styles.dashboardLink}
+                onMouseEnter={() => setIsDashboardHovered(true)}
+                onMouseLeave={() => setIsDashboardHovered(false)}
+                onFocus={() => setIsDashboardFocused(true)}
+                onBlur={() => setIsDashboardFocused(false)}
+              >
+                Dashboard
               </Link>
-              {!loading && greetingName && (
-                <span style={styles.greeting}>Hello, {greetingName}</span>
+              <Link
+                to="/beaches"
+                style={styles.beachesLink}
+                onMouseEnter={() => setIsBeachesHovered(true)}
+                onMouseLeave={() => setIsBeachesHovered(false)}
+                onFocus={() => setIsBeachesFocused(true)}
+                onBlur={() => setIsBeachesFocused(false)}
+              >
+                Beaches
+              </Link>
+            </div>
+
+            <div style={styles.right}>
+              <ThemeToggle />
+              {!loading &&
+                (user ? (
+                  <UserMenu email={user.email ?? ""} />
+                ) : (
+                  <button
+                    type="button"
+                    style={styles.signInButton}
+                    onClick={() => setModalOpen(true)}
+                  >
+                    Sign in
+                  </button>
+                ))}
+            </div>
+          </header>
+
+          {!loading && user && !user.emailVerified && (
+            <div style={styles.verifyBanner}>
+              Email not verified.{" "}
+              <button
+                type="button"
+                style={styles.resendButton}
+                onClick={handleResend}
+                disabled={resendState === "sending"}
+              >
+                {resendState === "sent"
+                  ? "Verification email sent"
+                  : "Resend verification email"}
+              </button>
+              {resendState === "error" && (
+                <span style={styles.error}>
+                  {" "}
+                  Could not send email, try again.
+                </span>
               )}
             </div>
-            <Link
-              to="/"
-              style={styles.dashboardLink}
-              onMouseEnter={() => setIsDashboardHovered(true)}
-              onMouseLeave={() => setIsDashboardHovered(false)}
-              onFocus={() => setIsDashboardFocused(true)}
-              onBlur={() => setIsDashboardFocused(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/beaches"
-              style={styles.beachesLink}
-              onMouseEnter={() => setIsBeachesHovered(true)}
-              onMouseLeave={() => setIsBeachesHovered(false)}
-              onFocus={() => setIsBeachesFocused(true)}
-              onBlur={() => setIsBeachesFocused(false)}
-            >
-              Beaches
-            </Link>
-          </div>
+          )}
 
-          <div style={styles.right}>
-            {!loading &&
-              (user ? (
-                <UserMenu email={user.email ?? ""} />
-              ) : (
-                <button
-                  type="button"
-                  style={styles.signInButton}
-                  onClick={() => setModalOpen(true)}
-                >
-                  Sign in
-                </button>
-              ))}
-          </div>
-        </header>
+          {modalOpen && <AuthModal onClose={() => setModalOpen(false)} />}
 
-        {!loading && user && !user.emailVerified && (
-          <div style={styles.verifyBanner}>
-            Email not verified.{" "}
-            <button
-              type="button"
-              style={styles.resendButton}
-              onClick={handleResend}
-              disabled={resendState === "sending"}
-            >
-              {resendState === "sent"
-                ? "Verification email sent"
-                : "Resend verification email"}
-            </button>
-            {resendState === "error" && (
-              <span style={styles.error}>
-                {" "}
-                Could not send email, try again.
-              </span>
-            )}
-          </div>
-        )}
-
-        {modalOpen && <AuthModal onClose={() => setModalOpen(false)} />}
-
-        <main style={styles.main}>{children}</main>
-      </div>
-    </ToastProvider>
+          <main style={styles.main}>{children}</main>
+        </div>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
