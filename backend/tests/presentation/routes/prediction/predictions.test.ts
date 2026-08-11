@@ -120,6 +120,13 @@ describe("GET /api/beaches/:beachId/predictions", () => {
     expect(response.body.status).toBe("error");
   });
 
+  it("returns 400 for a malformed beachId", async () => {
+    const response = await request(buildApp()).get(`/api/beaches/${encodeURIComponent("bad id")}/predictions?date=${DATE}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toMatchObject({ code: "invalid_beach_id" });
+  });
+
   it("returns 503 when the database is unreachable", async () => {
     const failingRepository = {
       saveDailyPredictions: async () => {},

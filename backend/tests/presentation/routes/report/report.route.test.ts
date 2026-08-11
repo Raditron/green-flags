@@ -135,6 +135,16 @@ describe("feedback submission (POST /api/beaches/:beachId/reports, GET /api/beac
       expect(response.body).toMatchObject({ code: "invalid_flag_color" });
     });
 
+    it("rejects with 400 for a malformed beachId", async () => {
+      const response = await request(buildApp())
+        .post(`/api/beaches/${encodeURIComponent("bad id")}/reports`)
+        .set("Authorization", "Bearer verified-token")
+        .send({ flagColor: "green" });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject({ code: "invalid_beach_id" });
+    });
+
     it("rejects with 403 beach_unguarded when the beach has no lifeguard coverage", async () => {
       await db.collection("predictions").insertOne(GREEN_PREDICTION_DOC);
       await db.collection("beaches").insertOne({
@@ -261,6 +271,15 @@ describe("feedback submission (POST /api/beaches/:beachId/reports, GET /api/beac
         .set("Authorization", "Bearer unverified-token");
 
       expect(response.status).toBe(200);
+    });
+
+    it("rejects with 400 for a malformed beachId", async () => {
+      const response = await request(buildApp())
+        .get(`/api/beaches/${encodeURIComponent("bad id")}/report-status`)
+        .set("Authorization", "Bearer verified-token");
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject({ code: "invalid_beach_id" });
     });
   });
 });
