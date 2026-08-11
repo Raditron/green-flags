@@ -1,20 +1,19 @@
 import cors from "cors";
 import express, { Express } from "express";
-import { HealthcheckRepository } from "../domain/ports/healthcheckRepository";
-import { BeachRepository } from "../domain/ports/beachRepository";
-import { ForecastProvider } from "../domain/ports/forecastProvider";
-import { StormWarningProvider } from "../domain/ports/stormWarningProvider";
-import { PredictionRepository } from "../domain/ports/predictionRepository";
-import { ReportRepository } from "../domain/ports/reportRepository";
-import { AuthTokenVerifier } from "../domain/ports/authTokenVerifier";
-import { UserRepository } from "../domain/ports/userRepository";
-import { createHealthRouter } from "./routes/health.route";
-import { createBeachRouter } from "./routes/beach.route";
-import { createBatchRouter } from "./routes/batch.route";
-import { createPredictionRouter } from "./routes/prediction.route";
-import { createMeRouter } from "./routes/me.route";
-import { createReportRouter } from "./routes/report.route";
-import { createUserRouter } from "./routes/user.route";
+import { HealthcheckRepository } from "../domain/ports/health/healthcheckRepository";
+import { BeachRepository } from "../domain/ports/beach/beachRepository";
+import { ForecastProvider } from "../domain/ports/batch/forecastProvider";
+import { StormWarningProvider } from "../domain/ports/batch/stormWarningProvider";
+import { PredictionRepository } from "../domain/ports/prediction/predictionRepository";
+import { ReportRepository } from "../domain/ports/report/reportRepository";
+import { AuthTokenVerifier } from "../domain/ports/auth/authTokenVerifier";
+import { UserRepository } from "../domain/ports/user/userRepository";
+import { createHealthRouter } from "./routes/health/health.route";
+import { createBeachRouter } from "./routes/beach/beach.route";
+import { createBatchRouter } from "./routes/batch/batch.route";
+import { createPredictionRouter } from "./routes/prediction/prediction.route";
+import { createReportRouter } from "./routes/report/report.route";
+import { createUserRouter } from "./routes/user/user.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -41,7 +40,6 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
   app.use("/api", createHealthRouter(dependencies.healthcheckRepository));
   app.use("/api", createBeachRouter(dependencies.beachRepository, dependencies.predictionRepository));
   app.use("/api", createPredictionRouter(dependencies.predictionRepository, dependencies.beachRepository));
-  app.use("/api", createMeRouter(dependencies.authTokenVerifier, dependencies.userRepository));
   app.use(
     "/api",
     createReportRouter(

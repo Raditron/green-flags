@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import { StormWarningProvider } from "../../domain/ports/stormWarningProvider";
+import { StormWarningProvider } from "../../domain/ports/batch/stormWarningProvider";
 
 const BULGARIA_CAP_FEED = "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bulgaria";
 

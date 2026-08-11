@@ -1,5 +1,5 @@
 import { Collection, Db, MongoServerError } from "mongodb";
-import { DuplicateReportError, ReportInput, ReportRepository } from "../../domain/ports/reportRepository";
+import { DuplicateReportError, ReportInput, ReportRepository } from "../../domain/ports/report/reportRepository";
 
 const DUPLICATE_KEY_ERROR_CODE = 11000;
 

@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Db, MongoClient } from "mongodb";
 import { MongoReportRepository } from "../src/infrastructure/repositories/mongoReportRepository";
-import { DuplicateReportError } from "../src/domain/ports/reportRepository";
+import { DuplicateReportError } from "../src/domain/ports/report/reportRepository";
 
 const BEACH_ID = "beach-a";
 const BUCKET_KEY = "beaufort-4_douglas-3";

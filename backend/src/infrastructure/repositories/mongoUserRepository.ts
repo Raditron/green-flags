@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { UserRecord, UserRepository } from "../../domain/ports/userRepository";
+import { UserRecord, UserRepository } from "../../domain/ports/user/userRepository";
 
 interface UserDocument {
   _id: string;

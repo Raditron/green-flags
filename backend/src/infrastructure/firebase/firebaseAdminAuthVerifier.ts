@@ -1,6 +1,6 @@
 import { App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { AuthTokenVerifier, DecodedAuthToken } from "../../domain/ports/authTokenVerifier";
+import { AuthTokenVerifier, DecodedAuthToken } from "../../domain/ports/auth/authTokenVerifier";
 
 export class FirebaseAdminAuthVerifier implements AuthTokenVerifier {
   constructor(private readonly app: App) {}
