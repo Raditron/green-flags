@@ -10,8 +10,8 @@ export function Dashboard() {
   const styles = getDashboardStyles();
 
   return (
-    <section aria-label="Dashboard">
-      <h1 style={styles.title}>Dashboard</h1>
+    <section aria-label="Today">
+      <h1 style={styles.title}>Today</h1>
 
       {summary.status === "loading" && <p>Loading today's summary…</p>}
 

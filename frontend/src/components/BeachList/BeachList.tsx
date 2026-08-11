@@ -25,7 +25,7 @@ export function BeachList() {
   const isFindingArea = beaches.status === "success" && userLocation.status === "loading";
 
   return (
-    <section aria-label="Beaches">
+    <section aria-label="All beaches">
       {beaches.status === "loading" && <p>Loading beaches…</p>}
 
       {beaches.status === "error" && (

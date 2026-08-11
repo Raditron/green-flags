@@ -18,14 +18,14 @@ export function SavedBeaches() {
   const styles = getSavedBeachesStyles();
 
   // Wait for auth to resolve before redirecting — a signed-in visitor whose session is still
-  // loading shouldn't get bounced to the Dashboard on their own bookmark.
+  // loading shouldn't get bounced to Today on their own bookmark.
   if (!authLoading && !user) {
     return <Navigate to="/" replace />;
   }
 
   return (
-    <section aria-label="Saved beaches">
-      <h1 style={styles.title}>Saved</h1>
+    <section aria-label="Your beaches">
+      <h1 style={styles.title}>Your beaches</h1>
 
       {(authLoading || savedBeaches.status === "loading") && <p>Loading saved beaches…</p>}
 

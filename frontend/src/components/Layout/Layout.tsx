@@ -65,7 +65,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 onFocus={() => setIsDashboardFocused(true)}
                 onBlur={() => setIsDashboardFocused(false)}
               >
-                Dashboard
+                Today
               </Link>
               <Link
                 to="/beaches"
@@ -75,7 +75,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 onFocus={() => setIsBeachesFocused(true)}
                 onBlur={() => setIsBeachesFocused(false)}
               >
-                Beaches
+                All beaches
               </Link>
               {!loading && user && (
                 <Link
@@ -86,7 +86,7 @@ export function Layout({ children }: { children: ReactNode }) {
                   onFocus={() => setIsSavedFocused(true)}
                   onBlur={() => setIsSavedFocused(false)}
                 >
-                  Saved
+                  Your beaches
                 </Link>
               )}
             </div>
