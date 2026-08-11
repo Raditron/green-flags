@@ -41,12 +41,16 @@ export function SavedBeaches() {
 }
 
 function SavedBeachesGrid({ beaches }: { beaches: Beach[] }) {
-  const { isSaved } = useSavedBeaches();
+  const { isSaved, isReady } = useSavedBeaches();
   const listStyles = getBeachListStyles();
 
   // Filtered against the live SavedBeachesContext, not this list's own fetch snapshot, so
   // unsaving a Beach from its star right here drops the card immediately, without a refetch.
-  const stillSaved = beaches.filter((beach) => isSaved(beach.id));
+  // Held back until the context's own fetch has settled (isReady): both fetches hit the same
+  // endpoint independently and race on a direct page load (e.g. a bookmark), so filtering before
+  // the context has caught up can flash — or wrongly show — an empty state for a visitor who
+  // does have saved beaches. Until then, this page's own fresh fetch is trusted as-is.
+  const stillSaved = isReady ? beaches.filter((beach) => isSaved(beach.id)) : beaches;
 
   if (stillSaved.length === 0) {
     return (

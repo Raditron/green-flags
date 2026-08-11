@@ -10,6 +10,11 @@ interface SavedBeachesContextValue {
   /** Flips the beach's saved state immediately (optimistic), then fires the corresponding
    * save/unsave request in the background — see the class doc below for the full contract. */
   toggleSave(beachId: string): void;
+  /** True once this provider's own fetch of the signed-in visitor's saved ids has settled
+   * (success or failure) for the current sign-in. The Saved page fetches the same beaches a
+   * second time (for the full Beach records `isSaved` doesn't carry) and needs this to tell "not
+   * saved" apart from "haven't heard back yet" — see SavedBeaches's class doc. */
+  isReady: boolean;
 }
 
 const SavedBeachesContext = createContext<SavedBeachesContextValue | null>(null);
@@ -29,6 +34,7 @@ const SavedBeachesContext = createContext<SavedBeachesContextValue | null>(null)
 export function SavedBeachesProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [isReady, setIsReady] = useState(false);
 
   // Keyed on uid rather than the User object itself — AuthContext hands out a new User
   // reference on things like its email-verification refresh, which isn't a new session and
@@ -36,18 +42,26 @@ export function SavedBeachesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) {
       setSavedIds(new Set());
+      setIsReady(true);
       return;
     }
 
     let cancelled = false;
+    setIsReady(false);
     fetchSavedBeaches(user)
       .then((beaches) => {
-        if (!cancelled) setSavedIds(new Set(beaches.map((beach) => beach.id)));
+        if (!cancelled) {
+          setSavedIds(new Set(beaches.map((beach) => beach.id)));
+          setIsReady(true);
+        }
       })
       .catch(() => {
         // Fail quiet: list/detail stars just show unsaved rather than blocking on or retrying
         // a failed fetch. The next sign-in gets another attempt.
-        if (!cancelled) setSavedIds(new Set());
+        if (!cancelled) {
+          setSavedIds(new Set());
+          setIsReady(true);
+        }
       });
 
     return () => {
@@ -93,7 +107,7 @@ export function SavedBeachesProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <SavedBeachesContext.Provider value={{ isSaved, toggleSave }}>
+    <SavedBeachesContext.Provider value={{ isSaved, toggleSave, isReady }}>
       {children}
     </SavedBeachesContext.Provider>
   );
