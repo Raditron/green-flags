@@ -32,7 +32,10 @@ export class MongoUserRepository implements UserRepository {
     return {
       uid: doc._id,
       emailVerified: doc.emailVerified,
-      savedBeaches: doc.savedBeaches,
+      // Legacy docs created before savedBeaches existed have no such field — $setOnInsert only
+      // backfills it on a fresh insert, not on an existing doc — so default it here rather than
+      // handing callers `undefined`.
+      savedBeaches: doc.savedBeaches ?? [],
     };
   }
   async update(
