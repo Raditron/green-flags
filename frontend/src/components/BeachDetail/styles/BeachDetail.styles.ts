@@ -18,6 +18,7 @@ type BeachDetailStyleKey =
   | "refreshing"
   | "offWindow"
   | "title"
+  | "titleRow"
   ;
 
 // The hero image now spans the full page width (data cards moved below it),
@@ -51,11 +52,20 @@ export function getBeachDetailStyles({
       minWidth: 0,
     },
     title: {
-      margin: "0 0 16px",
+      margin: 0,
       fontSize: "2rem",
       fontWeight: 700,
       letterSpacing: "-0.01em",
       color: "var(--text-h)",
+    },
+    // Star sits directly beside the name (flex-start, not spread to the row's far edge)
+    // rather than in the actions row further down like the list card — same icon-only
+    // button as the list card, just placed next to the title per #25.
+    titleRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: 4,
+      margin: "0 0 16px",
     },
     // Icon-only control (no visible "Back to beaches" label — that lives in aria-label
     // instead); hover swaps in a subtle circular background rather than an underline.
