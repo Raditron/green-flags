@@ -7,6 +7,7 @@ import { currentSofiaHour, isOutsideLegalWindow } from "./utils/legalWindow";
 import { useToast } from "../Layout/Toast/ToastContext";
 import { Timeline } from "./Timeline/Timeline";
 import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
+import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 import { getBeachImage } from "../../shared/data/images";
 
@@ -73,7 +74,10 @@ function BeachDetailView({ beachId }: { beachId: string }) {
         </div>
 
         <div style={styles.main}>
-          <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
+          <div style={styles.titleRow}>
+            <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
+            <SaveBeachButton beachId={beachId} />
+          </div>
 
           <div style={styles.heroRow}>
             <div style={styles.imageArea}>

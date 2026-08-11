@@ -7,6 +7,7 @@ type LayoutStyleKey =
   | "title"
   | "dashboardLink"
   | "beachesLink"
+  | "savedLink"
   | "greeting"
   | "right"
   | "signInButton"
@@ -41,11 +42,15 @@ export function getLayoutStyles({
   isDashboardFocused = false,
   isBeachesHovered = false,
   isBeachesFocused = false,
+  isSavedHovered = false,
+  isSavedFocused = false,
 }: {
   isDashboardHovered?: boolean;
   isDashboardFocused?: boolean;
   isBeachesHovered?: boolean;
   isBeachesFocused?: boolean;
+  isSavedHovered?: boolean;
+  isSavedFocused?: boolean;
 } = {}): Record<LayoutStyleKey, CSSProperties> {
   return {
     page: {
@@ -82,6 +87,10 @@ export function getLayoutStyles({
     beachesLink: navLinkStyle(
       isBeachesHovered || isBeachesFocused,
       isBeachesFocused,
+    ),
+    savedLink: navLinkStyle(
+      isSavedHovered || isSavedFocused,
+      isSavedFocused,
     ),
     greeting: {
       color: "var(--text)",

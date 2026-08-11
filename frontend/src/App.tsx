@@ -3,6 +3,7 @@ import { BeachList } from "./components/BeachList/BeachList";
 import { SystemStatus } from "./components/SystemStatus/SystemStatus";
 import { BeachDetail } from "./components/BeachDetail/BeachDetail";
 import { Dashboard } from "./components/Dashboard/Dashboard";
+import { SavedBeaches } from "./components/SavedBeaches/SavedBeaches";
 import { Layout } from "./components/Layout/Layout";
 import { BeachListCardPreview } from "./components/BeachList/BeachListCard/__preview";
 import { BeachDetailPreview } from "./components/BeachDetail/__preview";
@@ -22,6 +23,7 @@ function App() {
           }
         />
         <Route path="/beaches/:beachId" element={<BeachDetail />} />
+        <Route path="/saved" element={<SavedBeaches />} />
         <Route path="/dev/preview" element={<BeachListCardPreview />} />
         <Route path="/dev/preview-detail" element={<BeachDetailPreview />} />
       </Routes>

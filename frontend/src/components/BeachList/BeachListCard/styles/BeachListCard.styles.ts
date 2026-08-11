@@ -144,6 +144,8 @@ export function getBeachListCardStyles({
     },
     actions: {
       display: "flex",
+      alignItems: "center",
+      gap: 6,
       padding: 8,
     },
     // Ghost button; picks up a red tint on hover to preview the report flow

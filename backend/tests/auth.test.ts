@@ -73,7 +73,7 @@ describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
     const response = await request(buildApp()).get("/api/me").set("Authorization", "Bearer valid-verified-token");
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ uid: VERIFIED_UID, emailVerified: true });
+    expect(response.body).toEqual({ uid: VERIFIED_UID, emailVerified: true, savedBeaches: [] });
   });
 
   it("lazily creates the users document keyed by Firebase UID on first authenticated request", async () => {
@@ -90,6 +90,12 @@ describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
       ...stubBatchDependencies(),
       userRepository: {
         findOrCreate: async () => {
+          throw new Error("connection refused");
+        },
+        getUserById: async () => {
+          throw new Error("connection refused");
+        },
+        update: async () => {
           throw new Error("connection refused");
         },
       },

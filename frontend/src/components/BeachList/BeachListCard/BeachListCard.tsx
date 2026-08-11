@@ -9,6 +9,7 @@ import { getBeachListStyles } from "../styles/BeachList.styles";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
 import { getBeachImage } from "../../../shared/data/images";
 import { formatDistanceKm } from "../../../shared/data/utils/geo";
+import { SaveBeachButton } from "../../SaveBeachButton/SaveBeachButton";
 import {
   FaFlag,
   FaLifeRing,
@@ -86,11 +87,16 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
               <span
                 aria-describedby={guardStatusTooltipId}
                 aria-label={isUnguarded ? "Unguarded beach" : "Guarded beach"}
-                style={isUnguarded ? styles.unguardedLabel : styles.guardedLabel}
+                style={
+                  isUnguarded ? styles.unguardedLabel : styles.guardedLabel
+                }
                 onMouseEnter={() => setIsGuardStatusHovered(true)}
                 onMouseLeave={() => setIsGuardStatusHovered(false)}
               >
-                <GuardStatusIcon aria-hidden="true" style={styles.guardStatusIcon} />
+                <GuardStatusIcon
+                  aria-hidden="true"
+                  style={styles.guardStatusIcon}
+                />
                 <span
                   aria-hidden={!isGuardStatusHovered}
                   id={guardStatusTooltipId}
@@ -129,21 +135,26 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
         <div style={styles.divider} />
 
         <div style={styles.actions}>
-          <Link
-            to={`/beaches/${beach.id}`}
-            state={{
-              beachName: beach.name,
-              mapImageDataUrl: beach.mapImageDataUrl,
-              quirkNotes: beach.quirkNotes,
-              isUnguarded: beach.isUnguarded,
-            }}
-            style={styles.reportButton}
-            onMouseEnter={() => setIsReportHovered(true)}
-            onMouseLeave={() => setIsReportHovered(false)}
-          >
-            <FaFlag style={styles.reportIcon} />
-            Report
-          </Link>
+          <div style={{ display: "flex", flex: 1 }}>
+            <SaveBeachButton beachId={beach.id} withLabel />
+          </div>
+          <div style={{ display: "flex", flex: 1 }}>
+            <Link
+              to={`/beaches/${beach.id}`}
+              state={{
+                beachName: beach.name,
+                mapImageDataUrl: beach.mapImageDataUrl,
+                quirkNotes: beach.quirkNotes,
+                isUnguarded: beach.isUnguarded,
+              }}
+              style={styles.reportButton}
+              onMouseEnter={() => setIsReportHovered(true)}
+              onMouseLeave={() => setIsReportHovered(false)}
+            >
+              <FaFlag style={styles.reportIcon} />
+              Report
+            </Link>
+          </div>
         </div>
       </div>
     </li>

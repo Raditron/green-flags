@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "seed": "tsx src/infrastructure/seed/seedBeaches.ts",
-    "seed:unguarded": "tsx src/infrastructure/seed/seedUnguardedBeaches.ts"
+    "seed:unguarded": "tsx src/infrastructure/seed/seedUnguardedBeaches.ts",
+    "migrate:saved-beaches": "tsx src/infrastructure/migrations/backfillSavedBeaches.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

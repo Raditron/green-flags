@@ -31,9 +31,10 @@ describe("MongoUserRepository", () => {
   it("creates a user document keyed by Firebase UID on first sight", async () => {
     const result = await repository.findOrCreate(UID, false);
 
-    expect(result).toEqual({ uid: UID, emailVerified: false });
+    expect(result).toEqual({ uid: UID, emailVerified: false, savedBeaches: [] });
     const stored = await db.collection("users").findOne({ _id: UID } as never);
     expect(stored?.emailVerified).toBe(false);
+    expect(stored?.savedBeaches).toEqual([]);
   });
 
   it("does not duplicate the document on a repeat call with the same UID", async () => {
@@ -48,6 +49,39 @@ describe("MongoUserRepository", () => {
 
     const result = await repository.findOrCreate(UID, true);
 
-    expect(result).toEqual({ uid: UID, emailVerified: true });
+    expect(result).toEqual({ uid: UID, emailVerified: true, savedBeaches: [] });
+  });
+
+  it("does not wipe existing saved beaches when re-syncing emailVerified on a later call", async () => {
+    await repository.findOrCreate(UID, false);
+    await repository.update(UID, { savedBeaches: ["kranevo-sunny-day"] });
+
+    const result = await repository.findOrCreate(UID, true);
+
+    expect(result).toEqual({ uid: UID, emailVerified: true, savedBeaches: ["kranevo-sunny-day"] });
+  });
+
+  it("getUserById returns the stored record", async () => {
+    await repository.findOrCreate(UID, false);
+
+    const result = await repository.getUserById(UID);
+
+    expect(result).toEqual({ uid: UID, emailVerified: false, savedBeaches: [] });
+  });
+
+  it("getUserById rejects for a UID with no stored document", async () => {
+    await expect(repository.getUserById("no-such-uid")).rejects.toThrow();
+  });
+
+  it("update patches only the supplied fields, leaving the rest untouched", async () => {
+    await repository.findOrCreate(UID, false);
+
+    const result = await repository.update(UID, { savedBeaches: ["kranevo-sunny-day"] });
+
+    expect(result).toEqual({ uid: UID, emailVerified: false, savedBeaches: ["kranevo-sunny-day"] });
+  });
+
+  it("update rejects for a UID with no stored document", async () => {
+    await expect(repository.update("no-such-uid", { savedBeaches: [] })).rejects.toThrow();
   });
 });

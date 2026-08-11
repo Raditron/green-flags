@@ -46,4 +46,6 @@ export interface Beach {
 
 export interface BeachRepository {
   listBeaches(): Promise<Beach[]>;
+  /** Looks up a single beach by id, or null if no beach with that id exists. */
+  findBeachById(beachId: string): Promise<Beach | null>;
 }

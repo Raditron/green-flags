@@ -14,7 +14,9 @@ function buildFakeTokenVerifier(decoded: DecodedAuthToken | Error): AuthTokenVer
 
 function buildFakeUserRepository(overrides: Partial<UserRepository> = {}): UserRepository {
   return {
-    findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified }),
+    findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified, savedBeaches: [] }),
+    getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: [] }),
+    update: async (uid, changes) => ({ uid, emailVerified: true, savedBeaches: [], ...changes }),
     ...overrides,
   };
 }
@@ -27,7 +29,7 @@ describe("authenticateUser", () => {
       "valid-token"
     );
 
-    expect(user).toEqual<UserRecord>({ uid: "uid-1", emailVerified: true });
+    expect(user).toEqual<UserRecord>({ uid: "uid-1", emailVerified: true, savedBeaches: [] });
   });
 
   it("throws InvalidAuthTokenError when the token fails verification", async () => {
