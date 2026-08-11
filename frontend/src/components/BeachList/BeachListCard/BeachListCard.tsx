@@ -36,7 +36,8 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
   // Curated beach photo takes priority over the seeded map-pin image (see
   // ADR 0001) — it's the more informative thumbnail — falling back to the
   // pin, then the generic icon, if a beach has neither.
-  const imageSrc = getBeachImage(beach.id) ?? beach.mapImageDataUrl;
+  const imageDescriptor = getBeachImage(beach.id);
+  const imageSrc = imageDescriptor?.card.src ?? beach.mapImageDataUrl;
   // Focus bubbles up from either the media link or the report link below, so
   // the raised/outline treatment reads as one card regardless of which
   // control has keyboard focus. Only clear it once focus actually leaves
@@ -68,7 +69,14 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
         >
           <div style={styles.imageArea}>
             {imageSrc ? (
-              <img src={imageSrc} alt="" style={styles.image} />
+              <img
+                src={imageSrc}
+                width={imageDescriptor?.card.width}
+                height={imageDescriptor?.card.height}
+                loading="lazy"
+                alt=""
+                style={styles.image}
+              />
             ) : (
               <div style={styles.iconChip}>
                 <FaWater style={styles.icon} />
