@@ -1,4 +1,4 @@
-import { BeachAreas } from "../../domain/ports/beachRepository";
+import { BeachAreas } from "../../domain/ports/beach/beachRepository";
 
 export interface BeachSeed {
   id: string;

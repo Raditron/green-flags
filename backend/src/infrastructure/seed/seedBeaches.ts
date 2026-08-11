@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { BeachAreas, BeachMapImage } from "../../domain/ports/beachRepository";
+import { BeachAreas, BeachMapImage } from "../../domain/ports/beach/beachRepository";
 import { connectToDatabase } from "../db/mongoClient";
 import { BEACH_SEED_DATA } from "./beachSeedData";
 

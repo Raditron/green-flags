@@ -1,4 +1,4 @@
-import { DailyForecast, ForecastCoordinates, ForecastProvider, HourlyForecast } from "../../domain/ports/forecastProvider";
+import { DailyForecast, ForecastCoordinates, ForecastProvider, HourlyForecast } from "../../domain/ports/batch/forecastProvider";
 
 const MARINE_ENDPOINT = "https://marine-api.open-meteo.com/v1/marine";
 const WEATHER_ENDPOINT = "https://api.open-meteo.com/v1/forecast";

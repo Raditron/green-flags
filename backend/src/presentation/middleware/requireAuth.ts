@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthTokenVerifier } from "../../domain/ports/authTokenVerifier";
-import { UserRecord, UserRepository } from "../../domain/ports/userRepository";
-import { authenticateUser, InvalidAuthTokenError } from "../../application/useCases/authenticateUser";
+import { AuthTokenVerifier } from "../../domain/ports/auth/authTokenVerifier";
+import { UserRecord, UserRepository } from "../../domain/ports/user/userRepository";
+import { authenticateUser, InvalidAuthTokenError } from "../../application/useCases/auth/authenticateUser";
 
 const BEARER_PREFIX = "Bearer ";
 

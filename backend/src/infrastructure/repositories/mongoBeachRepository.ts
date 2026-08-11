@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { Beach, BeachAreas, BeachMapImage, BeachRepository } from "../../domain/ports/beachRepository";
+import { Beach, BeachAreas, BeachMapImage, BeachRepository } from "../../domain/ports/beach/beachRepository";
 
 interface BeachDocument {
   _id: string;

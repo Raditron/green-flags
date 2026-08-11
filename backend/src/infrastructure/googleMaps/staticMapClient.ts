@@ -1,4 +1,4 @@
-import { BeachMapImage } from "../../domain/ports/beachRepository";
+import { BeachMapImage } from "../../domain/ports/beach/beachRepository";
 
 const STATIC_MAP_ENDPOINT = "https://maps.googleapis.com/maps/api/staticmap";
 

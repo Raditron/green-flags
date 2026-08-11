@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { HealthcheckPingResult, HealthcheckRepository } from "../../domain/ports/healthcheckRepository";
+import { HealthcheckPingResult, HealthcheckRepository } from "../../domain/ports/health/healthcheckRepository";
 
 interface HealthcheckDocument {
   _id: "healthcheck";

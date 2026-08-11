@@ -1,4 +1,4 @@
-import { AuthTokenVerifier, DecodedAuthToken } from "../../src/domain/ports/authTokenVerifier";
+import { AuthTokenVerifier, DecodedAuthToken } from "../../src/domain/ports/auth/authTokenVerifier";
 
 /** Maps fixed token strings to decoded claims, rejecting anything else — stands in for the Firebase Admin SDK in tests. */
 export function stubAuthTokenVerifier(tokensByValue: Record<string, DecodedAuthToken>): AuthTokenVerifier {

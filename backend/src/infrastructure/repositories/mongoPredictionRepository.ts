@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { BeachDailyPredictions, HourlyPrediction, PredictionRepository } from "../../domain/ports/predictionRepository";
+import { BeachDailyPredictions, HourlyPrediction, PredictionRepository } from "../../domain/ports/prediction/predictionRepository";
 
 interface PredictionDocument {
   _id: string;
