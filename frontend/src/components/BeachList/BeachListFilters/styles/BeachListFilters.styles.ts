@@ -16,7 +16,9 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
   return {
     container: {
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "wrap",
       gap: 12,
       width: "100%",
       maxWidth: 900,
@@ -26,6 +28,8 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
       position: "relative",
       display: "flex",
       alignItems: "center",
+      flex: "1 1 220px",
+      minWidth: 180,
     },
     searchIcon: {
       position: "absolute",
@@ -47,13 +51,15 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
     },
     flagRow: {
       display: "flex",
+      alignItems: "center",
       gap: 8,
+      flex: "0 0 auto",
     },
     areaRow: {
       display: "flex",
       alignItems: "center",
       gap: 10,
-      flexWrap: "wrap",
+      flex: "0 0 auto",
     },
     areaSelect: {
       padding: "9px 12px",
