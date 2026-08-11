@@ -50,7 +50,8 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   // Curated beach photo takes priority over the seeded map-pin image (see
   // ADR 0001) — it's the more informative hero image — falling back to the
   // pin, then the generic icon, if a beach has neither.
-  const imageSrc = getBeachImage(beachId) ?? mapImageDataUrl;
+  const imageDescriptor = getBeachImage(beachId);
+  const imageSrc = imageDescriptor?.hero.src ?? mapImageDataUrl;
 
   // Fires on every beach detail page load (including switching straight from one
   // beach to another, since BeachDetailView remounts on beachId — see the key={beachId}
@@ -82,7 +83,13 @@ function BeachDetailView({ beachId }: { beachId: string }) {
           <div style={styles.heroRow}>
             <div style={styles.imageArea}>
               {imageSrc ? (
-                <img src={imageSrc} alt="" style={styles.image} />
+                <img
+                  src={imageSrc}
+                  width={imageDescriptor?.hero.width}
+                  height={imageDescriptor?.hero.height}
+                  alt=""
+                  style={styles.image}
+                />
               ) : (
                 <div style={styles.iconChip}>
                   <FaWater style={styles.icon} />

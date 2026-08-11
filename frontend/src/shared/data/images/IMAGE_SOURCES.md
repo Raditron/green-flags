@@ -1,9 +1,19 @@
 # Image sources & attribution
 
-Manifest for the photos downloaded by `download-missing-images.sh` into this directory. All
+Provenance for the photos downloaded by `download-missing-images.sh` into this directory. All
 photos are from Wikimedia Commons and are free to redistribute (public domain / CC0 / CC BY /
-CC BY-SA). This file does not change anything about how the app consumes images — see
-`index.ts` for the `BEACH_IMAGES` map (not modified by this manifest).
+CC BY-SA).
+
+**Storage note:** several beach ids below intentionally share one representative
+("area-fallback") source photo — several dozen of the raw files that
+`download-missing-images.sh` produced were therefore byte-identical copies of each other.
+`frontend/scripts/prepare-images.mjs` collapses those duplicates to one canonical file on disk
+(keyed by content hash, not by beach id) and generates compressed WebP card/hero variants from
+it; `generated/manifest.ts` (fully generated — do not hand-edit) records which beach ids share
+which canonical photo. The table below is unaffected by that dedupe — it documents where each
+beach id's photo originally came from, independent of how many physical files it's backed by.
+See `index.ts` for the `getBeachImage(beachId)` lookup that ties it all together, and "Adding a
+new beach photo" below for the process going forward.
 
 **Match tier** — `exact` means the photo is specifically of the named beach/spot. `area-fallback`
 means no photo of that exact sub-segment could be found, so one representative photo of the
@@ -201,3 +211,26 @@ of the 106 missing beach ids. If any of the above turn out on review to be a poo
 their beach (e.g. an area-fallback photo that doesn't read as a beach), the fix is to swap that
 one block in `download-missing-images.sh` for a better source rather than treating it as
 "not found" — no id needed to be dropped from this pass.
+
+## Adding a new beach photo
+
+The raw source library, the dedupe/compress pipeline, and the responsive-descriptor lookup are
+three separate, purpose-built pieces — new photos only ever need edits in the first two:
+
+1. **Add the raw file.** Drop the full-resolution photo under `images/<area>/`, named for the
+   beach (e.g. `images/tsarevo/my-new-beach.jpg`). Note its source URL/license/attribution here,
+   in the appropriate area table above (and update the Summary counts).
+2. **Point a beach id at it.** Add one line to `beach-photo-sources.ts`:
+   `"my-new-beach": "tsarevo/my-new-beach.jpg"`. If several beach ids should share this photo
+   (an area-fallback), just repeat the same path for each of them — the pipeline dedupes by
+   file content, so this is safe even before you've deduped anything by hand.
+3. **Run the pipeline.** `npm run images:prepare` (from `frontend/`) hashes and dedupes the raw
+   sources, generates compressed WebP card/hero variants, and rewrites
+   `generated/manifest.ts`. Check its printed before/after size report.
+4. **Commit the generated output** alongside your `beach-photo-sources.ts` change — `generated/`
+   is fully generated but is git-tracked, since the app's build never runs the pipeline itself
+   (it only globs whatever's already in `generated/`).
+
+Never hand-edit anything under `generated/`, and never import a raw source file directly from
+app code — `getBeachImage(beachId)` in `index.ts` is the only supported way to resolve a beach's
+photo, and it only ever resolves to pipeline-generated WebP variants.
