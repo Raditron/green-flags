@@ -3,12 +3,12 @@
   --text: #134074;
   /* downriver */
   --text-h: #0b2545;
-  /* neutrals.linen */
-  --bg: #f2eee2;
+  /* neutrals.seaHaze */
+  --bg: #eaf0f6;
   /* neutrals.nepalMist */
-  --border: #ccd8e4;
+  --border: #c1d1e1;
   /* neutrals.mistWhite */
-  --surface: #f9fbfc;
+  --surface: #f8fafb;
   --flag-green: #16a34a;
   --flag-yellow: #ca8a04;
   --flag-red: #dc2626;
@@ -21,8 +21,8 @@
      Held constant across themes so it reads against arbitrary photo
      content instead of flipping with the page chrome. */
   --media-badge-bg: rgba(11, 37, 69, 0.72);
-  /* mistWhite, for contrast against the badge background */
-  --media-badge-fg: #f9fbfc;
+  /* neutrals.mistWhite, for contrast against the badge background */
+  --media-badge-fg: #f8fafb;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;
@@ -30,8 +30,13 @@
   background: var(--bg);
 }
 
+/* Automatic dark fallback for visitors who haven't made an explicit choice
+   via the header toggle. Scoped to :root:not([data-theme]) so an explicit
+   `data-theme` attribute — set synchronously by the inline script in
+   index.html, or by the toggle at runtime — always wins over this,
+   regardless of OS preference or cascade order. See ADR 0006. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     /* nepal */
     --text: #8da9c4;
     /* snowDrift */
@@ -48,6 +53,35 @@
     /* nepal, for a light icon against the dark chip */
     --icon-chip-fg: #8da9c4;
   }
+}
+
+/* Explicit choice, made via the header toggle and persisted in
+   localStorage (see Theme/ThemeContext.tsx). `light` needs only a
+   `color-scheme` override — its variable values already match the :root
+   defaults above. `dark` mirrors the values in the media query above, so
+   the explicit choice renders correctly no matter what the OS preference
+   is. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  /* nepal */
+  --text: #8da9c4;
+  /* snowDrift */
+  --text-h: #eef4ed;
+  /* neutrals.duskSlate */
+  --bg: #1A1C22;
+  /* nepal, for visible contrast against the darker surface below */
+  --border: #8da9c4;
+  /* blueZodiac */
+  --surface: #13315c;
+  /* chathamsBlue, a shade lighter than the dark surface so the fallback
+     icon chip reads as a subtle sliver instead of a jarring block */
+  --icon-chip: #134074;
+  /* nepal, for a light icon against the dark chip */
+  --icon-chip-fg: #8da9c4;
+  color-scheme: dark;
 }
 
 * {

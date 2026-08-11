@@ -99,6 +99,7 @@ export function getLayoutStyles({
     right: {
       display: "flex",
       alignItems: "center",
+      gap: 12,
     },
     signInButton: {
       border: "1px solid var(--border)",
