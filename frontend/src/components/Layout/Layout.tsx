@@ -77,40 +77,19 @@ export function Layout({ children }: { children: ReactNode }) {
               >
                 Beaches
               </Link>
+              {!loading && user && (
+                <Link
+                  to="/saved"
+                  style={styles.savedLink}
+                  onMouseEnter={() => setIsSavedHovered(true)}
+                  onMouseLeave={() => setIsSavedHovered(false)}
+                  onFocus={() => setIsSavedFocused(true)}
+                  onBlur={() => setIsSavedFocused(false)}
+                >
+                  Saved
+                </Link>
+              )}
             </div>
-            <Link
-              to="/"
-              style={styles.dashboardLink}
-              onMouseEnter={() => setIsDashboardHovered(true)}
-              onMouseLeave={() => setIsDashboardHovered(false)}
-              onFocus={() => setIsDashboardFocused(true)}
-              onBlur={() => setIsDashboardFocused(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/beaches"
-              style={styles.beachesLink}
-              onMouseEnter={() => setIsBeachesHovered(true)}
-              onMouseLeave={() => setIsBeachesHovered(false)}
-              onFocus={() => setIsBeachesFocused(true)}
-              onBlur={() => setIsBeachesFocused(false)}
-            >
-              Beaches
-            </Link>
-            {!loading && user && (
-              <Link
-                to="/saved"
-                style={styles.savedLink}
-                onMouseEnter={() => setIsSavedHovered(true)}
-                onMouseLeave={() => setIsSavedHovered(false)}
-                onFocus={() => setIsSavedFocused(true)}
-                onBlur={() => setIsSavedFocused(false)}
-              >
-                Saved
-              </Link>
-            )}
-          </div>
 
             <div style={styles.right}>
               <ThemeToggle />
