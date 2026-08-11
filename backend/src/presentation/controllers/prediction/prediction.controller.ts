@@ -4,6 +4,7 @@ import { getBeachPredictions } from "../../../application/useCases/prediction/ge
 import { resolvePredictionDate } from "../../../domain/shared/today";
 import { getDailyBlackSeaSummary } from "../../../application/useCases/prediction/getDailyBlackSeaSummary";
 import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { isValidId } from "../../../domain/shared/id";
 
 export interface PredictionControllerDependencies {
   predictionRepository: PredictionRepository;
@@ -15,6 +16,15 @@ export function createPredictionController(
 ): { get: RequestHandler; getDailySummary: RequestHandler } {
   return {
     get: async (req, res) => {
+      if (!isValidId(req.params.beachId)) {
+        res.status(400).json({
+          status: "error",
+          code: "invalid_beach_id",
+          message: "beachId must be a non-empty id",
+        });
+        return;
+      }
+
       const rawDate =
         typeof req.query.date === "string" ? req.query.date : undefined;
       const date = resolvePredictionDate(rawDate);

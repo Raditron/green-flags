@@ -11,6 +11,7 @@ import {
   submitReport as submitReportUseCase,
 } from "../../../application/useCases/report/submitReport";
 import { todayInSofia } from "../../../domain/shared/today";
+import { isValidId } from "../../../domain/shared/id";
 import { AuthenticatedRequest } from "../../middleware/requireAuth";
 
 const VALID_FLAG_COLORS: FlagColor[] = ["green", "yellow", "red"];
@@ -30,6 +31,15 @@ export function createReportController(
 ): { submitReport: RequestHandler; getReportStatus: RequestHandler } {
   return {
     submitReport: async (req: AuthenticatedRequest, res) => {
+      if (!isValidId(req.params.beachId)) {
+        res.status(400).json({
+          status: "error",
+          code: "invalid_beach_id",
+          message: "beachId must be a non-empty id",
+        });
+        return;
+      }
+
       if (!isFlagColor(req.body?.flagColor)) {
         res.status(400).json({ status: "error", code: "invalid_flag_color", message: "flagColor must be green, yellow, or red" });
         return;
@@ -74,6 +84,15 @@ export function createReportController(
     },
 
     getReportStatus: async (req: AuthenticatedRequest, res) => {
+      if (!isValidId(req.params.beachId)) {
+        res.status(400).json({
+          status: "error",
+          code: "invalid_beach_id",
+          message: "beachId must be a non-empty id",
+        });
+        return;
+      }
+
       try {
         const alreadyReportedToday = await dependencies.reportRepository.hasReportedToday(
           req.params.beachId,
