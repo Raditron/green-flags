@@ -9,7 +9,6 @@ type BeachListFiltersStyleKey =
   | "searchInput"
   | "flagRow"
   | "areaRow"
-  | "areaSelect"
   | "areaHint";
 
 export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CSSProperties> {
@@ -42,10 +41,10 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
     searchInput: {
       width: "100%",
       padding: "10px 14px 10px 38px",
-      borderRadius: 10,
+      borderRadius: 999,
       border: "1px solid var(--border)",
       background: "var(--surface)",
-      color: "var(--text-h)",
+      color: "var(--text)",
       font: "inherit",
       fontSize: 14,
     },
@@ -60,16 +59,6 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
       alignItems: "center",
       gap: 10,
       flex: "0 0 auto",
-    },
-    areaSelect: {
-      padding: "9px 12px",
-      borderRadius: 10,
-      border: "1px solid var(--border)",
-      background: "var(--surface)",
-      color: "var(--text-h)",
-      font: "inherit",
-      fontSize: 14,
-      cursor: "pointer",
     },
     // Confirms the area was picked for the visitor rather than by them.
     areaHint: neutralHintTextStyle,
