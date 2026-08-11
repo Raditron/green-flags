@@ -17,11 +17,15 @@ export function Layout({ children }: { children: ReactNode }) {
   const [isDashboardFocused, setIsDashboardFocused] = useState(false);
   const [isBeachesHovered, setIsBeachesHovered] = useState(false);
   const [isBeachesFocused, setIsBeachesFocused] = useState(false);
+  const [isSavedHovered, setIsSavedHovered] = useState(false);
+  const [isSavedFocused, setIsSavedFocused] = useState(false);
   const styles = getLayoutStyles({
     isDashboardHovered,
     isDashboardFocused,
     isBeachesHovered,
     isBeachesFocused,
+    isSavedHovered,
+    isSavedFocused,
   });
 
   async function handleResend() {
@@ -70,6 +74,18 @@ export function Layout({ children }: { children: ReactNode }) {
             >
               Beaches
             </Link>
+            {!loading && user && (
+              <Link
+                to="/saved"
+                style={styles.savedLink}
+                onMouseEnter={() => setIsSavedHovered(true)}
+                onMouseLeave={() => setIsSavedHovered(false)}
+                onFocus={() => setIsSavedFocused(true)}
+                onBlur={() => setIsSavedFocused(false)}
+              >
+                Saved
+              </Link>
+            )}
           </div>
 
           <div style={styles.right}>
