@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
-import { useDismissibleMenu } from "./hooks/useDismissibleMenu";
+import { useDismissibleMenu } from "../../../shared/hooks/useDismissibleMenu";
 import { getUserMenuStyles } from "./styles/UserMenu.styles";
 
 export function UserMenu({ email }: { email: string }) {

@@ -26,7 +26,7 @@ function navLinkStyle(isRaised: boolean, isFocused: boolean): CSSProperties {
     fontWeight: 600,
     textDecoration: "none",
     padding: "6px 12px",
-    borderRadius: 6,
+    borderRadius: 999,
     border: `1px solid ${isRaised ? "var(--text-h)" : "transparent"}`,
     outline: isFocused ? "2px solid var(--text-h)" : "2px solid transparent",
     outlineOffset: 2,

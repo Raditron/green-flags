@@ -58,16 +58,6 @@ export function Layout({ children }: { children: ReactNode }) {
                 )}
               </div>
               <Link
-                to="/"
-                style={styles.dashboardLink}
-                onMouseEnter={() => setIsDashboardHovered(true)}
-                onMouseLeave={() => setIsDashboardHovered(false)}
-                onFocus={() => setIsDashboardFocused(true)}
-                onBlur={() => setIsDashboardFocused(false)}
-              >
-                Today
-              </Link>
-              <Link
                 to="/beaches"
                 style={styles.beachesLink}
                 onMouseEnter={() => setIsBeachesHovered(true)}
@@ -89,6 +79,16 @@ export function Layout({ children }: { children: ReactNode }) {
                   Your beaches
                 </Link>
               )}
+              <Link
+                to="/"
+                style={styles.dashboardLink}
+                onMouseEnter={() => setIsDashboardHovered(true)}
+                onMouseLeave={() => setIsDashboardHovered(false)}
+                onFocus={() => setIsDashboardFocused(true)}
+                onBlur={() => setIsDashboardFocused(false)}
+              >
+                Today
+              </Link>
             </div>
 
             <div style={styles.right}>

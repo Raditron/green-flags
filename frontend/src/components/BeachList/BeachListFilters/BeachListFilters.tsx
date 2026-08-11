@@ -1,7 +1,6 @@
 import type { FlagColor } from "../../../shared/types/Beach";
-import { BEACH_AREAS } from "../../../shared/types/Beach";
 import type { BeachListFiltersProps } from "./interfaces/BeachListFilters.interface";
-import type { SelectedArea } from "../hooks/useBeachFilters";
+import { AreaSelect } from "./AreaSelect/AreaSelect";
 import {
   getBeachListFiltersStyles,
   getFlagFilterChipStyle,
@@ -41,19 +40,7 @@ export function BeachListFilters({
       </div>
 
       <div style={styles.areaRow}>
-        <select
-          value={selectedArea}
-          onChange={event => onAreaChange(event.target.value as SelectedArea)}
-          aria-label="Filter by area"
-          style={styles.areaSelect}
-        >
-          <option value="all">All Areas</option>
-          {BEACH_AREAS.map(area => (
-            <option key={area} value={area}>
-              {area}
-            </option>
-          ))}
-        </select>
+        <AreaSelect value={selectedArea} onChange={onAreaChange} />
 
         {isAreaAutoDetected && (
           <span style={styles.areaHint}>
