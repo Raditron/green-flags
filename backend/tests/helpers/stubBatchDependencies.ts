@@ -40,7 +40,9 @@ export function stubBatchDependencies(): {
       },
     },
     userRepository: {
-      findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified }),
+      findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified, savedBeaches: [] }),
+      getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: [] }),
+      update: async (uid, changes) => ({ uid, emailVerified: true, savedBeaches: [], ...changes }),
     },
   };
 }

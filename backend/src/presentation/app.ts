@@ -14,6 +14,7 @@ import { createBatchRouter } from "./routes/batch.route";
 import { createPredictionRouter } from "./routes/prediction.route";
 import { createMeRouter } from "./routes/me.route";
 import { createReportRouter } from "./routes/report.route";
+import { createUserRouter } from "./routes/user.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -50,6 +51,10 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
       dependencies.authTokenVerifier,
       dependencies.userRepository
     )
+  );
+  app.use(
+    "/api",
+    createUserRouter(dependencies.userRepository, dependencies.beachRepository, dependencies.authTokenVerifier)
   );
   app.use(
     "/api",
