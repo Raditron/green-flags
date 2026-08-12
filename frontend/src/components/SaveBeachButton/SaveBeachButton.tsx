@@ -3,6 +3,7 @@ import { FaRegStar, FaStar } from "react-icons/fa6";
 import { useAuth } from "../../auth/AuthContext";
 import { useSavedBeaches } from "../../saved/SavedBeachesContext";
 import { AuthModal } from "../Auth/AuthModal/AuthModal";
+import type { SaveBeachButtonProps } from "./interfaces";
 import { getSaveBeachButtonStyles } from "./styles/SaveBeachButton.styles";
 
 /**
@@ -15,13 +16,7 @@ import { getSaveBeachButtonStyles } from "./styles/SaveBeachButton.styles";
  * of the list card's Report control, for spots where the button sits in a labelled actions row.
  * Omit it for icon-only spots like the detail page title.
  */
-export function SaveBeachButton({
-  beachId,
-  withLabel = false,
-}: {
-  beachId: string;
-  withLabel?: boolean;
-}) {
+export function SaveBeachButton({ beachId, withLabel = false }: SaveBeachButtonProps) {
   const { user } = useAuth();
   const { isSaved, toggleSave } = useSavedBeaches();
   const [isHovered, setIsHovered] = useState(false);
