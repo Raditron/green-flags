@@ -8,12 +8,14 @@ import { PredictionRepository } from "../domain/ports/prediction/predictionRepos
 import { ReportRepository } from "../domain/ports/report/reportRepository";
 import { AuthTokenVerifier } from "../domain/ports/auth/authTokenVerifier";
 import { UserRepository } from "../domain/ports/user/userRepository";
+import { CommentRepository } from "../domain/ports/comment/commentRepository";
 import { createHealthRouter } from "./routes/health/health.route";
 import { createBeachRouter } from "./routes/beach/beach.route";
 import { createBatchRouter } from "./routes/batch/batch.route";
 import { createPredictionRouter } from "./routes/prediction/prediction.route";
 import { createReportRouter } from "./routes/report/report.route";
 import { createUserRouter } from "./routes/user/user.route";
+import { createCommentRouter } from "./routes/comment/comment.route";
 
 export interface AppDependencies {
   healthcheckRepository: HealthcheckRepository;
@@ -25,6 +27,7 @@ export interface AppDependencies {
   batchTriggerSecret: string;
   authTokenVerifier: AuthTokenVerifier;
   userRepository: UserRepository;
+  commentRepository: CommentRepository;
 }
 
 export function createApp(dependencies: AppDependencies, frontendUrl?: string): Express {
@@ -56,6 +59,15 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
       dependencies.userRepository,
       dependencies.beachRepository,
       dependencies.predictionRepository,
+      dependencies.authTokenVerifier
+    )
+  );
+  app.use(
+    "/api",
+    createCommentRouter(
+      dependencies.userRepository,
+      dependencies.beachRepository,
+      dependencies.commentRepository,
       dependencies.authTokenVerifier
     )
   );

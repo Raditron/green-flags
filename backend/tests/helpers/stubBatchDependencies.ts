@@ -4,6 +4,7 @@ import { PredictionRepository } from "../../src/domain/ports/prediction/predicti
 import { ReportRepository } from "../../src/domain/ports/report/reportRepository";
 import { AuthTokenVerifier } from "../../src/domain/ports/auth/authTokenVerifier";
 import { UserRepository } from "../../src/domain/ports/user/userRepository";
+import { CommentRepository } from "../../src/domain/ports/comment/commentRepository";
 
 /** Batch- and auth-related AppDependencies fields, stubbed out for tests (e.g. health/beaches) that don't exercise those routes. */
 export function stubBatchDependencies(): {
@@ -14,6 +15,7 @@ export function stubBatchDependencies(): {
   batchTriggerSecret: string;
   authTokenVerifier: AuthTokenVerifier;
   userRepository: UserRepository;
+  commentRepository: CommentRepository;
 } {
   return {
     forecastProvider: {
@@ -56,6 +58,20 @@ export function stubBatchDependencies(): {
         savedBeaches: [],
         ...changes,
       }),
+    },
+    commentRepository: {
+      addComment: async (comment, beachId, commenterId) => ({
+        id: "stub-comment-id",
+        description: comment.description,
+        createdOn: comment.createdOn,
+        userId: commenterId,
+        beachId,
+      }),
+      listCommentsForBeach: async () => [],
+      deleteComment: async () => {},
+      getCommentById: async () => {
+        throw new Error("not stubbed");
+      },
     },
   };
 }

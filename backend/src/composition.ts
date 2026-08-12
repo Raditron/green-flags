@@ -4,6 +4,7 @@ import { MongoBeachRepository } from "./infrastructure/repositories/mongoBeachRe
 import { MongoPredictionRepository } from "./infrastructure/repositories/mongoPredictionRepository";
 import { MongoReportRepository } from "./infrastructure/repositories/mongoReportRepository";
 import { MongoUserRepository } from "./infrastructure/repositories/mongoUserRepository";
+import { MongoCommentRepository } from "./infrastructure/repositories/mongoCommentRepository";
 import { OpenMeteoForecastClient } from "./infrastructure/openMeteo/openMeteoForecastClient";
 import { MeteoalarmStormWarningClient } from "./infrastructure/meteoalarm/meteoalarmStormWarningClient";
 import { initializeFirebaseAdminApp } from "./infrastructure/firebase/firebaseAdminApp";
@@ -28,6 +29,7 @@ export async function buildDependencies(config: CompositionConfig): Promise<AppD
     predictionRepository: new MongoPredictionRepository(db),
     reportRepository: new MongoReportRepository(db),
     userRepository: new MongoUserRepository(db),
+    commentRepository: new MongoCommentRepository(db),
     forecastProvider: new OpenMeteoForecastClient(),
     stormWarningProvider: new MeteoalarmStormWarningClient(),
     authTokenVerifier: new FirebaseAdminAuthVerifier(firebaseApp),

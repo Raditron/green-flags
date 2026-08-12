@@ -30,3 +30,9 @@ _Avoid_: No area, unfiltered
 The straight-line distance from the visitor's browser location to a beach, shown on that beach's
 card whenever the location is known — independent of the Detected Area's 50 km cutoff.
 _Avoid_: Distance away, proximity
+
+**Comment**:
+A free-text note a signed-in User attaches to a Beach, visible to every visitor (signed in or not)
+on that beach's details page, newest first. Only its author may delete it; there is no edit.
+Distinct from a flag-color report — a Comment carries no water-safety judgment of its own.
+_Avoid_: Review, feedback, post
