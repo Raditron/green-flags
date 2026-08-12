@@ -17,8 +17,10 @@ export function getVerdictStyles({
 }): Record<VerdictStyleKey, CSSProperties> {
   return {
     panel: {
+      position: "relative",
       display: "flex",
-      alignItems: "flex-start",
+      flexDirection: "column",
+      alignItems: "center",
       gap: 12,
       padding: "18px 20px",
       borderRadius: 12,
@@ -30,17 +32,20 @@ export function getVerdictStyles({
       transition: "background 0.2s ease",
     },
     icon: {
-      flexShrink: 0,
+      position: "absolute",
+      top: 18,
+      left: 20,
       width: 22,
       height: 22,
-      marginTop: 3,
       opacity: 0.9,
     },
     textCol: {
       display: "flex",
       flexDirection: "column",
+      alignItems: "center",
       gap: 4,
       minWidth: 0,
+      textAlign: "center",
     },
     headline: {
       fontSize: 20,
