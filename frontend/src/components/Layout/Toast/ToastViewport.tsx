@@ -1,14 +1,8 @@
 import { Toast } from "./Toast";
-import type { ToastMessage } from "./ToastContext";
+import type { ToastViewportProps } from "./interfaces";
 import { getToastViewportStyles } from "./styles/ToastViewport.styles";
 
-export function ToastViewport({
-  toasts,
-  onDismiss,
-}: {
-  toasts: ToastMessage[];
-  onDismiss: (id: number) => void;
-}) {
+export function ToastViewport({ toasts, onDismiss }: ToastViewportProps) {
   const styles = getToastViewportStyles();
 
   if (toasts.length === 0) return null;

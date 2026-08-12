@@ -9,13 +9,8 @@ import { ReportSubmissionError, submitFlagReport } from "./data/submitFlagReport
 import { ReportPrompt } from "./ReportPrompt/ReportPrompt";
 import { SignInPrompt } from "./SignInPrompt/SignInPrompt";
 import type { FlagColor } from "../../../shared/types/Beach";
+import type { ReportFlagButtonProps, SubmissionState } from "./interfaces";
 import { getReportFlagButtonStyles } from "./styles/ReportFlagButton.styles";
-
-type SubmissionState =
-  | { status: "idle" }
-  | { status: "submitting" }
-  | { status: "success"; agreesWithPrediction: boolean }
-  | { status: "error"; message: string };
 
 const ALREADY_REPORTED_CODE = "already_reported";
 
@@ -26,7 +21,7 @@ const ALREADY_REPORTED_CODE = "already_reported";
  * state changes: a sign-in prompt for guests, a color picker for eligible signed-in users, then
  * a confirmation/error message once a submission resolves.
  */
-export function ReportFlagButton({ beachId }: { beachId: string }) {
+export function ReportFlagButton({ beachId }: ReportFlagButtonProps) {
   const { user, loading: authLoading } = useAuth();
   const [eligibility, markReportedToday] = useReportEligibility(beachId, user, authLoading);
   const [authenticating, setAuthenticating] = useState(false);

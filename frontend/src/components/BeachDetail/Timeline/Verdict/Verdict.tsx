@@ -1,13 +1,8 @@
 import { FaFlag } from "react-icons/fa6";
-import type { HourlyPrediction } from "../../interfaces";
 import { getFlagStatusText } from "../../../../shared/styles/flagColor";
 import { conditionsSentence, RIP_CURRENT_CAUTION } from "../conditionsCopy";
+import type { VerdictProps } from "./interfaces";
 import { getVerdictStyles } from "./styles/Verdict.styles";
-
-interface VerdictProps {
-  prediction?: HourlyPrediction;
-  desaturated?: boolean;
-}
 
 // The single-glance answer to "should I go in, and how will it feel" for the selected
 // hour — flag status, a plain-language conditions sentence, and a rip-current caution

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import type { ReactNode } from "react";
 import { resolveTheme } from "./resolveTheme";
 import type { Theme } from "./resolveTheme";
+import type { ThemeContextValue, ThemeProviderProps } from "./interfaces";
 
 // Single source of truth for "has the visitor made an explicit choice" — its
 // absence means "no explicit choice yet, follow system". We only ever store
@@ -17,14 +17,9 @@ function prefersDark(): boolean {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
-interface ThemeContextValue {
-  theme: Theme;
-  toggleTheme(): void;
-}
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => resolveTheme(readStoredTheme(), prefersDark()));
 
   // Stay in sync with OS-level changes for as long as the visitor hasn't

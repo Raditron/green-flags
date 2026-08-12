@@ -19,11 +19,7 @@ type BeachListCardStyleKey =
   | "divider"
   | "actions"
   | "reportButton"
-  | "reportIcon"
-  | "guardedLabel"
-  | "unguardedLabel"
-  | "guardStatusIcon"
-  | "guardStatusTooltip";
+  | "reportIcon";
 
 // Matches the reference design's tall, photo-forward banner instead of a
 // short fixed-height strip.
@@ -33,12 +29,10 @@ export function getBeachListCardStyles({
   isHovered,
   isFocused,
   isReportHovered,
-  isGuardStatusHovered,
 }: {
   isHovered: boolean;
   isFocused: boolean;
   isReportHovered: boolean;
-  isGuardStatusHovered: boolean;
 }): Record<BeachListCardStyleKey, CSSProperties> {
   const isRaised = isHovered || isFocused;
 
@@ -168,56 +162,6 @@ export function getBeachListCardStyles({
     reportIcon: {
       width: 14,
       height: 14,
-    },
-    guardedLabel: {
-      position: "relative",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-      border: "1px solid color-mix(in srgb, var(--flag-green) 50%, transparent)",
-      borderRadius: 999,
-      background: "color-mix(in srgb, var(--flag-green) 14%, transparent)",
-      color: "var(--flag-green)",
-      cursor: "help",
-      padding: 5,
-    },
-    unguardedLabel: {
-      position: "relative",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-      border: "1px solid color-mix(in srgb, var(--flag-red) 50%, transparent)",
-      borderRadius: 999,
-      background: "color-mix(in srgb, var(--flag-red) 14%, transparent)",
-      color: "var(--flag-red)",
-      cursor: "help",
-      padding: 5,
-    },
-    guardStatusIcon: {
-      width: 12,
-      height: 12,
-    },
-    guardStatusTooltip: {
-      position: "absolute",
-      top: "calc(100% + 6px)",
-      left: 0,
-      zIndex: 1,
-      width: 200,
-      padding: "8px 10px",
-      borderRadius: 6,
-      background: "var(--text-h)",
-      color: "var(--surface)",
-      fontSize: 12,
-      fontWeight: 500,
-      lineHeight: 1.35,
-      opacity: isGuardStatusHovered ? 1 : 0,
-      pointerEvents: "none",
-      transform: isGuardStatusHovered ? "translateY(0)" : "translateY(-2px)",
-      transition: "opacity 0.12s ease, transform 0.12s ease",
-      visibility: isGuardStatusHovered ? "visible" : "hidden",
-      whiteSpace: "normal",
     },
   };
 }

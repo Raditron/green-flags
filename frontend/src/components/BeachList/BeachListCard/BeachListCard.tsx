@@ -1,4 +1,4 @@
-import { useId, useState, type FocusEvent } from "react";
+import { useState, type FocusEvent } from "react";
 import { Link } from "react-router-dom";
 import type { BeachListCardProps } from "./interfaces/BeachListCard.interface";
 import {
@@ -10,6 +10,7 @@ import { getFlagStatusText } from "../../../shared/styles/flagColor";
 import { getBeachImage } from "../../../shared/data/images";
 import { formatDistanceKm } from "../../../shared/data/utils/geo";
 import { SaveBeachButton } from "../../SaveBeachButton/SaveBeachButton";
+import { GuardStatusBadge } from "./GuardStatusBadge/GuardStatusBadge";
 import {
   FaFlag,
   FaLifeRing,
@@ -21,13 +22,10 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isReportHovered, setIsReportHovered] = useState(false);
-  const [isGuardStatusHovered, setIsGuardStatusHovered] = useState(false);
-  const guardStatusTooltipId = useId();
   const styles = getBeachListCardStyles({
     isHovered,
     isFocused,
     isReportHovered,
-    isGuardStatusHovered,
   });
   const listStyles = getBeachListStyles();
   const flagStatusText = getFlagStatusText(beach.currentFlagColor);
@@ -92,30 +90,16 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
           <div style={styles.content}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={styles.name}>{beach.name}</span>
-              <span
-                aria-describedby={guardStatusTooltipId}
-                aria-label={isUnguarded ? "Unguarded beach" : "Guarded beach"}
-                style={
-                  isUnguarded ? styles.unguardedLabel : styles.guardedLabel
-                }
-                onMouseEnter={() => setIsGuardStatusHovered(true)}
-                onMouseLeave={() => setIsGuardStatusHovered(false)}
-              >
-                <GuardStatusIcon
-                  aria-hidden="true"
-                  style={styles.guardStatusIcon}
-                />
-                <span
-                  aria-hidden={!isGuardStatusHovered}
-                  id={guardStatusTooltipId}
-                  role="tooltip"
-                  style={styles.guardStatusTooltip}
-                >
-                  {isUnguarded
+              <GuardStatusBadge
+                icon={GuardStatusIcon}
+                variant={isUnguarded ? "unguarded" : "guarded"}
+                ariaLabel={isUnguarded ? "Unguarded beach" : "Guarded beach"}
+                tooltipText={
+                  isUnguarded
                     ? "This beach is unguarded. Swim with extra caution."
-                    : "This beach is guarded by lifeguards."}
-                </span>
-              </span>
+                    : "This beach is guarded by lifeguards."
+                }
+              />
             </div>
             <div style={styles.statusRow}>
               {flagStatusText ? (

@@ -1,11 +1,5 @@
+import type { DistributionBarProps } from "./interfaces";
 import { getDistributionBarStyles } from "./styles/DistributionBar.styles";
-import type { DistributionBarPreset } from "./distributionPresets";
-
-interface DistributionBarProps<K extends string> extends DistributionBarPreset<K> {
-  label: string;
-  distribution: Record<K, number>;
-  compact?: boolean;
-}
 
 // One horizontal, three-segment stacked bar — no chart library, just a `div` per key sized to
 // that key's percent. Shared by SeaSummaryCard and AreaCard for all three distributions (flag

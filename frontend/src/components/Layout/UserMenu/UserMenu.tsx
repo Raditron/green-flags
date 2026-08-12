@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useDismissibleMenu } from "../../../shared/hooks/useDismissibleMenu";
+import type { UserMenuProps } from "./interfaces";
 import { getUserMenuStyles } from "./styles/UserMenu.styles";
 
-export function UserMenu({ email }: { email: string }) {
+export function UserMenu({ email }: UserMenuProps) {
   const { logOut } = useAuth();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);

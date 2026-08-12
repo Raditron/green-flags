@@ -1,20 +1,12 @@
 import { useState } from "react";
-import type { HourlyPrediction } from "../interfaces";
 import { HourDetail } from "./HourDetail/HourDetail";
 import { SeaConditions } from "./SeaConditions/SeaConditions";
 import { TimePicker } from "./TimePicker/TimePicker";
 import { UnguardedNotice } from "./UnguardedNotice/UnguardedNotice";
 import { Verdict } from "./Verdict/Verdict";
 import { useLiveClock } from "./hooks/useLiveClock";
+import type { TimelineProps } from "./interfaces";
 import { getTimelineStyles } from "./styles/Timeline.styles";
-
-interface TimelineProps {
-  hourlyPredictions: HourlyPrediction[];
-  desaturated?: boolean;
-  currentHour?: number | null;
-  updatedAt?: string;
-  isUnguarded?: boolean;
-}
 
 export function Timeline({
   hourlyPredictions,

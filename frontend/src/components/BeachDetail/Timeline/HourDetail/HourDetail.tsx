@@ -1,9 +1,6 @@
-import type { Confidence, HourlyPrediction } from "../../interfaces";
+import type { Confidence } from "../../interfaces";
+import type { HourDetailProps } from "./interfaces";
 import { getHourDetailStyles } from "./styles/HourDetail.styles";
-
-interface HourDetailProps {
-  prediction: HourlyPrediction;
-}
 
 const RADIUS = 36;
 const STROKE_WIDTH = 8;
