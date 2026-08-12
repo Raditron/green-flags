@@ -94,6 +94,7 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "green",
       });
 
       const stored = await db.collection("reports").findOne({ beachId: BEACH_ID, userId: "u1" });
@@ -104,6 +105,7 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "green",
       });
     });
 
@@ -115,6 +117,7 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "green" as const,
       };
       await repository.recordReport(report);
 
@@ -131,6 +134,7 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "green" as const,
       };
       await repository.recordReport(report);
 
@@ -138,12 +142,12 @@ describe("MongoReportRepository", () => {
     });
   });
 
-  describe("hasReportedToday", () => {
-    it("returns false when this user hasn't reported this beach on this date", async () => {
-      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-05")).toBe(false);
+  describe("getTodaysReport", () => {
+    it("returns null when this user hasn't reported this beach on this date", async () => {
+      expect(await repository.getTodaysReport(BEACH_ID, "u1", "2026-08-05")).toBeNull();
     });
 
-    it("returns true once this user has reported this beach on this date", async () => {
+    it("returns the report once this user has reported this beach on this date", async () => {
       await repository.recordReport({
         beachId: BEACH_ID,
         userId: "u1",
@@ -151,9 +155,16 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "yellow",
       });
 
-      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-05")).toBe(true);
+      expect(await repository.getTodaysReport(BEACH_ID, "u1", "2026-08-05")).toEqual({
+        beachId: BEACH_ID,
+        userId: "u1",
+        date: "2026-08-05",
+        flagColor: "yellow",
+        agreesWithPrediction: true,
+      });
     });
 
     it("ignores reports from other users or other dates", async () => {
@@ -164,10 +175,11 @@ describe("MongoReportRepository", () => {
         hour: 12,
         bucketKey: BUCKET_KEY,
         agreesWithPrediction: true,
+        flagColor: "green",
       });
 
-      expect(await repository.hasReportedToday(BEACH_ID, "u2", "2026-08-05")).toBe(false);
-      expect(await repository.hasReportedToday(BEACH_ID, "u1", "2026-08-06")).toBe(false);
+      expect(await repository.getTodaysReport(BEACH_ID, "u2", "2026-08-05")).toBeNull();
+      expect(await repository.getTodaysReport(BEACH_ID, "u1", "2026-08-06")).toBeNull();
     });
   });
 });

@@ -1,5 +1,6 @@
 import { Collection, Db, MongoServerError } from "mongodb";
-import { DuplicateReportError, ReportInput, ReportRepository } from "../../domain/ports/report/reportRepository";
+import { DuplicateReportError, ReportInput, ReportRecord, ReportRepository } from "../../domain/ports/report/reportRepository";
+import { FlagColor } from "../../domain/rules/evaluateHourlyFlag";
 
 const DUPLICATE_KEY_ERROR_CODE = 11000;
 
@@ -11,6 +12,7 @@ interface ReportDocument {
   hour: number;
   bucketKey: string;
   agreesWithPrediction: boolean;
+  flagColor: FlagColor;
   userId: string;
   createdAt: Date;
 }
@@ -45,9 +47,18 @@ export class MongoReportRepository implements ReportRepository {
     return { agree, total };
   }
 
-  async hasReportedToday(beachId: string, userId: string, date: string): Promise<boolean> {
+  async getTodaysReport(beachId: string, userId: string, date: string): Promise<ReportRecord | null> {
     const doc = await this.collection.findOne({ _id: documentId(beachId, userId, date) });
-    return doc !== null;
+    if (!doc) {
+      return null;
+    }
+    return {
+      beachId: doc.beachId,
+      userId: doc.userId,
+      date: doc.date,
+      flagColor: doc.flagColor,
+      agreesWithPrediction: doc.agreesWithPrediction,
+    };
   }
 
   async recordReport(report: ReportInput): Promise<void> {
@@ -60,6 +71,7 @@ export class MongoReportRepository implements ReportRepository {
         hour: report.hour,
         bucketKey: report.bucketKey,
         agreesWithPrediction: report.agreesWithPrediction,
+        flagColor: report.flagColor,
         createdAt: new Date(),
       });
     } catch (error) {

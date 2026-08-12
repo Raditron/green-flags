@@ -252,7 +252,7 @@ describe("feedback submission (POST /api/beaches/:beachId/reports, GET /api/beac
       expect(response.body).toEqual({ alreadyReportedToday: false });
     });
 
-    it("reports alreadyReportedToday: true after a successful submission", async () => {
+    it("reports alreadyReportedToday: true and the reported flagColor after a successful submission", async () => {
       await db.collection("predictions").insertOne(GREEN_PREDICTION_DOC);
       const app = buildApp();
       await request(app).post(`/api/beaches/${BEACH_ID}/reports`).set("Authorization", "Bearer verified-token").send({ flagColor: "green" });
@@ -262,7 +262,7 @@ describe("feedback submission (POST /api/beaches/:beachId/reports, GET /api/beac
         .set("Authorization", "Bearer verified-token");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({ alreadyReportedToday: true });
+      expect(response.body).toEqual({ alreadyReportedToday: true, flagColor: "green", agreesWithPrediction: true });
     });
 
     it("does not require email verification, so an ineligible reason can still be surfaced", async () => {

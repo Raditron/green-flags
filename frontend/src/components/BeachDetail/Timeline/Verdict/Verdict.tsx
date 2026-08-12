@@ -7,8 +7,10 @@ import { getVerdictStyles } from "./styles/Verdict.styles";
 // The single-glance answer to "should I go in, and how will it feel" for the selected
 // hour — flag status, a plain-language conditions sentence, and a rip-current caution
 // when it's actually warranted. Everything else in Timeline (time picker, confidence
-// ring, itemized wind/sea rows) is supporting detail for someone who wants to know why,
-// not the first thing they read.
+// ring, itemized wind/sea rows, the "report the flag" picker) is supporting detail for
+// someone who wants to know why, not the first thing they read — see ReportFlagPanel,
+// which Timeline renders as its own card below this one rather than inset in here, so
+// this panel stays just the flag-color verdict.
 export function Verdict({ prediction, desaturated = false }: VerdictProps) {
   if (!prediction) return null;
 

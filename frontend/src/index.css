@@ -13,6 +13,10 @@
   --flag-yellow: #ca8a04;
   --flag-red: #dc2626;
   --error: #b91c1c;
+  /* Vivid accent blue, deliberately distinct from the muted chathamsBlue/downriver text
+     colors above — for informational notices (e.g. ReportedTodayNotice) that need to read
+     as their own accent rather than blend into the page's existing blue palette. */
+  --info: #2563eb;
   /* nepal, for the fallback icon chip */
   --icon-chip: #8da9c4;
   /* downriver, for contrast against the icon chip */
@@ -52,6 +56,8 @@
     --icon-chip: #134074;
     /* nepal, for a light icon against the dark chip */
     --icon-chip-fg: #8da9c4;
+    /* Lighter than the light-mode value for contrast against the dark surface. */
+    --info: #60a5fa;
   }
 }
 
@@ -81,6 +87,8 @@
   --icon-chip: #134074;
   /* nepal, for a light icon against the dark chip */
   --icon-chip-fg: #8da9c4;
+  /* Lighter than the light-mode value for contrast against the dark surface. */
+  --info: #60a5fa;
   color-scheme: dark;
 }
 
@@ -102,7 +110,8 @@ h2 {
    set via inline styles on the input itself (::placeholder can't be reached
    that way). Match it to the same var(--text) the inputs already use for
    typed text, so the placeholder doesn't stand out as a different shade. */
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--text);
   opacity: 1;
 }

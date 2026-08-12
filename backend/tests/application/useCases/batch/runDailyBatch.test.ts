@@ -32,7 +32,7 @@ function buildFakeReportRepository(overrides: Partial<ReportRepository> = {}): R
   return {
     getBucketStats: async () => ({ hits: 0, total: 0 }),
     getTodaysReports: async () => ({ agree: 0, total: 0 }),
-    hasReportedToday: async () => false,
+    getTodaysReport: async () => null,
     recordReport: async () => {},
     ...overrides,
   };

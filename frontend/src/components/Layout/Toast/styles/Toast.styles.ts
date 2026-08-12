@@ -11,9 +11,10 @@ export function getToastStyles(): Record<"toast" | "content" | "close", CSSPrope
       gap: 10,
       minWidth: 240,
       // Widened from the original 360 to comfortably fit three flag-icon+label option buttons
-      // side by side without wrapping.
-      maxWidth: 420,
-      padding: "10px 12px",
+      // side by side without wrapping — bumped again (460, 520, then 600) as those buttons
+      // grew larger with more breathing room between them.
+      maxWidth: 600,
+      padding: "12px 14px",
       borderRadius: 8,
       background: "var(--surface)",
       border: "1px solid var(--border)",

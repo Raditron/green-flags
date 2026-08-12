@@ -38,8 +38,8 @@ function commentCountLabel(count: number): string {
  * Comments render inline under the beach detail page (YouTube-style) rather than behind a
  * modal — per issue #70, reads are always open to any visitor, so there's nothing to gate
  * behind an open/close toggle. Posting/deleting still funnels a signed-out visitor through the
- * existing AuthModal first, same as SaveBeachButton/ReportFlagButton. All failures surface via
- * the global Toast system rather than inline in the section.
+ * existing AuthModal first, same as SaveBeachButton and Timeline's report-the-flag feature.
+ * All failures surface via the global Toast system rather than inline in the section.
  */
 export function CommentSection({ beachId }: CommentSectionProps) {
   const { user } = useAuth();
@@ -55,8 +55,7 @@ export function CommentSection({ beachId }: CommentSectionProps) {
   const reportedErrorRef = useRef<string | null>(null);
 
   // Surfaces a comment-list fetch failure once per distinct error via the global toast, since
-  // the section is always on screen (no modal to hide it behind) — matches ReportFlagButton's
-  // toast-only errors.
+  // the section is always on screen (no modal to hide it behind).
   useEffect(() => {
     if (error && reportedErrorRef.current !== error) {
       reportedErrorRef.current = error;

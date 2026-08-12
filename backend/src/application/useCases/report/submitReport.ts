@@ -77,6 +77,7 @@ export async function submitReport(
     hour,
     bucketKey,
     agreesWithPrediction,
+    flagColor: input.flagColor,
   });
 
   const confidence = await computeHourConfidence(reportRepository, {

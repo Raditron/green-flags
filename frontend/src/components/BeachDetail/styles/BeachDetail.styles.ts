@@ -33,14 +33,11 @@ export function getBeachDetailStyles({
   backHovered: boolean;
 }): Record<BeachDetailStyleKey, CSSProperties> {
   return {
-    // Back arrow sits in its own column to the left of everything else, so title,
-    // hero image and description all share one left edge (the main column's) instead
-    // of the arrow's — only the arrow overhangs further left.
+    // No side padding/columns of its own — title, hero image, badges and description
+    // all share the page's own left/right edges, so the content reads with equal
+    // padding on both sides (the back arrow lives inline in titleRow instead of a
+    // dedicated left-hand column that would push everything else off-center).
     page: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
       width: "100%",
       maxWidth: 900,
       margin: "0 auto",
@@ -48,8 +45,6 @@ export function getBeachDetailStyles({
     main: {
       display: "flex",
       flexDirection: "column",
-      flex: "1 1 auto",
-      minWidth: 0,
     },
     title: {
       margin: 0,
@@ -58,22 +53,21 @@ export function getBeachDetailStyles({
       letterSpacing: "-0.01em",
       color: "var(--text-h)",
     },
-    // Star sits directly beside the name (flex-start, not spread to the row's far edge)
-    // rather than in the actions row further down like the list card — same icon-only
-    // button as the list card, just placed next to the title per #25.
+    // Back arrow, name and star all share one row, flush with the same left/right
+    // edges as the hero image/badges below — star sits directly beside the name
+    // (flex-start, not spread to the row's far edge) rather than in the actions row
+    // further down like the list card, same icon-only button as the list card.
     titleRow: {
       display: "flex",
       alignItems: "center",
-      gap: 4,
-      margin: "0 0 16px",
+      gap: 8,
+      margin: "0 0 10px",
     },
     // Icon-only control (no visible "Back to beaches" label — that lives in aria-label
     // instead); hover swaps in a subtle circular background rather than an underline.
-    // A small top offset optically centers the 36px circle against the title's cap-height.
     backContainer: {
       display: "flex",
       flexShrink: 0,
-      marginTop: 4,
     },
     back: {
       display: "flex",

@@ -62,7 +62,12 @@ function MockDetailSection({ withImage, quirkNotes }: { withImage: boolean; quir
 
             <div style={styles.badges}>
               <p style={styles.meta}>Predictions for 2026-08-07</p>
-              <Timeline hourlyPredictions={mockPredictions} currentHour={10} updatedAt={new Date().toISOString()} />
+              <Timeline
+                hourlyPredictions={mockPredictions}
+                currentHour={10}
+                updatedAt={new Date().toISOString()}
+                beachId="preview-beach"
+              />
             </div>
           </div>
 

@@ -94,12 +94,20 @@ export function createReportController(
       }
 
       try {
-        const alreadyReportedToday = await dependencies.reportRepository.hasReportedToday(
+        const report = await dependencies.reportRepository.getTodaysReport(
           req.params.beachId,
           req.user!.uid,
           todayInSofia(new Date())
         );
-        res.status(200).json({ alreadyReportedToday });
+        if (!report) {
+          res.status(200).json({ alreadyReportedToday: false });
+          return;
+        }
+        // Destructured off `report` (a ReportRecord) rather than spread, so beachId/userId/date
+        // stay server-side and only the ReportedFlag pair — flagColor/agreesWithPrediction — goes
+        // out over the wire.
+        const { flagColor, agreesWithPrediction } = report;
+        res.status(200).json({ alreadyReportedToday: true, flagColor, agreesWithPrediction });
       } catch (error) {
         res.status(503).json({ status: "error", message: "Database unavailable" });
       }

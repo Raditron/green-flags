@@ -1,5 +1,9 @@
 import { useState } from "react";
+import { AuthModal } from "../../Auth/AuthModal/AuthModal";
+import { ReportFlagPanel } from "../ReportFlag/ReportFlagPanel/ReportFlagPanel";
+import { useReportFlag } from "../ReportFlag/hooks/useReportFlag";
 import { HourDetail } from "./HourDetail/HourDetail";
+import { ReportedTodayNotice } from "./ReportedTodayNotice/ReportedTodayNotice";
 import { SeaConditions } from "./SeaConditions/SeaConditions";
 import { TimePicker } from "./TimePicker/TimePicker";
 import { UnguardedNotice } from "./UnguardedNotice/UnguardedNotice";
@@ -13,7 +17,8 @@ export function Timeline({
   desaturated = false,
   currentHour = null,
   updatedAt,
-  isUnguarded = false,
+  isUnguarded,
+  beachId,
 }: TimelineProps) {
   // null = still tracking "now" as the live clock ticks; the moment the visitor manually
   // picks an hour from the popup, this locks in and stops following the clock.
@@ -35,9 +40,26 @@ export function Timeline({
     timeHovered,
   });
 
+  // Checked against `=== false` rather than negated directly: while isUnguarded is still
+  // unknown (undefined, before useBeach resolves it) this fails closed and keeps the report
+  // flow off screen instead of flashing it on for what turns out to be an unguarded beach —
+  // the same reasoning the old standalone ReportFlagButton applied itself.
+  const reportFlag = useReportFlag(beachId, isUnguarded === false);
   return (
     <>
       <Verdict prediction={selectedPrediction} desaturated={desaturated} />
+      {/* Its own card below Verdict rather than inset inside it — see ReportFlagPanel. */}
+      {reportFlag.canInvite && (
+        <ReportFlagPanel
+          submitting={reportFlag.submission.status === "submitting"}
+          error={reportFlag.submission.status === "error" ? reportFlag.submission.message : undefined}
+          onPick={reportFlag.onPick}
+        />
+      )}
+
+      {reportFlag.showReportedToday && reportFlag.eligibility.status === "already-reported" && (
+        <ReportedTodayNotice reported={reportFlag.eligibility.reported} />
+      )}
 
       {isUnguarded && <UnguardedNotice />}
 
@@ -88,6 +110,10 @@ export function Timeline({
           }}
           onClose={() => setPickerOpen(false)}
         />
+      )}
+
+      {reportFlag.authenticating && (
+        <AuthModal onClose={reportFlag.onAuthClose} onAuthenticated={reportFlag.onAuthenticated} />
       )}
     </>
   );

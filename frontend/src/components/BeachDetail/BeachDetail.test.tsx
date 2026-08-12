@@ -18,13 +18,10 @@ vi.mock("./hooks/usePredictions", () => ({
   usePredictions: () => ({ status: "loading" }) as const,
 }));
 vi.mock("../Layout/Toast/ToastContext", () => ({
-  useToast: () => ({ show: vi.fn() }),
+  useToast: () => ({ show: vi.fn(), dismiss: vi.fn() }),
 }));
 vi.mock("../SaveBeachButton/SaveBeachButton", () => ({
   SaveBeachButton: () => null,
-}));
-vi.mock("./ReportFlagButton/ReportFlagButton", () => ({
-  ReportFlagButton: () => null,
 }));
 vi.mock("./CommentSection/CommentSection", () => ({
   CommentSection: () => null,

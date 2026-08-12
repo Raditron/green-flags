@@ -6,7 +6,6 @@ import { useBeach } from "./hooks/useBeach";
 import { currentSofiaHour, isOutsideLegalWindow } from "./utils/legalWindow";
 import { useToast } from "../Layout/Toast/ToastContext";
 import { Timeline } from "./Timeline/Timeline";
-import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
 import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
 import { CommentSection } from "./CommentSection/CommentSection";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
@@ -47,7 +46,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   const currentHour = outsideLegalWindow ? null : currentSofiaHour();
   const [backHovered, setBackHovered] = useState(false);
   const styles = getBeachDetailStyles({ backHovered });
-  const { show: showToast } = useToast();
+  const { show: showToast, dismiss: dismissToast } = useToast();
   // Curated beach photo takes priority over the seeded map-pin image (see
   // ADR 0001) — it's the more informative hero image — falling back to the
   // pin, then the generic icon, if a beach has neither.
@@ -57,9 +56,14 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   // Fires on every beach detail page load (including switching straight from one
   // beach to another, since BeachDetailView remounts on beachId — see the key={beachId}
   // note on BeachDetail above) rather than once per session.
+  //
+  // Cleanup dismisses the toast it showed: without this, StrictMode's dev-only
+  // mount→cleanup→mount double-invoke leaves the first mount's toast on screen
+  // and the second mount adds another, showing the disclaimer twice.
   useEffect(() => {
-    showToast(DISCLAIMER_MESSAGE);
-  }, [beachId, showToast]);
+    const id = showToast(DISCLAIMER_MESSAGE);
+    return () => dismissToast(id);
+  }, [beachId, showToast, dismissToast]);
 
   // Client-side navigation doesn't get the browser's free anchor-scroll (that only fires on a
   // real document load), so a #comments link from the beach list card has to be honored by hand.
@@ -70,22 +74,35 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   return (
     <section aria-label="Beach detail">
       <div style={styles.page}>
-        <div style={styles.backContainer}>
-          <Link
-            to="/beaches"
-            style={styles.back}
-            aria-label="Back to beaches"
-            onMouseEnter={() => setBackHovered(true)}
-            onMouseLeave={() => setBackHovered(false)}
-          >
-            <FaArrowLeft style={styles.backIcon} />
-          </Link>
-        </div>
-
         <div style={styles.main}>
           <div style={styles.titleRow}>
-            <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
-            <SaveBeachButton beachId={beachId} />
+            <div style={styles.backContainer}>
+              <Link
+                to="/beaches"
+                style={styles.back}
+                aria-label="Back to beaches"
+                onMouseEnter={() => setBackHovered(true)}
+                onMouseLeave={() => setBackHovered(false)}
+              >
+                <FaArrowLeft style={styles.backIcon} />
+              </Link>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flex: 1,
+                justifyContent: "space-between",
+                // The title's line box runs taller than the button (inherited
+                // body line-height on a 2rem heading), so a stretch/center
+                // alignment leaves slack below the button before it even hits
+                // titleRow's margin. Pinning to flex-start removes that slack
+                // so the only gap left is the intentional margin below.
+                alignItems: "flex-start",
+              }}
+            >
+              <h2 style={styles.title}>{beachName ?? "Beach"}</h2>
+              <SaveBeachButton beachId={beachId} />
+            </div>
           </div>
 
           <div style={styles.heroRow}>
@@ -119,6 +136,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
                     currentHour={currentHour}
                     updatedAt={predictions.updatedAt}
                     isUnguarded={isUnguarded}
+                    beachId={beachId}
                   />
                   <p style={styles.meta}>
                     Predictions for {predictions.data.date}
@@ -132,11 +150,6 @@ function BeachDetailView({ beachId }: { beachId: string }) {
           </div>
 
           {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
-
-          {/* Gated on isUnguarded === false rather than !isUnguarded: while it's still
-              unknown (undefined, before useBeach resolves it) this fails closed and keeps
-              the report flow off screen instead of flashing it for an unguarded beach. */}
-          {isUnguarded === false && <ReportFlagButton beachId={beachId} />}
 
           {predictions.status === "loading" && <p>Loading predictions…</p>}
 

@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { FaFlag } from "react-icons/fa6";
 import type { FlagColor } from "../../../../shared/types/Beach";
 import {
   getReportPromptStyles,
   getFlagOptionStyle,
+  getFlagOptionSwatchStyle,
   getFlagOptionIconStyle,
 } from "./styles/ReportPrompt.styles";
 
@@ -20,20 +22,30 @@ export function ReportPrompt({
   onPick: (flagColor: FlagColor) => void;
 }) {
   const styles = getReportPromptStyles();
+  const [hovered, setHovered] = useState<FlagColor | null>(null);
+  const iconStyle = getFlagOptionIconStyle();
 
   return (
     <div>
-      <p style={styles.prompt}>What color is the flag right now?</p>
+      <p style={styles.prompt}>Think this flag is wrong? Vote below.</p>
       <div style={styles.options}>
         {OPTIONS.map(({ flagColor, label }) => (
           <button
             key={flagColor}
             type="button"
-            style={getFlagOptionStyle(submitting)}
+            style={getFlagOptionStyle(
+              flagColor,
+              hovered === flagColor,
+              submitting,
+            )}
             disabled={submitting}
             onClick={() => onPick(flagColor)}
+            onMouseEnter={() => setHovered(flagColor)}
+            onMouseLeave={() => setHovered(null)}
           >
-            <FaFlag style={getFlagOptionIconStyle(flagColor)} />
+            <span style={getFlagOptionSwatchStyle(flagColor)}>
+              <FaFlag style={iconStyle} />
+            </span>
             {label}
           </button>
         ))}

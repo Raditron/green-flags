@@ -33,7 +33,9 @@ export function getSaveBeachButtonStyles({
           fontWeight: 600,
           fontFamily: "inherit",
           color: active ? "var(--flag-yellow)" : "var(--text)",
-          background: active ? "color-mix(in srgb, var(--flag-yellow) 14%, transparent)" : "transparent",
+          background: active
+            ? "color-mix(in srgb, var(--flag-yellow) 14%, transparent)"
+            : "transparent",
           cursor: "pointer",
           transition: "background 0.12s ease, color 0.12s ease",
         }
@@ -45,8 +47,10 @@ export function getSaveBeachButtonStyles({
           width: 40,
           height: 40,
           border: "none",
-          borderRadius: 8,
-          background: active ? "color-mix(in srgb, var(--flag-yellow) 16%, transparent)" : "transparent",
+          borderRadius: "50%",
+          background: active
+            ? "color-mix(in srgb, var(--flag-yellow) 16%, transparent)"
+            : "transparent",
           cursor: "pointer",
           transition: "background 0.12s ease, color 0.12s ease",
         },
