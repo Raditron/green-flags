@@ -1,6 +1,9 @@
 export interface DecodedAuthToken {
   uid: string;
   emailVerified: boolean;
+  /** Optional because a token isn't guaranteed to carry either claim (e.g. a stale/unrefreshed token). */
+  email?: string;
+  displayName?: string;
 }
 
 /**

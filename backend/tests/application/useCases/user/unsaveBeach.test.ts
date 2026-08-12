@@ -7,9 +7,22 @@ const BEACH_ID = "kranevo-sunny-day";
 
 function buildFakeUserRepository(overrides: Partial<UserRepository> = {}): UserRepository {
   return {
-    findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified, savedBeaches: [] }),
-    getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: [] }),
-    update: async (uid, changes) => ({ uid, emailVerified: true, savedBeaches: [], ...changes }),
+    findOrCreate: async (uid, claims) => ({
+      uid,
+      emailVerified: claims.emailVerified,
+      email: claims.email ?? "",
+      displayName: claims.displayName ?? "",
+      savedBeaches: [],
+    }),
+    getUserById: async (uid) => ({ uid, emailVerified: true, email: "", displayName: "", savedBeaches: [] }),
+    update: async (uid, changes) => ({
+      uid,
+      emailVerified: true,
+      email: "",
+      displayName: "",
+      savedBeaches: [],
+      ...changes,
+    }),
     ...overrides,
   };
 }
@@ -19,10 +32,16 @@ describe("unsaveBeach", () => {
     const updates: Array<Partial<Omit<UserRecord, "uid">>> = [];
     await unsaveBeach(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["other-beach", BEACH_ID] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["other-beach", BEACH_ID],
+        }),
         update: async (uid, changes) => {
           updates.push(changes);
-          return { uid, emailVerified: true, savedBeaches: [], ...changes };
+          return { uid, emailVerified: true, email: "", displayName: "", savedBeaches: [], ...changes };
         },
       }),
       UID,
@@ -36,10 +55,16 @@ describe("unsaveBeach", () => {
     const updates: Array<Partial<Omit<UserRecord, "uid">>> = [];
     await unsaveBeach(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["other-beach"] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["other-beach"],
+        }),
         update: async (uid, changes) => {
           updates.push(changes);
-          return { uid, emailVerified: true, savedBeaches: [], ...changes };
+          return { uid, emailVerified: true, email: "", displayName: "", savedBeaches: [], ...changes };
         },
       }),
       UID,
@@ -53,10 +78,10 @@ describe("unsaveBeach", () => {
     const updates: Array<Partial<Omit<UserRecord, "uid">>> = [];
     await unsaveBeach(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: [] }),
+        getUserById: async (uid) => ({ uid, emailVerified: true, email: "", displayName: "", savedBeaches: [] }),
         update: async (uid, changes) => {
           updates.push(changes);
-          return { uid, emailVerified: true, savedBeaches: [], ...changes };
+          return { uid, emailVerified: true, email: "", displayName: "", savedBeaches: [], ...changes };
         },
       }),
       UID,

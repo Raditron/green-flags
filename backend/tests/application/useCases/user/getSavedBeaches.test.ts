@@ -32,9 +32,22 @@ const BEACH_B: Beach = {
 
 function buildFakeUserRepository(overrides: Partial<UserRepository> = {}): UserRepository {
   return {
-    findOrCreate: async (uid, emailVerified) => ({ uid, emailVerified, savedBeaches: [] }),
-    getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: [] }),
-    update: async (uid, changes) => ({ uid, emailVerified: true, savedBeaches: [], ...changes }),
+    findOrCreate: async (uid, claims) => ({
+      uid,
+      emailVerified: claims.emailVerified,
+      email: claims.email ?? "",
+      displayName: claims.displayName ?? "",
+      savedBeaches: [],
+    }),
+    getUserById: async (uid) => ({ uid, emailVerified: true, email: "", displayName: "", savedBeaches: [] }),
+    update: async (uid, changes) => ({
+      uid,
+      emailVerified: true,
+      email: "",
+      displayName: "",
+      savedBeaches: [],
+      ...changes,
+    }),
     ...overrides,
   };
 }
@@ -85,7 +98,13 @@ describe("getSavedBeaches", () => {
   it("resolves the user's saved beach ids to enriched beach summaries, in order", async () => {
     const beaches = await getSavedBeaches(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["beach-b", "beach-a"] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["beach-b", "beach-a"],
+        }),
       }),
       buildFakeBeachRepository(),
       buildFakePredictionRepository(),
@@ -111,7 +130,13 @@ describe("getSavedBeaches", () => {
   it("silently drops saved ids that no longer resolve to a beach", async () => {
     const beaches = await getSavedBeaches(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["beach-a", "deleted-beach"] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["beach-a", "deleted-beach"],
+        }),
       }),
       buildFakeBeachRepository(),
       buildFakePredictionRepository(),
@@ -125,7 +150,13 @@ describe("getSavedBeaches", () => {
   it("enriches each saved beach with today's current-hour flag color and confidence, like listBeaches does", async () => {
     const beaches = await getSavedBeaches(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["beach-a"] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["beach-a"],
+        }),
       }),
       buildFakeBeachRepository(),
       buildFakePredictionRepository({
@@ -143,7 +174,13 @@ describe("getSavedBeaches", () => {
   it("leaves currentFlagColor and currentConfidencePercent undefined when today's batch hasn't run yet", async () => {
     const beaches = await getSavedBeaches(
       buildFakeUserRepository({
-        getUserById: async (uid) => ({ uid, emailVerified: true, savedBeaches: ["beach-a"] }),
+        getUserById: async (uid) => ({
+          uid,
+          emailVerified: true,
+          email: "",
+          displayName: "",
+          savedBeaches: ["beach-a"],
+        }),
       }),
       buildFakeBeachRepository(),
       buildFakePredictionRepository(),

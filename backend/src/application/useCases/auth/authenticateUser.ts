@@ -17,5 +17,9 @@ export async function authenticateUser(
     throw new InvalidAuthTokenError();
   }
 
-  return userRepository.findOrCreate(decoded.uid, decoded.emailVerified);
+  return userRepository.findOrCreate(decoded.uid, {
+    emailVerified: decoded.emailVerified,
+    email: decoded.email,
+    displayName: decoded.displayName,
+  });
 }

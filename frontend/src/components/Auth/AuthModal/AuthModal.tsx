@@ -9,6 +9,7 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
   const [mode, setMode] = useState<AuthFormMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const styles = getAuthModalStyles({ submitting });
@@ -19,7 +20,7 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
     setSubmitting(true);
     try {
       if (mode === "signup") {
-        await signUp(email, password);
+        await signUp(email, password, displayName);
       } else {
         await logIn(email, password);
       }
@@ -41,6 +42,18 @@ export function AuthModal({ onClose, onAuthenticated }: AuthModalProps) {
         <h2 style={styles.title}>{mode === "signup" ? "Create an account" : "Sign in"}</h2>
 
         <form onSubmit={handleSubmit} style={styles.form}>
+          {mode === "signup" && (
+            <label style={styles.label}>
+              Display name
+              <input
+                type="text"
+                required
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                style={styles.input}
+              />
+            </label>
+          )}
           <label style={styles.label}>
             Email
             <input

@@ -6,6 +6,7 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "../firebase";
@@ -13,7 +14,7 @@ import { auth } from "../firebase";
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  signUp(email: string, password: string): Promise<void>;
+  signUp(email: string, password: string, displayName: string): Promise<void>;
   logIn(email: string, password: string): Promise<void>;
   logOut(): Promise<void>;
   resendVerificationEmail(): Promise<void>;
@@ -56,8 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser({ ...auth.currentUser } as User);
   }
 
-  async function signUp(email: string, password: string): Promise<void> {
+  async function signUp(email: string, password: string, displayName: string): Promise<void> {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(credential.user, { displayName });
+    // Firebase does not retroactively update an already-minted ID token when updateProfile runs —
+    // force-refresh so the token's `name` claim reflects the display name before any backend call
+    // is made (the same forced-refresh trick refreshEmailVerified uses above).
+    await auth.currentUser?.getIdToken(true);
     await sendEmailVerification(credential.user);
   }
 

@@ -11,6 +11,9 @@ import { stubAuthTokenVerifier } from "../../../helpers/stubAuthTokenVerifier";
 
 const UNVERIFIED_UID = "uid-unverified";
 const VERIFIED_UID = "uid-verified";
+const FRESH_UID = "uid-fresh";
+const RESYNC_UID = "uid-resync";
+const LEGACY_UID = "uid-legacy";
 
 describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
   let mongoServer: MongoMemoryServer;
@@ -42,6 +45,20 @@ describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
       authTokenVerifier: stubAuthTokenVerifier({
         "valid-unverified-token": { uid: UNVERIFIED_UID, emailVerified: false },
         "valid-verified-token": { uid: VERIFIED_UID, emailVerified: true },
+        "fresh-token-with-claims": {
+          uid: FRESH_UID,
+          emailVerified: true,
+          email: "diver@example.com",
+          displayName: "Diver Dan",
+        },
+        "resync-token-with-claims": {
+          uid: RESYNC_UID,
+          emailVerified: true,
+          email: "diver@example.com",
+          displayName: "Diver Dan",
+        },
+        "resync-token-missing-display-name": { uid: RESYNC_UID, emailVerified: true },
+        "legacy-token": { uid: LEGACY_UID, emailVerified: true },
       }),
     });
   }
@@ -73,7 +90,13 @@ describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
     const response = await request(buildApp()).get("/api/me").set("Authorization", "Bearer valid-verified-token");
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ uid: VERIFIED_UID, emailVerified: true, savedBeaches: [] });
+    expect(response.body).toEqual({
+      uid: VERIFIED_UID,
+      emailVerified: true,
+      email: "",
+      displayName: "",
+      savedBeaches: [],
+    });
   });
 
   it("lazily creates the users document keyed by Firebase UID on first authenticated request", async () => {
@@ -81,6 +104,54 @@ describe("GET /api/me (requireAuth + requireVerifiedEmail)", () => {
 
     const stored = await db.collection("users").findOne({ _id: VERIFIED_UID } as never);
     expect(stored?.emailVerified).toBe(true);
+  });
+
+  it("stores and returns email/displayName from the token's claims on a fresh UID's first request", async () => {
+    const response = await request(buildApp())
+      .get("/api/me")
+      .set("Authorization", "Bearer fresh-token-with-claims");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      uid: FRESH_UID,
+      email: "diver@example.com",
+      displayName: "Diver Dan",
+    });
+
+    const stored = await db.collection("users").findOne({ _id: FRESH_UID } as never);
+    expect(stored?.email).toBe("diver@example.com");
+    expect(stored?.displayName).toBe("Diver Dan");
+  });
+
+  it("does not null out a previously-stored displayName when a later request's token is missing that claim", async () => {
+    const app = buildApp();
+    await request(app).get("/api/me").set("Authorization", "Bearer resync-token-with-claims");
+
+    const response = await request(app)
+      .get("/api/me")
+      .set("Authorization", "Bearer resync-token-missing-display-name");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      uid: RESYNC_UID,
+      email: "diver@example.com",
+      displayName: "Diver Dan",
+    });
+  });
+
+  it("reads a pre-feature document's missing email/displayName back as \"\" rather than undefined", async () => {
+    await db.collection("users").insertOne({
+      _id: LEGACY_UID,
+      emailVerified: false,
+      savedBeaches: [],
+      createdAt: new Date(),
+    } as never);
+
+    const response = await request(buildApp()).get("/api/me").set("Authorization", "Bearer legacy-token");
+
+    expect(response.status).toBe(200);
+    expect(response.body.email).toBe("");
+    expect(response.body.displayName).toBe("");
   });
 
   it("responds with 503, not 401, when the token is valid but the user repository fails", async () => {
