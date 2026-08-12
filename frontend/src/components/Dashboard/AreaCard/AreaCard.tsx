@@ -2,13 +2,9 @@ import { FaCloudBolt, FaFlag } from "react-icons/fa6";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
 import { DistributionBar } from "../DistributionBar/DistributionBar";
 import { CONFIDENCE_BASIS_BAR, FLAG_COLOR_BAR, RIP_CURRENT_RISK_BAR } from "../DistributionBar/distributionPresets";
-import type { AreaAverageAttributes } from "../interfaces";
 import { averageConditionsSentence, isLowSample, readingsFooter } from "../utils/formatAverageAttributes";
+import type { AreaCardProps } from "./interfaces";
 import { getAreaCardStyles } from "./styles/AreaCard.styles";
-
-interface AreaCardProps {
-  attributes: AreaAverageAttributes;
-}
 
 // One grid card per Area — the same shape as SeaSummaryCard, scaled down: Area name + dominant
 // flag instead of a full hero, a compact storm badge instead of a banner, and the same

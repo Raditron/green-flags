@@ -2,14 +2,9 @@ import { FaCloudBolt, FaFlag, FaWater, FaWind } from "react-icons/fa6";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
 import { DistributionBar } from "../DistributionBar/DistributionBar";
 import { CONFIDENCE_BASIS_BAR, FLAG_COLOR_BAR, RIP_CURRENT_RISK_BAR } from "../DistributionBar/distributionPresets";
-import type { AverageAttributes } from "../interfaces";
 import { averageConditionsSentence, isLowSample, readingsFooter } from "../utils/formatAverageAttributes";
+import type { SeaSummaryCardProps } from "./interfaces";
 import { getSeaSummaryCardStyles } from "./styles/SeaSummaryCard.styles";
-
-interface SeaSummaryCardProps {
-  date: string;
-  attributes: AverageAttributes;
-}
 
 // The sea-wide headline card: dominant flag color + a plain-language conditions sentence (the
 // same "should I go in" answer Verdict.tsx gives for a single beach/hour), a storm-warning
