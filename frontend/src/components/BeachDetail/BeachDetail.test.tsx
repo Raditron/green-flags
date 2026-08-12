@@ -26,6 +26,9 @@ vi.mock("../SaveBeachButton/SaveBeachButton", () => ({
 vi.mock("./ReportFlagButton/ReportFlagButton", () => ({
   ReportFlagButton: () => null,
 }));
+vi.mock("./CommentSection/CommentSection", () => ({
+  CommentSection: () => null,
+}));
 
 function renderDetail(beachId: string) {
   const { container } = render(

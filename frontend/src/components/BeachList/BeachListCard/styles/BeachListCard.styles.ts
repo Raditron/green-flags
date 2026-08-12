@@ -18,6 +18,8 @@ type BeachListCardStyleKey =
   | "distanceText"
   | "divider"
   | "actions"
+  | "commentButton"
+  | "commentIcon"
   | "reportButton"
   | "reportIcon";
 
@@ -28,10 +30,12 @@ const IMAGE_ASPECT_RATIO = "37 / 20";
 export function getBeachListCardStyles({
   isHovered,
   isFocused,
+  isCommentHovered,
   isReportHovered,
 }: {
   isHovered: boolean;
   isFocused: boolean;
+  isCommentHovered: boolean;
   isReportHovered: boolean;
 }): Record<BeachListCardStyleKey, CSSProperties> {
   const isRaised = isHovered || isFocused;
@@ -141,6 +145,28 @@ export function getBeachListCardStyles({
       alignItems: "center",
       gap: 6,
       padding: 8,
+    },
+    // Ghost button; picks up the same heading-blue tint the card's own raised-hover border
+    // uses, keeping it visually distinct from the gold Save and red Report actions either
+    // side of it.
+    commentButton: {
+      flex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      padding: "9px 6px",
+      borderRadius: 8,
+      fontSize: 12.5,
+      fontWeight: 600,
+      color: isCommentHovered ? "var(--text-h)" : "var(--text)",
+      background: isCommentHovered ? "color-mix(in srgb, var(--text-h) 14%, transparent)" : "transparent",
+      textDecoration: "none",
+      transition: "background 0.12s ease, color 0.12s ease",
+    },
+    commentIcon: {
+      width: 14,
+      height: 14,
     },
     // Ghost button; picks up a red tint on hover to preview the report flow
     // it leads to, rather than the neutral hover the rest of the card uses.

@@ -14,6 +14,7 @@ import { GuardStatusBadge } from "./GuardStatusBadge/GuardStatusBadge";
 import {
   FaFlag,
   FaLifeRing,
+  FaRegComment,
   FaTriangleExclamation,
   FaWater,
 } from "react-icons/fa6";
@@ -21,10 +22,12 @@ import {
 export const BeachListCard = ({ beach }: BeachListCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isCommentHovered, setIsCommentHovered] = useState(false);
   const [isReportHovered, setIsReportHovered] = useState(false);
   const styles = getBeachListCardStyles({
     isHovered,
     isFocused,
+    isCommentHovered,
     isReportHovered,
   });
   const listStyles = getBeachListStyles();
@@ -129,6 +132,23 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
         <div style={styles.actions}>
           <div style={{ display: "flex", flex: 1 }}>
             <SaveBeachButton beachId={beach.id} withLabel />
+          </div>
+          <div style={{ display: "flex", flex: 1 }}>
+            <Link
+              to={{ pathname: `/beaches/${beach.id}`, hash: "#comments" }}
+              state={{
+                beachName: beach.name,
+                mapImageDataUrl: beach.mapImageDataUrl,
+                quirkNotes: beach.quirkNotes,
+                isUnguarded: beach.isUnguarded,
+              }}
+              style={styles.commentButton}
+              onMouseEnter={() => setIsCommentHovered(true)}
+              onMouseLeave={() => setIsCommentHovered(false)}
+            >
+              <FaRegComment style={styles.commentIcon} />
+              Comment
+            </Link>
           </div>
           <div style={{ display: "flex", flex: 1 }}>
             <Link

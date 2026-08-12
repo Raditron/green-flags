@@ -8,6 +8,7 @@ import { useToast } from "../Layout/Toast/ToastContext";
 import { Timeline } from "./Timeline/Timeline";
 import { ReportFlagButton } from "./ReportFlagButton/ReportFlagButton";
 import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
+import { CommentSection } from "./CommentSection/CommentSection";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 import { getBeachImage } from "../../shared/data/images";
 
@@ -59,6 +60,13 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   useEffect(() => {
     showToast(DISCLAIMER_MESSAGE);
   }, [beachId, showToast]);
+
+  // Client-side navigation doesn't get the browser's free anchor-scroll (that only fires on a
+  // real document load), so a #comments link from the beach list card has to be honored by hand.
+  useEffect(() => {
+    if (location.hash !== "#comments") return;
+    document.getElementById("comments")?.scrollIntoView({ block: "start" });
+  }, [beachId, location.hash]);
   return (
     <section aria-label="Beach detail">
       <div style={styles.page}>
@@ -137,6 +145,10 @@ function BeachDetailView({ beachId }: { beachId: string }) {
               Could not load predictions: {predictions.message}
             </p>
           )}
+
+          {/* Lives under the rest of the page, always visible (YouTube-style), rather than
+              behind the icon-button modal it used to open — see CommentSection per #70. */}
+          <CommentSection beachId={beachId} />
         </div>
       </div>
     </section>
