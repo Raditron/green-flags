@@ -4,6 +4,8 @@ import { UserRecord, UserRepository } from "../../domain/ports/user/userReposito
 interface UserDocument {
   _id: string;
   emailVerified: boolean;
+  email: string;
+  displayName: string;
   savedBeaches: string[];
   createdAt: Date;
 }
@@ -15,11 +17,26 @@ export class MongoUserRepository implements UserRepository {
     this.collection = db.collection<UserDocument>("users");
   }
 
-  async findOrCreate(uid: string, emailVerified: boolean): Promise<UserRecord> {
+  async findOrCreate(
+    uid: string,
+    claims: { emailVerified: boolean; email?: string; displayName?: string },
+  ): Promise<UserRecord> {
+    // email/displayName are only included when the token actually carried them — the Mongo Node
+    // driver (this project's MongoClient does not set ignoreUndefined: true) otherwise serializes
+    // an undefined field as BSON null, which would null out a previously-stored value on a request
+    // whose token happens to be missing that claim.
+    const set: Partial<UserDocument> = { emailVerified: claims.emailVerified };
+    if (claims.email !== undefined) {
+      set.email = claims.email;
+    }
+    if (claims.displayName !== undefined) {
+      set.displayName = claims.displayName;
+    }
+
     const doc = await this.collection.findOneAndUpdate(
       { _id: uid },
       {
-        $set: { emailVerified },
+        $set: set,
         $setOnInsert: { savedBeaches: [], createdAt: new Date() },
       },
       { upsert: true, returnDocument: "after" },
@@ -32,9 +49,12 @@ export class MongoUserRepository implements UserRepository {
     return {
       uid: doc._id,
       emailVerified: doc.emailVerified,
-      // Legacy docs created before savedBeaches existed have no such field — $setOnInsert only
-      // backfills it on a fresh insert, not on an existing doc — so default it here rather than
+      // Legacy docs created before email/displayName/savedBeaches existed have no such field —
+      // $setOnInsert only backfills savedBeaches on a fresh insert, not on an existing doc, and
+      // email/displayName are only ever conditionally $set above — so default here rather than
       // handing callers `undefined`.
+      email: doc.email ?? "",
+      displayName: doc.displayName ?? "",
       savedBeaches: doc.savedBeaches ?? [],
     };
   }
@@ -55,6 +75,8 @@ export class MongoUserRepository implements UserRepository {
     return {
       uid: doc._id,
       emailVerified: doc.emailVerified,
+      email: doc.email ?? "",
+      displayName: doc.displayName ?? "",
       savedBeaches: doc.savedBeaches,
     };
   }
@@ -68,6 +90,8 @@ export class MongoUserRepository implements UserRepository {
     return {
       uid: doc._id,
       emailVerified: doc.emailVerified,
+      email: doc.email ?? "",
+      displayName: doc.displayName ?? "",
       savedBeaches: doc.savedBeaches,
     };
   }
