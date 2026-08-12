@@ -1,14 +1,6 @@
-import type { HourlyPrediction } from "../../interfaces";
 import { flagColorVar } from "../../../../shared/styles/flagColor";
+import type { TimePickerProps } from "./interfaces";
 import { getTimePickerStyles, getTimePickerRowStyle } from "./styles/TimePicker.styles";
-
-interface TimePickerProps {
-  hourlyPredictions: HourlyPrediction[];
-  selectedHour: number | null;
-  currentHour: number | null;
-  onPick: (hour: number) => void;
-  onClose: () => void;
-}
 
 // Backdrop + centered dialog convention, consistent with the other modal on this page
 // (AuthModal).

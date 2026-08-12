@@ -1,11 +1,7 @@
 import { FaWind, FaWater } from "react-icons/fa6";
-import type { HourlyPrediction } from "../../interfaces";
 import { WIND_FEEL, SEA_FEEL } from "../conditionsCopy";
+import type { SeaConditionsProps } from "./interfaces";
 import { getSeaConditionsStyles } from "./styles/SeaConditions.styles";
-
-interface SeaConditionsProps {
-  prediction: HourlyPrediction;
-}
 
 // WIND_FEEL/SEA_FEEL live in ../conditionsCopy — shared with Verdict's synthesized
 // sentence so the two never drift into describing the same wind differently.
