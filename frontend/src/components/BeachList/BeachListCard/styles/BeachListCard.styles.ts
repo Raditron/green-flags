@@ -125,8 +125,8 @@ export function getBeachListCardStyles({
       color: "var(--text)",
     },
     flagIcon: {
-      width: 12,
-      height: 12,
+      width: 14,
+      height: 14,
       flexShrink: 0,
     },
     statusText: {

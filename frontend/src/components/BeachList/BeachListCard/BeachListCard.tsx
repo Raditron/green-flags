@@ -91,18 +91,46 @@ export const BeachListCard = ({ beach }: BeachListCardProps) => {
           </div>
 
           <div style={styles.content}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={styles.name}>{beach.name}</span>
-              <GuardStatusBadge
-                icon={GuardStatusIcon}
-                variant={isUnguarded ? "unguarded" : "guarded"}
-                ariaLabel={isUnguarded ? "Unguarded beach" : "Guarded beach"}
-                tooltipText={
-                  isUnguarded
-                    ? "This beach is unguarded. Swim with extra caution."
-                    : "This beach is guarded by lifeguards."
-                }
-              />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                width: "100%",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={styles.name}>{beach.name}</span>
+                  <GuardStatusBadge
+                    icon={GuardStatusIcon}
+                    variant={isUnguarded ? "unguarded" : "guarded"}
+                    ariaLabel={
+                      isUnguarded ? "Unguarded beach" : "Guarded beach"
+                    }
+                    tooltipText={
+                      isUnguarded
+                        ? "This beach is unguarded. Swim with extra caution."
+                        : "This beach is guarded by lifeguards."
+                    }
+                  />
+                </div>
+
+                <span>{beach.area}</span>
+              </div>
             </div>
             <div style={styles.statusRow}>
               {flagStatusText ? (

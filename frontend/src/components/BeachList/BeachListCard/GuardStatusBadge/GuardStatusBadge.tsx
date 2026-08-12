@@ -1,13 +1,12 @@
-import { useId, useState } from "react";
+import { Tooltip } from "../../../Tooltip/Tooltip";
 import type { GuardStatusBadgeProps } from "./interfaces";
 import { getGuardStatusBadgeStyles } from "./styles/GuardStatusBadge.styles";
 
 /**
  * Guard-status pill shown next to a beach's name — an icon plus a
- * hover-triggered tooltip explaining what the icon means. Self-contained the
- * same way `SaveBeachButton` is: it owns its own hover state and generates
- * its own tooltip id internally, so the parent only has to pass in what the
- * icon/label/tooltip should say.
+ * hover/focus-triggered tooltip explaining what the icon means. The pill
+ * styling (accent color, background chip) is what's unique to this badge;
+ * the tooltip bubble itself is the shared `Tooltip`.
  */
 export const GuardStatusBadge = ({
   icon: Icon,
@@ -15,27 +14,13 @@ export const GuardStatusBadge = ({
   ariaLabel,
   tooltipText,
 }: GuardStatusBadgeProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const tooltipId = useId();
-  const styles = getGuardStatusBadgeStyles({ variant, isHovered });
+  const styles = getGuardStatusBadgeStyles({ variant });
 
   return (
-    <span
-      aria-describedby={tooltipId}
-      aria-label={ariaLabel}
-      style={styles.label}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Icon aria-hidden="true" style={styles.icon} />
-      <span
-        aria-hidden={!isHovered}
-        id={tooltipId}
-        role="tooltip"
-        style={styles.tooltip}
-      >
-        {tooltipText}
+    <Tooltip text={tooltipText} align="end">
+      <span aria-label={ariaLabel} style={styles.label}>
+        <Icon aria-hidden="true" style={styles.icon} />
       </span>
-    </span>
+    </Tooltip>
   );
 };

@@ -1,5 +1,6 @@
 import { FaCloudBolt, FaFlag } from "react-icons/fa6";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
+import { Tooltip } from "../../Tooltip/Tooltip";
 import { DistributionBar } from "../DistributionBar/DistributionBar";
 import { CONFIDENCE_BASIS_BAR, FLAG_COLOR_BAR, RIP_CURRENT_RISK_BAR } from "../DistributionBar/distributionPresets";
 import { averageConditionsSentence, isLowSample, readingsFooter } from "../utils/formatAverageAttributes";
@@ -23,14 +24,15 @@ export function AreaCard({ attributes }: AreaCardProps) {
           <span style={styles.headline}>{headline}</span>
         </div>
         {attributes.stormWarningActivePercent > 0 && (
-          <span
-            style={styles.stormBadge}
-            role="alert"
-            title={`Storm warning active for ${attributes.stormWarningActivePercent}% of today's readings`}
+          <Tooltip
+            text={`Storm warning active for ${attributes.stormWarningActivePercent}% of today's readings`}
+            align="end"
           >
-            <FaCloudBolt aria-hidden="true" />
-            {attributes.stormWarningActivePercent}%
-          </span>
+            <span style={styles.stormBadge} role="alert">
+              <FaCloudBolt aria-hidden="true" />
+              {attributes.stormWarningActivePercent}%
+            </span>
+          </Tooltip>
         )}
       </div>
 

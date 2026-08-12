@@ -1,4 +1,5 @@
 import type { FlagColor } from "../../../shared/types/Beach";
+import { Tooltip } from "../../Tooltip/Tooltip";
 import type { BeachListFiltersProps } from "./interfaces/BeachListFilters.interface";
 import { AreaSelect } from "./AreaSelect/AreaSelect";
 import {
@@ -54,17 +55,17 @@ export function BeachListFilters({
         {FLAG_OPTIONS.map(({ flagColor, label }) => {
           const isSelected = selectedFlags.includes(flagColor);
           return (
-            <button
-              key={flagColor}
-              type="button"
-              aria-pressed={isSelected}
-              aria-label={`${label} flag`}
-              title={`${label} flag`}
-              style={getFlagFilterChipStyle(flagColor, isSelected)}
-              onClick={() => onToggleFlag(flagColor)}
-            >
-              <FaFlag style={getFlagFilterIconStyle(flagColor, isSelected)} />
-            </button>
+            <Tooltip key={flagColor} text={`${label} flag`} align="center">
+              <button
+                type="button"
+                aria-pressed={isSelected}
+                aria-label={`${label} flag`}
+                style={getFlagFilterChipStyle(flagColor, isSelected)}
+                onClick={() => onToggleFlag(flagColor)}
+              >
+                <FaFlag style={getFlagFilterIconStyle(flagColor, isSelected)} />
+              </button>
+            </Tooltip>
           );
         })}
       </div>
