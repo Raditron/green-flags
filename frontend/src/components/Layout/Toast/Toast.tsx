@@ -1,20 +1,10 @@
 import { useEffect } from "react";
-import type { ReactNode } from "react";
+import type { ToastProps } from "./interfaces";
 import { getToastStyles } from "./styles/Toast.styles";
 
 export const AUTO_DISMISS_MS = 4000;
 
-export function Toast({
-  content,
-  autoDismiss,
-  version,
-  onDismiss,
-}: {
-  content: ReactNode;
-  autoDismiss: boolean;
-  version: number;
-  onDismiss: () => void;
-}) {
+export function Toast({ content, autoDismiss, version, onDismiss }: ToastProps) {
   const styles = getToastStyles();
 
   // Restarts whenever `version` changes (i.e. the toast's content was just replaced), so a
