@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { AuthModal } from "../Auth/AuthModal/AuthModal";
@@ -7,38 +6,15 @@ import { UserMenu } from "./UserMenu/UserMenu";
 import { ToastProvider } from "./Toast/ToastContext";
 import { ThemeProvider } from "./Theme/ThemeContext";
 import { ThemeToggle } from "./Theme/ThemeToggle";
+import { NavLink } from "./NavLink/NavLink";
+import { EmailVerificationBanner } from "./EmailVerificationBanner/EmailVerificationBanner";
+import type { LayoutProps } from "./interfaces";
 import { getLayoutStyles } from "./styles/Layout.styles";
 
-export function Layout({ children }: { children: ReactNode }) {
-  const { user, loading, resendVerificationEmail } = useAuth();
+export function Layout({ children }: LayoutProps) {
+  const { user, loading } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
-  const [resendState, setResendState] = useState<
-    "idle" | "sending" | "sent" | "error"
-  >("idle");
-  const [isDashboardHovered, setIsDashboardHovered] = useState(false);
-  const [isDashboardFocused, setIsDashboardFocused] = useState(false);
-  const [isBeachesHovered, setIsBeachesHovered] = useState(false);
-  const [isBeachesFocused, setIsBeachesFocused] = useState(false);
-  const [isSavedHovered, setIsSavedHovered] = useState(false);
-  const [isSavedFocused, setIsSavedFocused] = useState(false);
-  const styles = getLayoutStyles({
-    isDashboardHovered,
-    isDashboardFocused,
-    isBeachesHovered,
-    isBeachesFocused,
-    isSavedHovered,
-    isSavedFocused,
-  });
-
-  async function handleResend() {
-    setResendState("sending");
-    try {
-      await resendVerificationEmail();
-      setResendState("sent");
-    } catch {
-      setResendState("error");
-    }
-  }
+  const styles = getLayoutStyles();
 
   // Everything before the "@" — a first-name-style greeting without a separate display-name field.
   const greetingName = user?.email?.split("@")[0] ?? null;
@@ -57,38 +33,9 @@ export function Layout({ children }: { children: ReactNode }) {
                   <span style={styles.greeting}>Hello, {greetingName}</span>
                 )}
               </div>
-              <Link
-                to="/beaches"
-                style={styles.beachesLink}
-                onMouseEnter={() => setIsBeachesHovered(true)}
-                onMouseLeave={() => setIsBeachesHovered(false)}
-                onFocus={() => setIsBeachesFocused(true)}
-                onBlur={() => setIsBeachesFocused(false)}
-              >
-                All beaches
-              </Link>
-              {!loading && user && (
-                <Link
-                  to="/saved"
-                  style={styles.savedLink}
-                  onMouseEnter={() => setIsSavedHovered(true)}
-                  onMouseLeave={() => setIsSavedHovered(false)}
-                  onFocus={() => setIsSavedFocused(true)}
-                  onBlur={() => setIsSavedFocused(false)}
-                >
-                  Your beaches
-                </Link>
-              )}
-              <Link
-                to="/"
-                style={styles.dashboardLink}
-                onMouseEnter={() => setIsDashboardHovered(true)}
-                onMouseLeave={() => setIsDashboardHovered(false)}
-                onFocus={() => setIsDashboardFocused(true)}
-                onBlur={() => setIsDashboardFocused(false)}
-              >
-                Today
-              </Link>
+              <NavLink to="/beaches">All beaches</NavLink>
+              {!loading && user && <NavLink to="/saved">Your beaches</NavLink>}
+              <NavLink to="/">Today</NavLink>
             </div>
 
             <div style={styles.right}>
@@ -108,27 +55,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </div>
           </header>
 
-          {!loading && user && !user.emailVerified && (
-            <div style={styles.verifyBanner}>
-              Email not verified.{" "}
-              <button
-                type="button"
-                style={styles.resendButton}
-                onClick={handleResend}
-                disabled={resendState === "sending"}
-              >
-                {resendState === "sent"
-                  ? "Verification email sent"
-                  : "Resend verification email"}
-              </button>
-              {resendState === "error" && (
-                <span style={styles.error}>
-                  {" "}
-                  Could not send email, try again.
-                </span>
-              )}
-            </div>
-          )}
+          <EmailVerificationBanner />
 
           {modalOpen && <AuthModal onClose={() => setModalOpen(false)} />}
 
