@@ -44,7 +44,7 @@ export function Layout({ children }: LayoutProps) {
               <ThemeToggle />
               {!loading &&
                 (user ? (
-                  <UserMenu email={user.email ?? ""} />
+                  <UserMenu email={user.email ?? ""} displayName={user.displayName ?? ""} />
                 ) : (
                   <button
                     type="button"

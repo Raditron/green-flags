@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { FaRegComment, FaTrashCan } from "react-icons/fa6";
 import { useAuth } from "../../../auth/AuthContext";
+import { avatarInitial } from "../../../shared/avatarInitial";
 import { AuthModal } from "../../Auth/AuthModal/AuthModal";
 import { useToast } from "../../Layout/Toast/ToastContext";
 import { useComments } from "./hooks/useComments";
@@ -16,10 +17,6 @@ const MAX_DESCRIPTION_LENGTH = 1000;
 // disabled state never disagrees with what the server would actually accept.
 function isValidDescription(value: string): boolean {
   return value.trim().length > 0 && value.length <= MAX_DESCRIPTION_LENGTH;
-}
-
-function avatarInitial(displayName: string, email: string): string {
-  return displayName.charAt(0) || email.charAt(0) || "?";
 }
 
 function formatDate(createdOn: string): string {
