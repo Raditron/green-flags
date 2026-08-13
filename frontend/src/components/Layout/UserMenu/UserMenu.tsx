@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
+import { avatarInitial } from "../../../shared/avatarInitial";
 import { useDismissibleMenu } from "../../../shared/hooks/useDismissibleMenu";
 import type { UserMenuProps } from "./interfaces";
 import { getUserMenuStyles } from "./styles/UserMenu.styles";
@@ -10,7 +11,7 @@ export function UserMenu({ email, displayName }: UserMenuProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useDismissibleMenu(containerRef, open, setOpen);
   const styles = getUserMenuStyles();
-  const initial = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || "?";
+  const initial = avatarInitial(displayName, email);
 
   function handleLogOut() {
     setOpen(false);
