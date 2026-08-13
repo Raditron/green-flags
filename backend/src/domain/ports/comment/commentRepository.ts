@@ -1,3 +1,10 @@
+/** Thrown when a comment id doesn't resolve to a comment document. */
+export class CommentNotFoundError extends Error {
+  constructor(message = "Comment not found") {
+    super(message);
+  }
+}
+
 export interface Comment {
   id: string;
   description: string;

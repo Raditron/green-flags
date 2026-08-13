@@ -2,7 +2,11 @@ import { AuthTokenVerifier } from "../../../domain/ports/auth/authTokenVerifier"
 import { UserRecord, UserRepository } from "../../../domain/ports/user/userRepository";
 
 /** Thrown when the Firebase ID token itself is missing/invalid/expired, as distinct from a downstream infra failure. */
-export class InvalidAuthTokenError extends Error {}
+export class InvalidAuthTokenError extends Error {
+  constructor(message = "Invalid or expired token") {
+    super(message);
+  }
+}
 
 /** Verifies the caller's Firebase ID token, then lazily creates/syncs the mirrored `users` document so it stays current on every authenticated request. */
 export async function authenticateUser(

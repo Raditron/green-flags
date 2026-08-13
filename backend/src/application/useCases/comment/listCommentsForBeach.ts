@@ -1,10 +1,9 @@
-import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { BeachNotFoundError, BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import {
   Comment,
   CommentRepository,
 } from "../../../domain/ports/comment/commentRepository";
 import { UserRepository } from "../../../domain/ports/user/userRepository";
-import { BeachNotFoundError } from "./errors";
 
 /** A Comment enriched with its author's *current* displayName/email — distinct from the stored `Comment`, which only carries a `userId`. Never denormalized/snapshotted onto the comment itself. */
 export interface CommentWithAuthor extends Comment {

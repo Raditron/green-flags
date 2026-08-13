@@ -1,10 +1,10 @@
 import { Collection, Db, ObjectId } from "mongodb";
 import {
   Comment,
+  CommentNotFoundError,
   CommentRepository,
   NewComment,
 } from "../../domain/ports/comment/commentRepository";
-import { CommentNotFoundError } from "../../application/useCases/comment/errors";
 
 interface CommentDocument {
   _id: string;

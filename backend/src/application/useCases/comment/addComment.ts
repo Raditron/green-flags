@@ -1,7 +1,6 @@
-import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { BeachNotFoundError, BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import { CommentRepository } from "../../../domain/ports/comment/commentRepository";
-import { UserRepository } from "../../../domain/ports/user/userRepository";
-import { BeachNotFoundError, UserNotFoundError } from "./errors";
+import { UserNotFoundError, UserRepository } from "../../../domain/ports/user/userRepository";
 
 export async function addComment(
   commentRepository: CommentRepository,

@@ -9,15 +9,7 @@ import { windSpeedToBeaufortForce } from "../../../domain/rules/beaufortScale";
 import { waveHeightToDouglasSeaState } from "../../../domain/rules/douglasSeaState";
 import { effectiveWaveHeightM } from "../../../domain/rules/evaluateHourlyFlag";
 import { currentSofiaHour, todayInSofia } from "../../../domain/shared/today";
-
-/** Thrown for a beach with no official lifeguard station — there's no lifeguard-raised flag to report on. */
-export class BeachUnguardedError extends Error {}
-/** Thrown outside the June-September lifeguard season (see .scratch/green-flags-mvp/issues/08-feedback-window-and-off-season.md). */
-export class OutsideSeasonError extends Error {}
-/** Thrown within season but outside the daily 09:00-18:30 window. */
-export class OutsideWindowError extends Error {}
-/** Thrown when the batch job hasn't yet persisted a prediction for this beach/date/hour to compare the report against. */
-export class NoPredictionAvailableError extends Error {}
+import { BeachUnguardedError, OutsideSeasonError, OutsideWindowError, NoPredictionAvailableError } from "./errors";
 
 export interface SubmitReportInput {
   beachId: string;

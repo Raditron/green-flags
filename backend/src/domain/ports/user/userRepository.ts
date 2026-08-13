@@ -1,3 +1,10 @@
+/** Thrown when a user id doesn't resolve to a user document. */
+export class UserNotFoundError extends Error {
+  constructor(message = "User not found") {
+    super(message);
+  }
+}
+
 export interface UserRecord {
   uid: string;
   emailVerified: boolean;

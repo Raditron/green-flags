@@ -3,13 +3,13 @@ import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import { PredictionRepository } from "../../../domain/ports/prediction/predictionRepository";
 import { ReportRepository, DuplicateReportError } from "../../../domain/ports/report/reportRepository";
 import { FlagColor } from "../../../domain/rules/evaluateHourlyFlag";
+import { submitReport as submitReportUseCase } from "../../../application/useCases/report/submitReport";
 import {
   BeachUnguardedError,
   NoPredictionAvailableError,
   OutsideSeasonError,
   OutsideWindowError,
-  submitReport as submitReportUseCase,
-} from "../../../application/useCases/report/submitReport";
+} from "../../../application/useCases/report/errors";
 import { todayInSofia } from "../../../domain/shared/today";
 import { isValidId } from "../../../domain/shared/id";
 import { AuthenticatedRequest } from "../../middleware/requireAuth";

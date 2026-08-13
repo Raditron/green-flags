@@ -44,6 +44,13 @@ export interface Beach {
   isUnguarded: boolean;
 }
 
+/** Thrown when a beach id doesn't resolve to a beach document. */
+export class BeachNotFoundError extends Error {
+  constructor(message = "Beach not found") {
+    super(message);
+  }
+}
+
 export interface BeachRepository {
   listBeaches(): Promise<Beach[]>;
   /** Looks up a single beach by id, or null if no beach with that id exists. */

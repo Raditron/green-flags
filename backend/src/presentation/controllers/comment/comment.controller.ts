@@ -1,17 +1,12 @@
 import { RequestHandler } from "express";
-import { UserRepository } from "../../../domain/ports/user/userRepository";
+import { UserNotFoundError, UserRepository } from "../../../domain/ports/user/userRepository";
 import { isValidId } from "../../../domain/shared/id";
 import { addComment as addCommentUseCase } from "../../../application/useCases/comment/addComment";
 import { deleteComment as deleteCommentUseCase } from "../../../application/useCases/comment/deleteComment";
 import { listCommentsForBeach as listCommentsForBeachUseCase } from "../../../application/useCases/comment/listCommentsForBeach";
-import {
-  BeachNotFoundError,
-  CommentNotFoundError,
-  UnauthorizedCommentDeleteError,
-  UserNotFoundError,
-} from "../../../application/useCases/comment/errors";
-import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
-import { CommentRepository } from "../../../domain/ports/comment/commentRepository";
+import { UnauthorizedCommentDeleteError } from "../../../application/useCases/comment/errors";
+import { BeachNotFoundError, BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { CommentNotFoundError, CommentRepository } from "../../../domain/ports/comment/commentRepository";
 import { AuthenticatedRequest } from "../../middleware/requireAuth";
 
 const MAX_DESCRIPTION_LENGTH = 1000;

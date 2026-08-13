@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { submitReport } from "../../../../src/application/useCases/report/submitReport";
 import {
   BeachUnguardedError,
   NoPredictionAvailableError,
   OutsideSeasonError,
   OutsideWindowError,
-  submitReport,
-} from "../../../../src/application/useCases/report/submitReport";
+} from "../../../../src/application/useCases/report/errors";
 import { Beach, BeachAreas, BeachRepository } from "../../../../src/domain/ports/beach/beachRepository";
 import { BeachDailyPredictions, PredictionRepository } from "../../../../src/domain/ports/prediction/predictionRepository";
 import { DuplicateReportError, ReportInput, ReportRepository } from "../../../../src/domain/ports/report/reportRepository";

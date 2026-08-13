@@ -1,15 +1,11 @@
-import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
+import { BeachNotFoundError, BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import {
   Comment,
+  CommentNotFoundError,
   CommentRepository,
 } from "../../../domain/ports/comment/commentRepository";
-import { UserRepository } from "../../../domain/ports/user/userRepository";
-import {
-  BeachNotFoundError,
-  CommentNotFoundError,
-  UnauthorizedCommentDeleteError,
-  UserNotFoundError,
-} from "./errors";
+import { UserNotFoundError, UserRepository } from "../../../domain/ports/user/userRepository";
+import { UnauthorizedCommentDeleteError } from "./errors";
 
 export async function deleteComment(
   commentRepository: CommentRepository,
