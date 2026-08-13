@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaFlag } from "react-icons/fa6";
 import { useAuth } from "../../auth/AuthContext";
 import { AuthModal } from "../Auth/AuthModal/AuthModal";
 import { UserMenu } from "./UserMenu/UserMenu";
@@ -27,6 +28,7 @@ export function Layout({ children }: LayoutProps) {
             <div style={styles.left}>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <Link to="/" style={styles.title}>
+                  <FaFlag style={styles.titleIcon} aria-hidden="true" />
                   Green Flags
                 </Link>
                 {!loading && greetingName && (

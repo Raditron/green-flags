@@ -5,6 +5,7 @@ type LayoutStyleKey =
   | "header"
   | "left"
   | "title"
+  | "titleIcon"
   | "greeting"
   | "right"
   | "signInButton"
@@ -33,11 +34,19 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
       flexWrap: "wrap",
     },
     title: {
-      color: "var(--text-h)",
-      fontSize: 20,
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      color: "var(--flag-green)",
+      fontSize: 16,
       fontWeight: 700,
-      letterSpacing: "-0.01em",
+      letterSpacing: "0.08em",
+      textTransform: "uppercase",
       textDecoration: "none",
+    },
+    titleIcon: {
+      width: 14,
+      height: 14,
     },
     greeting: {
       color: "var(--text)",
