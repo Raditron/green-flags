@@ -50,7 +50,9 @@ function renderSignupModal() {
 }
 
 async function switchToSignup(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByText("Need an account? Sign up"));
+  // A `tab`, not a `button` — the modal's segmented mode switcher, distinct from the submit
+  // button below it that reuses the same "Sign up" label (see AuthModal.tsx).
+  await user.click(screen.getByRole("tab", { name: "Sign up" }));
 }
 
 describe("AuthModal", () => {

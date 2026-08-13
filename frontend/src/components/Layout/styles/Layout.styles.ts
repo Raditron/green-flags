@@ -50,11 +50,12 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
     },
     signInButton: {
       border: "1px solid var(--border)",
-      borderRadius: 6,
+      borderRadius: 999,
       background: "var(--surface)",
       color: "var(--text)",
-      padding: "6px 12px",
+      padding: "6px 16px",
       font: "inherit",
+      fontWeight: 700,
       cursor: "pointer",
     },
     main: {

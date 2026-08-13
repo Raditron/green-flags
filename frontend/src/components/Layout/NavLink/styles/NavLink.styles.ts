@@ -15,7 +15,7 @@ export function getNavLinkStyles({
   return {
     color: "var(--text)",
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 700,
     textDecoration: "none",
     padding: "6px 12px",
     borderRadius: 999,
