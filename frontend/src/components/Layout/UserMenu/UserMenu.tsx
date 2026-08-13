@@ -4,13 +4,13 @@ import { useDismissibleMenu } from "../../../shared/hooks/useDismissibleMenu";
 import type { UserMenuProps } from "./interfaces";
 import { getUserMenuStyles } from "./styles/UserMenu.styles";
 
-export function UserMenu({ email }: UserMenuProps) {
+export function UserMenu({ email, displayName }: UserMenuProps) {
   const { logOut } = useAuth();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   useDismissibleMenu(containerRef, open, setOpen);
   const styles = getUserMenuStyles();
-  const initial = email.charAt(0).toUpperCase() || "?";
+  const initial = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || "?";
 
   function handleLogOut() {
     setOpen(false);
