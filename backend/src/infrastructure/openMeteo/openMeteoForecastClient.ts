@@ -3,6 +3,9 @@ import { DailyForecast, ForecastCoordinates, ForecastProvider, HourlyForecast } 
 const MARINE_ENDPOINT = "https://marine-api.open-meteo.com/v1/marine";
 const WEATHER_ENDPOINT = "https://api.open-meteo.com/v1/forecast";
 
+/** Days of hourly data requested per call: today plus the 6 days after it, matching the 7-day rolling forecast window. */
+const FORECAST_WINDOW_DAYS = 7;
+
 interface MarineHourly {
   time: string[];
   wave_height: number[];
@@ -37,43 +40,48 @@ async function fetchJson<T>(url: URL): Promise<T> {
 }
 
 /**
- * Fetches a beach's full day of hourly forecast from Open-Meteo — one call each to the Marine
- * Weather API (wave/swell) and the Weather Forecast API (wind), both with `timezone=auto` so
+ * Fetches a beach's 7-day rolling window of hourly forecast from Open-Meteo — one call each to the
+ * Marine Weather API (wave/swell) and the Weather Forecast API (wind), both with `timezone=auto` so
  * hourly timestamps come back already in the beach's own local time (no server-timezone math
  * needed downstream). Per .scratch/green-flags-mvp/issues/09-rule-engine-threshold-standard.md,
  * Open-Meteo is the sole rule-engine data source.
  */
 export class OpenMeteoForecastClient implements ForecastProvider {
-  async fetchDailyForecast(coordinates: ForecastCoordinates): Promise<DailyForecast> {
+  async fetchForecastWindow(coordinates: ForecastCoordinates): Promise<DailyForecast[]> {
     const [marine, weather] = await Promise.all([
       fetchJson<{ hourly: MarineHourly }>(this.buildMarineUrl(coordinates)),
       fetchJson<{ hourly: WeatherHourly }>(this.buildWeatherUrl(coordinates)),
     ]);
 
-    const windByHour = new Map(
+    const windByTimestamp = new Map(
       weather.hourly.time.map((time, index) => [
-        hourOf(time),
+        time,
         { windSpeedMps: weather.hourly.wind_speed_10m[index], windDirectionDeg: weather.hourly.wind_direction_10m[index] },
       ])
     );
 
-    const hours: HourlyForecast[] = marine.hourly.time.flatMap((time, index) => {
-      const wind = windByHour.get(hourOf(time));
-      if (!wind) return [];
+    const hoursByDate = new Map<string, HourlyForecast[]>();
 
-      return [
-        {
-          hour: hourOf(time),
-          windSpeedMps: wind.windSpeedMps,
-          windDirectionDeg: wind.windDirectionDeg,
-          waveHeightM: marine.hourly.wave_height[index],
-          wavePeriodS: marine.hourly.wave_period[index],
-          swellHeightM: marine.hourly.swell_wave_height[index],
-        },
-      ];
+    marine.hourly.time.forEach((time, index) => {
+      const wind = windByTimestamp.get(time);
+      if (!wind) return;
+
+      const date = dateOf(time);
+      const hours = hoursByDate.get(date) ?? [];
+      hours.push({
+        hour: hourOf(time),
+        windSpeedMps: wind.windSpeedMps,
+        windDirectionDeg: wind.windDirectionDeg,
+        waveHeightM: marine.hourly.wave_height[index],
+        wavePeriodS: marine.hourly.wave_period[index],
+        swellHeightM: marine.hourly.swell_wave_height[index],
+      });
+      hoursByDate.set(date, hours);
     });
 
-    return { date: dateOf(marine.hourly.time[0]), hours };
+    // Map preserves insertion order, and Open-Meteo returns timestamps in chronological order, so
+    // this is already ascending by date without a separate sort.
+    return Array.from(hoursByDate.entries()).map(([date, hours]) => ({ date, hours }));
   }
 
   private buildMarineUrl(coordinates: ForecastCoordinates): URL {
@@ -82,7 +90,7 @@ export class OpenMeteoForecastClient implements ForecastProvider {
     url.searchParams.set("longitude", String(coordinates.long));
     url.searchParams.set("hourly", "wave_height,wave_period,swell_wave_height");
     url.searchParams.set("timezone", "auto");
-    url.searchParams.set("forecast_days", "1");
+    url.searchParams.set("forecast_days", String(FORECAST_WINDOW_DAYS));
     return url;
   }
 
@@ -92,7 +100,7 @@ export class OpenMeteoForecastClient implements ForecastProvider {
     url.searchParams.set("longitude", String(coordinates.long));
     url.searchParams.set("hourly", "wind_speed_10m,wind_direction_10m");
     url.searchParams.set("timezone", "auto");
-    url.searchParams.set("forecast_days", "1");
+    url.searchParams.set("forecast_days", String(FORECAST_WINDOW_DAYS));
     url.searchParams.set("wind_speed_unit", "ms");
     return url;
   }

@@ -73,9 +73,10 @@ describe("GET /api/beaches/:beachId/predictions", () => {
 
   it("requires no authentication and returns a seeded beach's hourly predictions for a given date", async () => {
     await db.collection("predictions").insertOne({
-      _id: `${BEACH_ID}_${DATE}`,
+      _id: `${BEACH_ID}_${DATE}_${DATE}`,
       beachId: BEACH_ID,
       date: DATE,
+      issuedDate: DATE,
       hourlyPredictions: HOURLY_PREDICTIONS,
       computedAt: new Date(),
     });
@@ -90,12 +91,37 @@ describe("GET /api/beaches/:beachId/predictions", () => {
     });
   });
 
+  it("returns the freshest (smallest-Lead) Prediction when several Leads exist for the same date", async () => {
+    await db.collection("predictions").insertOne({
+      _id: `${BEACH_ID}_${DATE}_2026-08-02`,
+      beachId: BEACH_ID,
+      date: DATE,
+      issuedDate: "2026-08-02",
+      hourlyPredictions: [{ ...HOURLY_PREDICTIONS[0], flagColor: "red" }],
+      computedAt: new Date(),
+    });
+    await db.collection("predictions").insertOne({
+      _id: `${BEACH_ID}_${DATE}_${DATE}`,
+      beachId: BEACH_ID,
+      date: DATE,
+      issuedDate: DATE,
+      hourlyPredictions: HOURLY_PREDICTIONS,
+      computedAt: new Date(),
+    });
+
+    const response = await request(buildApp()).get(`/api/beaches/${BEACH_ID}/predictions?date=${DATE}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.hourlyPredictions).toEqual(HOURLY_PREDICTIONS);
+  });
+
   it("defaults to today's date (Europe/Sofia) when no date query param is given", async () => {
     const today = todayInSofia();
     await db.collection("predictions").insertOne({
-      _id: `${BEACH_ID}_${today}`,
+      _id: `${BEACH_ID}_${today}_${today}`,
       beachId: BEACH_ID,
       date: today,
+      issuedDate: today,
       hourlyPredictions: HOURLY_PREDICTIONS,
       computedAt: new Date(),
     });
@@ -133,6 +159,8 @@ describe("GET /api/beaches/:beachId/predictions", () => {
       findByBeachAndDate: async () => {
         throw new Error("connection lost");
       },
+      getDailyPredictions: async () => null,
+      getIssuedPredictionsForTargetDate: async () => [],
     };
     const app = createApp({
       healthcheckRepository: new MongoHealthcheckRepository(db),

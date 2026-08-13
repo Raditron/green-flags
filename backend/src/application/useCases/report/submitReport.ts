@@ -83,6 +83,7 @@ export async function submitReport(
   await predictionRepository.saveDailyPredictions({
     beachId: prediction.beachId,
     date: prediction.date,
+    issuedDate: prediction.issuedDate,
     hourlyPredictions: prediction.hourlyPredictions.map((candidate) =>
       candidate.hour === hour ? { ...candidate, confidence } : candidate
     ),

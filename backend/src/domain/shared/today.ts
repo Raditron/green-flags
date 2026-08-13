@@ -38,3 +38,9 @@ export function currentOrNearestLegalHour(now: Date = new Date()): number {
   if (hour > LEGAL_WINDOW_END_HOUR) return LEGAL_WINDOW_END_HOUR;
   return hour;
 }
+
+/** The calendar date (YYYY-MM-DD) immediately before the given one. Pure date-string arithmetic (UTC midnight diffing), not tied to Europe/Sofia "now" — callers pass in an already-resolved Sofia date. */
+export function previousCalendarDate(date: string): string {
+  const previous = new Date(Date.parse(`${date}T00:00:00Z`) - 24 * 60 * 60 * 1000);
+  return previous.toISOString().slice(0, 10);
+}

@@ -68,9 +68,10 @@ describe("GET /api/daily-summary", () => {
   it("requires no authentication and aggregates today's persisted predictions into a sea-wide and per-area summary", async () => {
     const today = todayInSofia();
     await db.collection("predictions").insertOne({
-      _id: `${BEACH_ID}_${today}`,
+      _id: `${BEACH_ID}_${today}_${today}`,
       beachId: BEACH_ID,
       date: today,
+      issuedDate: today,
       hourlyPredictions: [HOURLY_PREDICTION],
       computedAt: new Date(),
     });
@@ -85,9 +86,10 @@ describe("GET /api/daily-summary", () => {
 
   it("ignores predictions left over from previous days' batch runs", async () => {
     await db.collection("predictions").insertOne({
-      _id: `${BEACH_ID}_2020-01-01`,
+      _id: `${BEACH_ID}_2020-01-01_2020-01-01`,
       beachId: BEACH_ID,
       date: "2020-01-01",
+      issuedDate: "2020-01-01",
       hourlyPredictions: [HOURLY_PREDICTION],
       computedAt: new Date(),
     });
@@ -117,6 +119,7 @@ describe("GET /api/daily-summary", () => {
       getDailyPredictions: async () => {
         throw new Error("connection lost");
       },
+      getIssuedPredictionsForTargetDate: async () => [],
     };
     const app = createApp({
       ...stubBatchDependencies(),

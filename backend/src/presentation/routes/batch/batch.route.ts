@@ -3,6 +3,7 @@ import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import { ForecastProvider } from "../../../domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../../../domain/ports/batch/stormWarningProvider";
 import { PredictionRepository } from "../../../domain/ports/prediction/predictionRepository";
+import { SelfConsistencyRepository } from "../../../domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../../../domain/ports/report/reportRepository";
 import { createBatchSecretAuth } from "../../middleware/batchSecretAuth";
 import { createBatchController } from "../../controllers/batch/batch.controller";
@@ -12,6 +13,7 @@ export interface BatchRouteDependencies {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
+  selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
   batchTriggerSecret: string;
 }

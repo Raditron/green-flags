@@ -20,17 +20,24 @@ export interface BeachDailyPredictions {
   beachId: string;
   /** Calendar date (YYYY-MM-DD) these predictions apply to, in the beach's own timezone. */
   date: string;
+  /** Calendar date (YYYY-MM-DD) the batch run that produced this Prediction actually ran on — together with `date`, this is Lead: docs/adr/0007-prediction-keyed-by-target-and-issued-date.md. */
+  issuedDate: string;
   hourlyPredictions: HourlyPrediction[];
 }
 
 export interface PredictionRepository {
-  /** Upserts by beach + date, so re-running the batch job for the same day replaces rather than duplicates. */
+  /** Upserts by beach + target date + issued date, so re-running the batch job on the same day for the same target date replaces rather than duplicates that day's Prediction, while still accumulating one Prediction per Lead as the target date moves through the rolling window. */
   saveDailyPredictions(predictions: BeachDailyPredictions): Promise<void>;
-  /** Point lookup by beach + date; resolves to null if no batch run has persisted predictions for that day yet. */
+
+  /** Point lookup by beach + target date, resolving to the freshest (smallest-Lead, i.e. most-recently-issued) Prediction for that date — the one every "today" read path wants. Null if no batch run has persisted a Prediction for that date yet. */
   findByBeachAndDate(beachId: string, date: string): Promise<BeachDailyPredictions | null>;
 
-  /** Every beach's predictions for a single calendar date, filtered at the data source rather than
-   * in application code — the predictions collection accumulates one batch run per beach per day
-   * forever, so this must never come back as an unfiltered full-collection fetch. */
+  /** Every beach's freshest-Lead Prediction for a single target date, filtered at the data source
+   * rather than in application code — the predictions collection accumulates one Prediction per
+   * beach per Lead per target date forever, so this must never come back as an unfiltered
+   * full-collection fetch. */
   getDailyPredictions(date: string): Promise<BeachDailyPredictions[] | null>;
+
+  /** Every Prediction ever issued for a single target date, across all beaches and every Lead — used by Reconciliation to grade older-Lead Predictions against that date's own near-tier (Lead 0) Prediction once the date closes out. */
+  getIssuedPredictionsForTargetDate(date: string): Promise<BeachDailyPredictions[]>;
 }
