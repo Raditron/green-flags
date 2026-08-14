@@ -131,7 +131,7 @@ function BeachDetailView({ beachId }: { beachId: string }) {
               )}
             </div>
 
-            <div style={styles.badges}>
+            <div style={styles.badges }>
               <ForecastStrip
                 beachId={beachId}
                 selectedDate={selectedDate ?? today}

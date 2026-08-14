@@ -16,7 +16,7 @@ export function ForecastStrip({ beachId, selectedDate, onSelect }: ForecastStrip
   return (
     <ul style={styles.list}>
       {dates.map((date) => (
-        <li key={date}>
+        <li key={date} style={styles.item}>
           <ForecastStripChip
             beachId={beachId}
             date={date}

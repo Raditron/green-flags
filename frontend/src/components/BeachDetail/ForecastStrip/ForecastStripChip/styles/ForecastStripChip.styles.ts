@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 export type ForecastStripChipState = "pending" | "resolved" | "failed";
 
-type ForecastStripChipStyleKey = "button" | "dot" | "label";
+type ForecastStripChipStyleKey = "button" | "dot" | "label" | "date";
 
 interface ForecastStripChipStyleArgs {
   state: ForecastStripChipState;
@@ -21,27 +21,40 @@ export function getForecastStripChipStyles({
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      gap: 6,
+      justifyContent: "center",
+      gap: 8,
+      width: "100%",
       border: `1px solid ${selected ? "var(--text-h)" : "var(--border)"}`,
-      borderRadius: 8,
-      padding: "8px 12px",
-      minWidth: 56,
+      borderRadius: 10,
+      padding: "14px 8px",
       font: "inherit",
-      fontSize: 12,
+      fontSize: 14,
       color: "var(--text)",
-      background: selected ? "var(--border)" : "transparent",
+      // --surface, not --border, for the selected fill: --border is a light "nepal" blue in
+      // both themes (chosen to stay visible as an outline against a dark background), so
+      // using it as a solid fill just reproduces the light-mode look in dark mode. --surface
+      // is the token that's actually themed per-mode (near-white in light, dark navy in dark).
+      background: selected ? "var(--surface)" : "transparent",
       cursor: state === "failed" ? "default" : "pointer",
       opacity: state === "failed" ? 0.5 : 1,
     },
     dot: {
-      width: 10,
-      height: 10,
+      width: 12,
+      height: 12,
       borderRadius: "50%",
       background: "var(--border)",
       flexShrink: 0,
     },
     label: {
       whiteSpace: "nowrap",
+    },
+    // Smaller, muted, and pulled up out of the button's flex gap so it reads as a caption
+    // underneath the day label rather than a peer of equal visual weight.
+    date: {
+      whiteSpace: "nowrap",
+      fontSize: 11,
+      opacity: 0.7,
+      marginTop: -4,
     },
   };
 }

@@ -1,3 +1,4 @@
+import { buildMonthWithDateReadable } from "../../../../shared/data/utils/toTimeReadable";
 import { flagColorVar, getFlagStatusText } from "../../../../shared/styles/flagColor";
 import { usePredictions } from "../../hooks/usePredictions";
 import { worstCaseHour } from "../../utils/worstCaseHour";
@@ -18,7 +19,7 @@ export function ForecastStripChip({ beachId, date, label, selected, onSelect }: 
 
   const styles = getForecastStripChipStyles({ state, selected });
   const dotBackground = worst ? flagColorVar(worst.flagColor) : styles.dot.background;
-
+  const readableDate = buildMonthWithDateReadable({ date });
   const accessibleName =
     state === "pending"
       ? `${label}: loading forecast`
@@ -38,6 +39,7 @@ export function ForecastStripChip({ beachId, date, label, selected, onSelect }: 
     >
       <span style={{ ...styles.dot, background: dotBackground }} aria-hidden="true" />
       <span style={styles.label}>{label}</span>
+      <span style={styles.date}>{readableDate}</span>
     </button>
   );
 }
