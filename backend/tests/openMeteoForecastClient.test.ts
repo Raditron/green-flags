@@ -73,6 +73,136 @@ describe("OpenMeteoForecastClient", () => {
     ]);
   });
 
+  it("includes every date when the marine model has real wave data for the whole window", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input.toString();
+        const body = {
+          hourly: {
+            time: ["2026-08-05T09:00", "2026-08-05T18:00", "2026-08-06T09:00", "2026-08-06T18:00"],
+            ...(url.includes("marine-api.open-meteo.com")
+              ? {
+                  wave_height: [0.2, 0.22, 0.24, 0.26],
+                  wave_period: [4.1, 4.0, 3.9, 3.8],
+                  swell_wave_height: [0.18, 0.19, 0.2, 0.21],
+                }
+              : { wind_speed_10m: [0.5, 0.6, 1.1, 1.2], wind_direction_10m: [307, 300, 140, 145] }),
+          },
+        };
+        return new Response(JSON.stringify(body), { status: 200 });
+      })
+    );
+    const client = new OpenMeteoForecastClient();
+
+    const result = await client.fetchForecastWindow({ lat: 43.19, long: 27.92 });
+
+    expect(result.map((day) => day.date)).toEqual(["2026-08-05", "2026-08-06"]);
+  });
+
+  it("drops a date with a null legal-window wave reading and every later date", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input.toString();
+        const body = {
+          hourly: {
+            time: ["2026-08-05T09:00", "2026-08-06T09:00", "2026-08-07T09:00"],
+            ...(url.includes("marine-api.open-meteo.com")
+              ? {
+                  // 08-06's 09:00 wave_height is null (past the marine model's real horizon); 08-07
+                  // has real data again, but it's still dropped since the cutoff is contiguous.
+                  wave_height: [0.2, null, 0.3],
+                  wave_period: [4.1, 4.0, 3.9],
+                  swell_wave_height: [0.18, 0.19, 0.2],
+                }
+              : { wind_speed_10m: [0.5, 0.6, 0.7], wind_direction_10m: [307, 300, 145] }),
+          },
+        };
+        return new Response(JSON.stringify(body), { status: 200 });
+      })
+    );
+    const client = new OpenMeteoForecastClient();
+
+    const result = await client.fetchForecastWindow({ lat: 43.19, long: 27.92 });
+
+    expect(result.map((day) => day.date)).toEqual(["2026-08-05"]);
+  });
+
+  it("drops a date with a null legal-window wave_period even when wave_height is real", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input.toString();
+        const body = {
+          hourly: {
+            time: ["2026-08-05T09:00", "2026-08-06T09:00"],
+            ...(url.includes("marine-api.open-meteo.com")
+              ? { wave_height: [0.2, 0.3], wave_period: [4.1, null], swell_wave_height: [0.18, 0.19] }
+              : { wind_speed_10m: [0.5, 0.6], wind_direction_10m: [307, 300] }),
+          },
+        };
+        return new Response(JSON.stringify(body), { status: 200 });
+      })
+    );
+    const client = new OpenMeteoForecastClient();
+
+    const result = await client.fetchForecastWindow({ lat: 43.19, long: 27.92 });
+
+    expect(result.map((day) => day.date)).toEqual(["2026-08-05"]);
+  });
+
+  it("keeps a date whose only null wave hour falls outside the legal window", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input.toString();
+        const body = {
+          hourly: {
+            // 20:00 is outside the 09:00-18:00 legal window, so its null wave_height doesn't gate.
+            time: ["2026-08-05T09:00", "2026-08-05T20:00", "2026-08-06T09:00"],
+            ...(url.includes("marine-api.open-meteo.com")
+              ? {
+                  wave_height: [0.2, null, 0.24],
+                  wave_period: [4.1, 4.0, 3.9],
+                  swell_wave_height: [0.18, 0.19, 0.2],
+                }
+              : { wind_speed_10m: [0.5, 0.55, 0.6], wind_direction_10m: [307, 305, 300] }),
+          },
+        };
+        return new Response(JSON.stringify(body), { status: 200 });
+      })
+    );
+    const client = new OpenMeteoForecastClient();
+
+    const result = await client.fetchForecastWindow({ lat: 43.19, long: 27.92 });
+
+    expect(result.map((day) => day.date)).toEqual(["2026-08-05", "2026-08-06"]);
+  });
+
+  it("keeps a date when only swell_wave_height is null but wave_height/wave_period are real", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input.toString();
+        const body = {
+          hourly: {
+            time: ["2026-08-05T09:00"],
+            ...(url.includes("marine-api.open-meteo.com")
+              ? { wave_height: [0.2], wave_period: [4.1], swell_wave_height: [null] }
+              : { wind_speed_10m: [0.5], wind_direction_10m: [307] }),
+          },
+        };
+        return new Response(JSON.stringify(body), { status: 200 });
+      })
+    );
+    const client = new OpenMeteoForecastClient();
+
+    const result = await client.fetchForecastWindow({ lat: 43.19, long: 27.92 });
+
+    expect(result.map((day) => day.date)).toEqual(["2026-08-05"]);
+  });
+
   it("throws when the marine API responds with a non-2xx status", async () => {
     vi.stubGlobal(
       "fetch",
