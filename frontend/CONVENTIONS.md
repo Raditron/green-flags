@@ -20,3 +20,12 @@ Add any other folder a component specifically needs (e.g. `utils/`) using the sa
 `components/SystemStatus/` is the reference example: it fetches `GET /api/health` from the backend and renders the result, proving the frontend↔backend↔database path works end to end.
 
 Cross-cutting concerns (design tokens, a shared API client, app-wide layout) live at `src/` top level (e.g. `src/index.css`) rather than inside any one component's local folders — colocation is for component-specific concerns, not app-wide ones.
+
+## Border radius
+
+Cards, panels, buttons, inputs, and other boxy elements use `borderRadius: 12` by default. Don't
+introduce a different value (8, 6, 10, ...) just because a neighboring or copy-pasted component
+happened to use one — match 12 unless the design specifically calls for something else.
+
+Pill/fully-round shapes (`999`, `"50%"`) are a different, deliberate shape language — chips,
+avatars, toggle pills — and are unaffected by this rule.

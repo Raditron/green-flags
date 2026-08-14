@@ -25,7 +25,7 @@ export function getForecastStripChipStyles({
       gap: 8,
       width: "100%",
       border: `1px solid ${selected ? "var(--text-h)" : "var(--border)"}`,
-      borderRadius: 10,
+      borderRadius: 12,
       padding: "14px 8px",
       font: "inherit",
       fontSize: 14,

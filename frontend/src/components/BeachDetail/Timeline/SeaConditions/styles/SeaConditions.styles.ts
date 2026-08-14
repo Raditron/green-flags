@@ -18,7 +18,7 @@ export function getSeaConditionsStyles(): Record<SeaConditionsStyleKey, CSSPrope
       flex: "1 1 0%",
       minWidth: 0,
       padding: "12px 16px",
-      borderRadius: 8,
+      borderRadius: 12,
       background: "var(--surface)",
       border: "1px solid var(--border)",
       display: "flex",

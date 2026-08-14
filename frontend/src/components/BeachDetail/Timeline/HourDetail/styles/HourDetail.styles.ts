@@ -8,7 +8,7 @@ export function getHourDetailStyles(): Record<HourDetailStyleKey, CSSProperties>
       flex: "1 1 160px",
       minWidth: 160,
       padding: "12px 16px",
-      borderRadius: 8,
+      borderRadius: 12,
       background: "var(--surface)",
       border: "1px solid var(--border)",
       display: "flex",
