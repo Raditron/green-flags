@@ -12,7 +12,7 @@ vi.mock("../data/fetchPredictions", async () => {
 const BEACH_ID = "beach-a";
 
 function predictions(date: string): BeachDailyPredictions {
-  return { beachId: BEACH_ID, date, issuedDate: date, hourlyPredictions: [] } as unknown as BeachDailyPredictions;
+  return { beachId: BEACH_ID, date, issuedDate: date, hourlyPredictions: [] };
 }
 
 describe("usePredictions", () => {

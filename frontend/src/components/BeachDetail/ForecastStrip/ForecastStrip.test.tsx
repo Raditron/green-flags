@@ -31,6 +31,7 @@ function successState(flagColor: HourlyPrediction["flagColor"]): PredictionsStat
     data: {
       beachId: BEACH_ID,
       date: TODAY,
+      issuedDate: TODAY,
       hourlyPredictions: [hour({ hour: 12, flagColor })],
     },
   };

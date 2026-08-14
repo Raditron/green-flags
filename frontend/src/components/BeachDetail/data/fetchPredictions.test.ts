@@ -5,7 +5,7 @@ import { API_BASE_URL } from "../../../apiBaseUrl";
 const BEACH_ID = "beach-a";
 
 function stubFetch(status: number, body: unknown = {}) {
-  const fetchMock = vi.fn(async () => new Response(JSON.stringify(body), { status }));
+  const fetchMock = vi.fn(async (..._args: Parameters<typeof fetch>) => new Response(JSON.stringify(body), { status }));
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
 }

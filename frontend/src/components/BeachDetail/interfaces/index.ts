@@ -50,5 +50,7 @@ export interface HourlyPrediction {
 export interface BeachDailyPredictions {
   beachId: string;
   date: string;
+  /** Calendar date (YYYY-MM-DD) the batch run that produced this Prediction actually ran on. Mirrors backend/src/domain/ports/prediction/predictionRepository.ts's BeachDailyPredictions. */
+  issuedDate: string;
   hourlyPredictions: HourlyPrediction[];
 }
