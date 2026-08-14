@@ -69,8 +69,11 @@ describe("ForecastStrip", () => {
     expect(screen.getByRole("button", { name: "Today: loading forecast" })).not.toBeDisabled();
     expect(screen.getByRole("button", { name: "Fri: Red flag · no swimming" })).not.toBeDisabled();
     expect(screen.getByRole("button", { name: "Sat: forecast unavailable" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Sun: forecast unavailable" })).toBeDisabled();
+    // Sun is not-found (outside the marine wave-data horizon, #87) — its chip renders nothing at
+    // all, rather than a muted "unavailable" one, so it never shows up as a button.
+    expect(screen.queryByRole("button", { name: "Sun: forecast unavailable" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /Green flag/ })).toHaveLength(3);
+    expect(screen.getAllByRole("button")).toHaveLength(6);
   });
 
   it("fetches each chip's day independently by beachId and date", () => {

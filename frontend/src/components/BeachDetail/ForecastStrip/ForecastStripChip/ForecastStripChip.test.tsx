@@ -25,13 +25,16 @@ function hour(overrides: Partial<HourlyPrediction> & { hour: number }): HourlyPr
 function renderChip(overrides: Partial<{ selected: boolean; onSelect: (date: string) => void }> = {}) {
   const onSelect = overrides.onSelect ?? vi.fn();
   render(
-    <ForecastStripChip
-      beachId={BEACH_ID}
-      date={DATE}
-      label="Thu"
-      selected={overrides.selected ?? false}
-      onSelect={onSelect}
-    />,
+    <ul>
+      <ForecastStripChip
+        beachId={BEACH_ID}
+        date={DATE}
+        label="Thu"
+        selected={overrides.selected ?? false}
+        onSelect={onSelect}
+        itemStyle={{}}
+      />
+    </ul>,
   );
   return { onSelect };
 }
@@ -73,11 +76,11 @@ describe("ForecastStripChip", () => {
     expect(button).toBeDisabled();
   });
 
-  it("shows the same muted, disabled look on a 404 (not-found)", () => {
+  it("renders nothing on a 404 (not-found) — the day is outside the forecast horizon", () => {
     mockUsePredictions.mockReturnValue({ status: "not-found" });
     renderChip();
 
-    expect(screen.getByRole("button", { name: "Thu: forecast unavailable" })).toBeDisabled();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("reflects selected state via aria-pressed", () => {
