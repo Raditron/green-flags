@@ -4,8 +4,11 @@ import { FaArrowLeft, FaWater } from "react-icons/fa6";
 import { usePredictions } from "./hooks/usePredictions";
 import { useBeach } from "./hooks/useBeach";
 import { currentSofiaHour, isOutsideLegalWindow } from "./utils/legalWindow";
+import { todayInSofia } from "./utils/forecastWindow";
 import { useToast } from "../Layout/Toast/ToastContext";
 import { Timeline } from "./Timeline/Timeline";
+import { DayOutlook } from "./DayOutlook/DayOutlook";
+import { ForecastStrip } from "./ForecastStrip/ForecastStrip";
 import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
 import { CommentSection } from "./CommentSection/CommentSection";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
@@ -45,6 +48,12 @@ function BeachDetailView({ beachId }: { beachId: string }) {
   const outsideLegalWindow = isOutsideLegalWindow();
   const currentHour = outsideLegalWindow ? null : currentSofiaHour();
   const [backHovered, setBackHovered] = useState(false);
+  // Which Forecast Strip chip is showing: null means Today, which keeps this page's original
+  // Timeline behavior untouched; any other value is a future calendar date (YYYY-MM-DD) that
+  // swaps the Timeline area for that day's Day Outlook (#83) instead. Transient UI state only —
+  // never the URL — so a reload always lands back on Today. See #85.
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const today = todayInSofia();
   const styles = getBeachDetailStyles({ backHovered });
   const { show: showToast, dismiss: dismissToast } = useToast();
   // Curated beach photo takes priority over the seeded map-pin image (see
@@ -122,38 +131,48 @@ function BeachDetailView({ beachId }: { beachId: string }) {
               )}
             </div>
 
-            <div style={styles.badges}>
-              {predictions.status === "success" && (
-                <>
-                  {outsideLegalWindow && (
-                    <p style={styles.offWindow}>
-                      No lifeguard on duty — estimate only
-                    </p>
-                  )}
-                  <Timeline
-                    hourlyPredictions={predictions.data.hourlyPredictions}
-                    desaturated={outsideLegalWindow}
-                    currentHour={currentHour}
-                    updatedAt={predictions.updatedAt}
-                    isUnguarded={isUnguarded}
-                    beachId={beachId}
-                  />
-                  <p style={styles.meta}>
-                    Predictions for {predictions.data.date}
-                    {predictions.refreshing && (
-                      <span style={styles.refreshing}>Refreshing…</span>
+            <div style={styles.badges }>
+              <ForecastStrip
+                beachId={beachId}
+                selectedDate={selectedDate ?? today}
+                onSelect={(date) => setSelectedDate(date === today ? null : date)}
+              />
+
+              {selectedDate ? (
+                <DayOutlook beachId={beachId} date={selectedDate} isUnguarded={isUnguarded} />
+              ) : (
+                predictions.status === "success" && (
+                  <>
+                    {outsideLegalWindow && (
+                      <p style={styles.offWindow}>
+                        No lifeguard on duty — estimate only
+                      </p>
                     )}
-                  </p>
-                </>
+                    <Timeline
+                      hourlyPredictions={predictions.data.hourlyPredictions}
+                      desaturated={outsideLegalWindow}
+                      currentHour={currentHour}
+                      updatedAt={predictions.updatedAt}
+                      isUnguarded={isUnguarded}
+                      beachId={beachId}
+                    />
+                    <p style={styles.meta}>
+                      Predictions for {predictions.data.date}
+                      {predictions.refreshing && (
+                        <span style={styles.refreshing}>Refreshing…</span>
+                      )}
+                    </p>
+                  </>
+                )
               )}
             </div>
           </div>
 
           {quirkNotes && <p style={styles.description}>{quirkNotes}</p>}
 
-          {predictions.status === "loading" && <p>Loading predictions…</p>}
+          {selectedDate === null && predictions.status === "loading" && <p>Loading predictions…</p>}
 
-          {predictions.status === "error" && (
+          {selectedDate === null && predictions.status === "error" && (
             <p style={styles.error}>
               Could not load predictions: {predictions.message}
             </p>

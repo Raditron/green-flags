@@ -3,6 +3,7 @@ import { BeachRepository } from "../../../domain/ports/beach/beachRepository";
 import { ForecastProvider } from "../../../domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../../../domain/ports/batch/stormWarningProvider";
 import { PredictionRepository } from "../../../domain/ports/prediction/predictionRepository";
+import { SelfConsistencyRepository } from "../../../domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../../../domain/ports/report/reportRepository";
 import { runDailyBatch } from "../../../application/useCases/batch/runDailyBatch";
 
@@ -11,6 +12,7 @@ export interface BatchControllerDependencies {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
+  selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
 }
 
@@ -23,6 +25,7 @@ export function createBatchController(dependencies: BatchControllerDependencies)
           forecastProvider: dependencies.forecastProvider,
           stormWarningProvider: dependencies.stormWarningProvider,
           predictionRepository: dependencies.predictionRepository,
+          selfConsistencyRepository: dependencies.selfConsistencyRepository,
           reportRepository: dependencies.reportRepository,
           now: new Date(),
         });

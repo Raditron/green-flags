@@ -5,6 +5,7 @@ import { BeachRepository } from "../domain/ports/beach/beachRepository";
 import { ForecastProvider } from "../domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../domain/ports/batch/stormWarningProvider";
 import { PredictionRepository } from "../domain/ports/prediction/predictionRepository";
+import { SelfConsistencyRepository } from "../domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../domain/ports/report/reportRepository";
 import { AuthTokenVerifier } from "../domain/ports/auth/authTokenVerifier";
 import { UserRepository } from "../domain/ports/user/userRepository";
@@ -23,6 +24,7 @@ export interface AppDependencies {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
+  selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
   batchTriggerSecret: string;
   authTokenVerifier: AuthTokenVerifier;
@@ -78,6 +80,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
       forecastProvider: dependencies.forecastProvider,
       stormWarningProvider: dependencies.stormWarningProvider,
       predictionRepository: dependencies.predictionRepository,
+      selfConsistencyRepository: dependencies.selfConsistencyRepository,
       reportRepository: dependencies.reportRepository,
       batchTriggerSecret: dependencies.batchTriggerSecret,
     })

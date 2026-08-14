@@ -1,6 +1,7 @@
 import { ForecastProvider } from "../../src/domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../../src/domain/ports/batch/stormWarningProvider";
 import { PredictionRepository } from "../../src/domain/ports/prediction/predictionRepository";
+import { SelfConsistencyRepository } from "../../src/domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../../src/domain/ports/report/reportRepository";
 import { AuthTokenVerifier } from "../../src/domain/ports/auth/authTokenVerifier";
 import { UserRepository } from "../../src/domain/ports/user/userRepository";
@@ -11,6 +12,7 @@ export function stubBatchDependencies(): {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
   predictionRepository: PredictionRepository;
+  selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
   batchTriggerSecret: string;
   authTokenVerifier: AuthTokenVerifier;
@@ -19,7 +21,7 @@ export function stubBatchDependencies(): {
 } {
   return {
     forecastProvider: {
-      fetchDailyForecast: async () => ({ date: "1970-01-01", hours: [] }),
+      fetchForecastWindow: async () => [{ date: "1970-01-01", hours: [] }],
     },
     stormWarningProvider: {
       checkActiveStormWarning: async () => false,
@@ -28,6 +30,11 @@ export function stubBatchDependencies(): {
       saveDailyPredictions: async () => {},
       findByBeachAndDate: async () => null,
       getDailyPredictions: async () => null,
+      getIssuedPredictionsForTargetDate: async () => [],
+    },
+    selfConsistencyRepository: {
+      getStats: async () => ({ hits: 0, total: 0 }),
+      recordOutcomes: async () => {},
     },
     reportRepository: {
       getBucketStats: async () => ({ hits: 0, total: 0 }),

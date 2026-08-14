@@ -6,6 +6,7 @@ import { createApp } from "../../../../src/presentation/app";
 import { MongoHealthcheckRepository } from "../../../../src/infrastructure/repositories/mongoHealthcheckRepository";
 import { MongoBeachRepository } from "../../../../src/infrastructure/repositories/mongoBeachRepository";
 import { MongoPredictionRepository } from "../../../../src/infrastructure/repositories/mongoPredictionRepository";
+import { MongoSelfConsistencyRepository } from "../../../../src/infrastructure/repositories/mongoSelfConsistencyRepository";
 import { MongoReportRepository } from "../../../../src/infrastructure/repositories/mongoReportRepository";
 import { OpenMeteoForecastClient } from "../../../../src/infrastructure/openMeteo/openMeteoForecastClient";
 import { MeteoalarmStormWarningClient } from "../../../../src/infrastructure/meteoalarm/meteoalarmStormWarningClient";
@@ -93,6 +94,7 @@ describe("POST /api/batch", () => {
   beforeEach(async () => {
     await db.collection("beaches").deleteMany({});
     await db.collection("predictions").deleteMany({});
+    await db.collection("selfConsistencyStats").deleteMany({});
     await db.collection("beaches").insertMany(
       BEACH_SEED_DATA.slice(0, 2).map((beach) => ({
         _id: beach.id,
@@ -116,6 +118,7 @@ describe("POST /api/batch", () => {
       healthcheckRepository: new MongoHealthcheckRepository(db),
       beachRepository: new MongoBeachRepository(db),
       predictionRepository: new MongoPredictionRepository(db),
+      selfConsistencyRepository: new MongoSelfConsistencyRepository(db),
       reportRepository: new MongoReportRepository(db),
       forecastProvider: new OpenMeteoForecastClient(),
       stormWarningProvider: new MeteoalarmStormWarningClient(),

@@ -17,5 +17,6 @@ export interface ForecastCoordinates {
 }
 
 export interface ForecastProvider {
-  fetchDailyForecast(coordinates: ForecastCoordinates): Promise<DailyForecast>;
+  /** One entry per date in the rolling forecast window (today .. today+6), in ascending date order. */
+  fetchForecastWindow(coordinates: ForecastCoordinates): Promise<DailyForecast[]>;
 }

@@ -34,6 +34,18 @@ export function effectiveWaveHeightM(conditions: Pick<HourlyConditions, "waveHei
   return Math.max(conditions.waveHeightM, conditions.swellHeightM ?? 0);
 }
 
+/** Beaufort force + Douglas sea state for a forecast reading — shared by flag evaluation (here)
+ * and Reconciliation, which has to re-derive the same classification from a stored Prediction's
+ * own forecast reading since only the raw reading, not the classification, is persisted. */
+export function deriveBeaufortAndDouglas(
+  conditions: Pick<HourlyConditions, "windSpeedMps" | "waveHeightM" | "swellHeightM">
+): { beaufortForce: number; douglasSeaState: number } {
+  return {
+    beaufortForce: windSpeedToBeaufortForce(conditions.windSpeedMps),
+    douglasSeaState: waveHeightToDouglasSeaState(effectiveWaveHeightM(conditions)),
+  };
+}
+
 function deriveFlagColor(beaufortForce: number, douglasSeaState: number, stormWarningActive: boolean): FlagColor {
   if (stormWarningActive || beaufortForce >= RED_BEAUFORT_FORCE || douglasSeaState >= RED_DOUGLAS_SEA_STATE) {
     return "red";
@@ -79,8 +91,7 @@ function deriveRipCurrentRisk(waveHeightM: number, wavePeriodS: number, onshoreW
 }
 
 export function evaluateHourlyFlag(conditions: HourlyConditions): FlagAssessment {
-  const beaufortForce = windSpeedToBeaufortForce(conditions.windSpeedMps);
-  const douglasSeaState = waveHeightToDouglasSeaState(effectiveWaveHeightM(conditions));
+  const { beaufortForce, douglasSeaState } = deriveBeaufortAndDouglas(conditions);
   const onshoreWindComponentMps = computeOnshoreWindComponentMps(conditions);
   const readableWindSpeed = beaufortForceToReadable(beaufortForce);
   const readableSeaState = douglasSeaStateToReadable(douglasSeaState);

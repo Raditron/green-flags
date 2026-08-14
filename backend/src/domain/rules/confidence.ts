@@ -11,6 +11,17 @@ import { DOUGLAS_UPPER_BOUNDS_M } from "./douglasSeaState";
  */
 export const CONFIDENCE_KAPPA = 9;
 
+/**
+ * Pseudo-observation weight of the self-consistency track record (Reconciliation-derived
+ * agreement between a mid/far-Lead Prediction and its target date's own near-tier verdict) in the
+ * confidence formula. Deliberately smaller than CONFIDENCE_KAPPA: self-consistency is a real but
+ * bounded signal — it can only ever pull a far-Lead forecast's trust up to "as good as the
+ * near-Lead model", never further — so once genuine report-backed history exists for a bucket it
+ * must dominate, not sit on equal footing. See
+ * docs/adr/0009-self-consistency-reconciliation-weighted-below-reports.md.
+ */
+export const CONFIDENCE_KAPPA_SELF = 3;
+
 /** Wind/wave distance from the nearest color-flipping boundary beyond which conditions count as "well clear". */
 const WELL_CLEAR_WIND_MARGIN_MPS = 2;
 const WELL_CLEAR_WAVE_MARGIN_M = 0.4;

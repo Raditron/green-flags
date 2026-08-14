@@ -1,4 +1,5 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { BeachDetail } from "./BeachDetail";
@@ -54,5 +55,27 @@ describe("BeachDetail", () => {
   it("falls back to the generic icon when the beach has no curated photo or map-pin image", () => {
     const image = renderDetail("not-a-real-beach");
     expect(image).not.toBeInTheDocument();
+  });
+
+  it("selecting a future Forecast Strip chip swaps Timeline for Day Outlook, and reselecting Today reverts", async () => {
+    const user = userEvent.setup();
+    renderDetail("varna-central-beach");
+
+    // Today starts selected: the page's own (Timeline) loading copy shows, not Day Outlook's.
+    expect(screen.getByText("Loading predictions…")).toBeInTheDocument();
+    expect(screen.queryByText("Loading forecast…")).not.toBeInTheDocument();
+
+    // Chip 0 is Today; click the next chip, a future date, to swap in Day Outlook.
+    const chips = screen.getAllByRole("button", { name: /loading forecast/ });
+    await user.click(chips[1]);
+
+    expect(screen.getByText("Loading forecast…")).toBeInTheDocument();
+    expect(screen.queryByText("Loading predictions…")).not.toBeInTheDocument();
+
+    // Selecting Today again reverts to the original Timeline area, unchanged.
+    await user.click(screen.getByRole("button", { name: "Today: loading forecast" }));
+
+    expect(screen.getByText("Loading predictions…")).toBeInTheDocument();
+    expect(screen.queryByText("Loading forecast…")).not.toBeInTheDocument();
   });
 });

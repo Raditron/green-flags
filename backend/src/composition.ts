@@ -2,6 +2,7 @@ import { connectToDatabase } from "./infrastructure/db/mongoClient";
 import { MongoHealthcheckRepository } from "./infrastructure/repositories/mongoHealthcheckRepository";
 import { MongoBeachRepository } from "./infrastructure/repositories/mongoBeachRepository";
 import { MongoPredictionRepository } from "./infrastructure/repositories/mongoPredictionRepository";
+import { MongoSelfConsistencyRepository } from "./infrastructure/repositories/mongoSelfConsistencyRepository";
 import { MongoReportRepository } from "./infrastructure/repositories/mongoReportRepository";
 import { MongoUserRepository } from "./infrastructure/repositories/mongoUserRepository";
 import { MongoCommentRepository } from "./infrastructure/repositories/mongoCommentRepository";
@@ -27,6 +28,7 @@ export async function buildDependencies(config: CompositionConfig): Promise<AppD
     healthcheckRepository: new MongoHealthcheckRepository(db),
     beachRepository: new MongoBeachRepository(db),
     predictionRepository: new MongoPredictionRepository(db),
+    selfConsistencyRepository: new MongoSelfConsistencyRepository(db),
     reportRepository: new MongoReportRepository(db),
     userRepository: new MongoUserRepository(db),
     commentRepository: new MongoCommentRepository(db),
