@@ -49,6 +49,8 @@ describe("DayOutlook", () => {
     expect(screen.getByText("Worst around 15:00")).toBeInTheDocument();
     expect(screen.getByText("Strong rip currents — stay close to shore")).toBeInTheDocument();
     expect(screen.getByRole("progressbar", { name: "Confidence" })).toHaveAttribute("aria-valuenow", "90");
+    expect(screen.getByText("Wind: calm")).toBeInTheDocument();
+    expect(screen.getByText("Sea: calm")).toBeInTheDocument();
   });
 
   it("renders UnguardedNotice when the beach is unguarded", () => {

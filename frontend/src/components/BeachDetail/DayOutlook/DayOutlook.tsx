@@ -1,16 +1,19 @@
 import { HourDetail } from "../Timeline/HourDetail/HourDetail";
+import { SeaConditions } from "../Timeline/SeaConditions/SeaConditions";
 import { UnguardedNotice } from "../Timeline/UnguardedNotice/UnguardedNotice";
 import { Verdict } from "../Timeline/Verdict/Verdict";
 import { usePredictions } from "../hooks/usePredictions";
 import { worstCaseHour } from "../utils/worstCaseHour";
 import type { DayOutlookProps } from "./interfaces";
 import { getDayOutlookStyles } from "./styles/DayOutlook.styles";
+import { WorstAroundNotice } from "./WorstAroundNotice/WorstAroundNotice";
 
 // Future-day counterpart to Timeline (see Timeline.tsx): a future day collapses to its single
 // worst-case hour (#82's worstCaseHour) rather than a live-tracked "now", so this reuses Verdict's
-// flag/sentence/caution and HourDetail's confidence ring as-is but skips everything Timeline shows
-// that only makes sense for today — TimePicker, the live clock, the report-a-flag flow, and the
-// off-window banner. See docs/adr/0010-worst-case-hour-of-day-in-frontend.md.
+// flag/sentence/caution, HourDetail's confidence ring, and SeaConditions' wind/sea readout as-is
+// but skips everything Timeline shows that only makes sense for today — TimePicker, the live
+// clock, the report-a-flag flow, and the off-window banner. See
+// docs/adr/0010-worst-case-hour-of-day-in-frontend.md.
 export function DayOutlook({ beachId, date, isUnguarded }: DayOutlookProps) {
   const predictions = usePredictions(beachId, date);
   const styles = getDayOutlookStyles();
@@ -34,12 +37,13 @@ export function DayOutlook({ beachId, date, isUnguarded }: DayOutlookProps) {
   return (
     <>
       <Verdict prediction={worst} />
-      <p style={styles.worstAround}>Worst around {String(worst.hour).padStart(2, "0")}:00</p>
+      <WorstAroundNotice hour={worst.hour} />
 
       {isUnguarded && <UnguardedNotice />}
 
       <div style={styles.detailRow}>
         <HourDetail prediction={worst} />
+        <SeaConditions prediction={worst} />
       </div>
     </>
   );
