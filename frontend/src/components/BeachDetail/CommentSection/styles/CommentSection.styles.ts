@@ -80,7 +80,7 @@ export function getCommentSectionStyles({
       width: "100%",
       boxSizing: "border-box",
       border: "1px solid var(--border)",
-      borderRadius: 6,
+      borderRadius: 12,
       padding: "8px 10px",
       font: "inherit",
       fontSize: 13.5,
@@ -100,7 +100,7 @@ export function getCommentSectionStyles({
     },
     submit: {
       border: "none",
-      borderRadius: 6,
+      borderRadius: 12,
       background: "var(--flag-green)",
       color: "white",
       padding: "6px 14px",
