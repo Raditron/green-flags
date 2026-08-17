@@ -21,7 +21,10 @@ export function Toast({ content, autoDismiss, version, onDismiss }: ToastProps) 
   }, [autoDismiss, version, onDismiss]);
 
   return (
-    <View style={styles.toast} accessibilityRole="alert">
+    // Matches frontend's `role="status"` exactly (not `accessibilityRole="alert"`, which maps to
+    // an assertive/interrupting announcement — `status` is the polite, non-interrupting semantics
+    // a transient toast is meant to have).
+    <View style={styles.toast} role="status">
       <View style={styles.content}>
         {/* Bare-string content (the common `show("message")` case) needs wrapping in <Text> —
             RN throws if a plain string is a direct child of <View>. JSX content (a caller-built

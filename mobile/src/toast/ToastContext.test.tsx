@@ -1,6 +1,7 @@
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { act, render, screen } from "@testing-library/react-native";
 import { Pressable, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { press } from "../test/press";
 import { ThemeProvider } from "../theme/ThemeContext";
 import { AUTO_DISMISS_MS } from "./Toast";
 import { ToastProvider, useToast } from "./ToastContext";
@@ -51,29 +52,28 @@ function renderConsumer() {
   );
 }
 
-// RNTL's `fireEvent.press` and `act` are both async under the hood (they always wrap in an async
-// function internally, even for a synchronous callback) — every call site must be awaited, or the
-// next statement runs before the state update/effect flush they triggered has actually landed.
-async function press(label: string) {
-  await fireEvent.press(screen.getByLabelText(label));
+// Presses the Pressable with the given accessibility label — a thin wrapper around the shared
+// `press()` helper (see ../test/press.ts) for this file's label-driven Consumer.
+async function pressLabel(label: string) {
+  await press(screen.getByLabelText(label));
 }
 
 describe("ToastProvider / useToast", () => {
   it("show() renders the toast, and its close button dismisses it", async () => {
     await renderConsumer();
 
-    await press("show");
+    await pressLabel("show");
     expect(await screen.findByText("Saved!")).toBeOnTheScreen();
 
-    await press("Dismiss");
+    await pressLabel("Dismiss");
     expect(screen.queryByText("Saved!")).not.toBeOnTheScreen();
   });
 
   it("stacks multiple shown toasts independently", async () => {
     await renderConsumer();
 
-    await press("show");
-    await press("show-persistent");
+    await pressLabel("show");
+    await pressLabel("show-persistent");
 
     expect(screen.getByText("Saved!")).toBeOnTheScreen();
     expect(screen.getByText("Pending…")).toBeOnTheScreen();
@@ -81,14 +81,14 @@ describe("ToastProvider / useToast", () => {
     // Toast's AUTO_DISMISS_MS effect schedules a real 4s setTimeout for the "Saved!" (autoDismiss)
     // toast — clear it deterministically rather than leaving it to fire in the background during a
     // later test.
-    await press("dismiss-first");
+    await pressLabel("dismiss-first");
   });
 
   it("update() replaces a toast's content in place rather than adding a new one", async () => {
     await renderConsumer();
 
-    await press("show"); // id 0, "Saved!"
-    await press("update-first");
+    await pressLabel("show"); // id 0, "Saved!"
+    await pressLabel("update-first");
 
     expect(screen.getByText("Updated!")).toBeOnTheScreen();
     expect(screen.queryByText("Saved!")).not.toBeOnTheScreen();
@@ -96,14 +96,14 @@ describe("ToastProvider / useToast", () => {
     expect(screen.getAllByLabelText("Dismiss")).toHaveLength(1);
 
     // Same real-timer cleanup as above — the updated toast is still an autoDismiss one.
-    await press("dismiss-first");
+    await pressLabel("dismiss-first");
   });
 
   it("dismiss() removes a specific toast by id", async () => {
     await renderConsumer();
 
-    await press("show"); // id 0
-    await press("dismiss-first");
+    await pressLabel("show"); // id 0
+    await pressLabel("dismiss-first");
 
     expect(screen.queryByText("Saved!")).not.toBeOnTheScreen();
   });
@@ -122,7 +122,7 @@ describe("ToastProvider / useToast", () => {
     it("auto-dismisses a toast after AUTO_DISMISS_MS", async () => {
       await renderConsumer();
 
-      await press("show");
+      await pressLabel("show");
       expect(screen.getByText("Saved!")).toBeOnTheScreen();
 
       await act(() => {
@@ -135,7 +135,7 @@ describe("ToastProvider / useToast", () => {
     it("does not auto-dismiss a toast shown with autoDismiss: false", async () => {
       await renderConsumer();
 
-      await press("show-persistent");
+      await pressLabel("show-persistent");
       expect(screen.getByText("Pending…")).toBeOnTheScreen();
 
       await act(() => {

@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { press } from "../test/press";
 import { ThemeProvider } from "../theme/ThemeContext";
 import { RootNavigator } from "./RootNavigator";
 
@@ -23,14 +24,6 @@ function renderApp() {
       </ThemeProvider>
     </SafeAreaProvider>,
   );
-}
-
-// RNTL's `fireEvent.press` is async under the hood (it always wraps in an async function
-// internally, even for a synchronous callback) — every call site must be awaited, or the next
-// statement runs before the state update/navigation transition it triggered has actually landed.
-// See ToastContext.test.tsx for the same pattern.
-async function press(element: Awaited<ReturnType<typeof screen.findByText>>) {
-  await fireEvent.press(element);
 }
 
 describe("RootNavigator", () => {
