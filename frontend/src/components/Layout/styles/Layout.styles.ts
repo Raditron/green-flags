@@ -3,11 +3,15 @@ import type { CSSProperties } from "react";
 type LayoutStyleKey =
   | "page"
   | "header"
-  | "left"
+  | "headerRowWide"
+  | "headerRowTop"
+  | "headerRowNav"
+  | "titleBlock"
+  | "navGroup"
+  | "rightGroup"
   | "title"
   | "titleIcon"
   | "greeting"
-  | "right"
   | "signInButton"
   | "main";
 
@@ -17,21 +21,52 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
       minHeight: "100vh",
       background: "var(--bg)",
     },
+    // Outer chrome shared by both the wide (one row) and compact (two stacked rows) layouts —
+    // which row structure lands inside is decided in Layout.tsx by useIsCompactHeader, not by
+    // this container wrapping on its own.
     header: {
       display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
+      flexDirection: "column",
       gap: 12,
       padding: "12px 24px",
       background: "var(--surface)",
       borderBottom: "1px solid var(--border)",
     },
-    left: {
+    // Wide layout: title+greeting, nav pills, and right controls all as siblings in one row.
+    headerRowWide: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "nowrap",
+      gap: 12,
+    },
+    // Compact layout, row 1: title+greeting on the left, right controls on the right.
+    headerRowTop: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    // Compact layout, row 2: the nav-pills group alone, full width.
+    headerRowNav: {
+      display: "flex",
+    },
+    titleBlock: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    // The three (or two, signed-out) nav pills — nowrap in both layouts so they move between
+    // rows as a single unit but can never split from each other internally.
+    navGroup: {
       display: "flex",
       alignItems: "center",
       gap: 12,
-      flexWrap: "wrap",
+      flexWrap: "nowrap",
+    },
+    rightGroup: {
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
     },
     title: {
       display: "flex",
@@ -51,11 +86,6 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
     greeting: {
       color: "var(--text)",
       fontSize: 14,
-    },
-    right: {
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
     },
     signInButton: {
       border: "1px solid var(--border)",
