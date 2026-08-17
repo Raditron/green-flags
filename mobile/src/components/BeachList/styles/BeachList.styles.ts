@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { BORDER_RADIUS } from "../../../theme/tokens";
 import type { ThemeTokens } from "../../../theme/tokens";
 
 /**
@@ -6,21 +7,22 @@ import type { ThemeTokens } from "../../../theme/tokens";
  * style-object map) — see `frontend/CONVENTIONS.md`. Re-derived on every render from the current
  * theme's tokens so the placeholder recolors live when the theme toggle flips.
  */
-export function getBeachDetailStyles(tokens: ThemeTokens) {
+export function getBeachListStyles(tokens: ThemeTokens) {
   return StyleSheet.create({
     container: {
       flex: 1,
       padding: 16,
       backgroundColor: tokens.bg,
     },
-    heading: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: tokens.textHeading,
+    item: {
+      padding: 16,
+      borderRadius: BORDER_RADIUS,
+      borderWidth: 1,
+      borderColor: tokens.border,
+      backgroundColor: tokens.surface,
     },
-    beachId: {
-      fontSize: 14,
-      marginTop: 4,
+    itemText: {
+      fontSize: 16,
       color: tokens.text,
     },
   });

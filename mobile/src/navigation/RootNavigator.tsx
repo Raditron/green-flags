@@ -1,4 +1,5 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import type { Theme as NavigationTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Pressable, Text } from "react-native";
@@ -6,6 +7,8 @@ import { Dashboard } from "../components/Dashboard/Dashboard";
 import { BeachList } from "../components/BeachList/BeachList";
 import { SavedBeaches } from "../components/SavedBeaches/SavedBeaches";
 import { BeachDetail } from "../components/BeachDetail/BeachDetail";
+import { useTheme } from "../theme/ThemeContext";
+import type { ThemeTokens } from "../theme/tokens";
 import type { RootStackParamList, TabParamList } from "./interfaces";
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -28,13 +31,39 @@ function MainTabs() {
 }
 
 /**
+ * Recolors React Navigation's own chrome (header/tab-bar backgrounds, active tint, etc. — none of
+ * which our screens render themselves) with our tokens, so the "every screen updates live" part
+ * of #93's acceptance criteria covers navigator-owned UI too, not just page content. `fonts` has
+ * no token equivalent (design tokens only cover color/radius) so it carries over from the base
+ * theme unchanged.
+ */
+function toNavigationTheme(theme: "light" | "dark", tokens: ThemeTokens): NavigationTheme {
+  const base = theme === "dark" ? DarkTheme : DefaultTheme;
+  return {
+    ...base,
+    dark: theme === "dark",
+    colors: {
+      ...base.colors,
+      primary: tokens.info,
+      background: tokens.bg,
+      card: tokens.surface,
+      text: tokens.text,
+      border: tokens.border,
+      notification: tokens.error,
+    },
+  };
+}
+
+/**
  * Root stack: the tab navigator, with Beach Detail pushed on top — mirrors frontend's
  * `/beaches/:beachId` route being reachable from the Beaches tab while `Layout`'s chrome
  * (header/nav) stays mounted around every screen.
  */
 export function RootNavigator() {
+  const { theme, tokens } = useTheme();
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={toNavigationTheme(theme, tokens)}>
       <RootStack.Navigator>
         <RootStack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
         <RootStack.Screen

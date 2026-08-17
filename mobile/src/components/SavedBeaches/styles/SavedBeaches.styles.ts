@@ -6,21 +6,16 @@ import type { ThemeTokens } from "../../../theme/tokens";
  * style-object map) — see `frontend/CONVENTIONS.md`. Re-derived on every render from the current
  * theme's tokens so the placeholder recolors live when the theme toggle flips.
  */
-export function getBeachDetailStyles(tokens: ThemeTokens) {
+export function getSavedBeachesStyles(tokens: ThemeTokens) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      padding: 16,
+      alignItems: "center",
+      justifyContent: "center",
       backgroundColor: tokens.bg,
     },
-    heading: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: tokens.textHeading,
-    },
-    beachId: {
-      fontSize: 14,
-      marginTop: 4,
+    text: {
+      fontSize: 16,
       color: tokens.text,
     },
   });

@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { useTheme } from "../../theme/ThemeContext";
 import type { BeachDetailScreenProps } from "../../navigation/interfaces";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 
@@ -12,7 +13,8 @@ import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
  */
 export function BeachDetail({ route }: BeachDetailScreenProps) {
   const { beachId } = route.params;
-  const styles = getBeachDetailStyles();
+  const { tokens } = useTheme();
+  const styles = getBeachDetailStyles(tokens);
 
   return (
     <View style={styles.container}>
