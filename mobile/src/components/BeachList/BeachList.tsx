@@ -1,5 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { useTheme } from "../../theme/ThemeContext";
 import type { BeachesTabScreenProps } from "../../navigation/interfaces";
+import { getBeachListStyles } from "./styles/BeachList.styles";
 
 /**
  * Placeholder for the Beaches tab. Mirrors `frontend/src/components/BeachList/BeachList.tsx`
@@ -9,6 +11,9 @@ import type { BeachesTabScreenProps } from "../../navigation/interfaces";
  * back navigation returning here — the navigable skeleton #92 exists to prove.
  */
 export function BeachList({ navigation }: BeachesTabScreenProps) {
+  const { tokens } = useTheme();
+  const styles = getBeachListStyles(tokens);
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -20,19 +25,3 @@ export function BeachList({ navigation }: BeachesTabScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  item: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#c1d1e1",
-  },
-  itemText: {
-    fontSize: 16,
-  },
-});

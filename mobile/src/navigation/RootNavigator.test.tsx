@@ -1,5 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { press } from "../test/press";
+import { ThemeProvider } from "../theme/ThemeContext";
 import { RootNavigator } from "./RootNavigator";
 
 // react-native-safe-area-context has no native module under Jest, so `initialWindowMetrics` is
@@ -17,7 +19,9 @@ function renderApp() {
   // await it before the `screen` singleton is populated.
   return render(
     <SafeAreaProvider initialMetrics={TEST_METRICS}>
-      <RootNavigator />
+      <ThemeProvider>
+        <RootNavigator />
+      </ThemeProvider>
     </SafeAreaProvider>,
   );
 }
@@ -36,12 +40,12 @@ describe("RootNavigator", () => {
   it("pushes Beach Detail from the Beaches tab, and back returns to the tab", async () => {
     await renderApp();
 
-    fireEvent.press(await screen.findByText("Beaches"));
-    fireEvent.press(await screen.findByText("Placeholder beach"));
+    await press(await screen.findByText("Beaches"));
+    await press(await screen.findByText("Placeholder beach"));
 
     expect(await screen.findByText("placeholder-beach")).toBeOnTheScreen();
 
-    fireEvent.press(screen.getByLabelText("Go back"));
+    await press(screen.getByLabelText("Go back"));
 
     expect(await screen.findByText("Placeholder beach")).toBeOnTheScreen();
   });
