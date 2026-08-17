@@ -1,19 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
+import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
 import { ThemeProvider } from "./ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
 
-// Matches RootNavigator.test.tsx's fixed metrics — SafeAreaProvider never resolves
-// initialWindowMetrics under Jest, so ThemeToggle's useSafeAreaInsets() would hang without this.
-const TEST_METRICS = {
-  frame: { x: 0, y: 0, width: 320, height: 640 },
-  insets: { top: 0, left: 0, right: 0, bottom: 0 },
-};
-
 function renderToggle() {
   return render(
-    <SafeAreaProvider initialMetrics={TEST_METRICS}>
+    <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
       <ThemeProvider>
         <ThemeToggle />
       </ThemeProvider>
