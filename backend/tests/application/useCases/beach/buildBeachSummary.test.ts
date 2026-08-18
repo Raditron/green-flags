@@ -26,10 +26,15 @@ function buildFakePredictionRepository(overrides: Partial<PredictionRepository> 
   };
 }
 
+// Deliberately distinct from DATE (the target date) — issuedDate is the day the batch actually
+// ran, which can differ from the target date it's predicting for (ADR 0007's Lead concept).
+const ISSUED_DATE = "2026-08-10";
+
 function dailyPredictions(hour: number): BeachDailyPredictions {
   return {
     beachId: BEACH.id,
     date: DATE,
+    issuedDate: ISSUED_DATE,
     hourlyPredictions: [
       {
         hour,
@@ -52,14 +57,15 @@ function dailyPredictions(hour: number): BeachDailyPredictions {
 }
 
 describe("buildBeachSummary", () => {
-  it("leaves currentFlagColor and currentConfidencePercent undefined when no predictions exist for the date", async () => {
+  it("leaves currentFlagColor, currentConfidencePercent, and issuedDate undefined when no predictions exist for the date", async () => {
     const summary = await buildBeachSummary(BEACH, buildFakePredictionRepository(), DATE, HOUR);
 
     expect(summary.currentFlagColor).toBeUndefined();
     expect(summary.currentConfidencePercent).toBeUndefined();
+    expect(summary.issuedDate).toBeUndefined();
   });
 
-  it("resolves the current-hour prediction's flag color and confidence when one exists for that hour", async () => {
+  it("resolves the current-hour prediction's flag color, confidence, and issuedDate when one exists for that hour", async () => {
     const summary = await buildBeachSummary(
       BEACH,
       buildFakePredictionRepository({
@@ -72,9 +78,10 @@ describe("buildBeachSummary", () => {
 
     expect(summary.currentFlagColor).toBe("yellow");
     expect(summary.currentConfidencePercent).toBe(76);
+    expect(summary.issuedDate).toBe(ISSUED_DATE);
   });
 
-  it("leaves currentFlagColor undefined when predictions exist for the date but not for the requested hour", async () => {
+  it("leaves currentFlagColor, currentConfidencePercent, and issuedDate undefined when predictions exist for the date but not for the requested hour", async () => {
     const summary = await buildBeachSummary(
       BEACH,
       buildFakePredictionRepository({
@@ -86,6 +93,7 @@ describe("buildBeachSummary", () => {
 
     expect(summary.currentFlagColor).toBeUndefined();
     expect(summary.currentConfidencePercent).toBeUndefined();
+    expect(summary.issuedDate).toBeUndefined();
   });
 
   it("carries over the beach's id, name, coordinates, area, and unguarded flag unchanged", async () => {

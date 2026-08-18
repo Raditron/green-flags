@@ -45,10 +45,13 @@ function buildFakePredictionRepository(overrides: Partial<PredictionRepository> 
   };
 }
 
+const ISSUED_DATE = "2026-08-10";
+
 function dailyPredictions(beachId: string): BeachDailyPredictions {
   return {
     beachId,
     date: DATE,
+    issuedDate: ISSUED_DATE,
     hourlyPredictions: [
       {
         hour: HOUR,
@@ -88,8 +91,18 @@ describe("listBeaches", () => {
     );
 
     expect(summaries).toEqual([
-      expect.objectContaining({ id: "beach-a", currentFlagColor: "green", currentConfidencePercent: 90 }),
-      expect.objectContaining({ id: "beach-b", currentFlagColor: "green", currentConfidencePercent: 90 }),
+      expect.objectContaining({
+        id: "beach-a",
+        currentFlagColor: "green",
+        currentConfidencePercent: 90,
+        issuedDate: ISSUED_DATE,
+      }),
+      expect.objectContaining({
+        id: "beach-b",
+        currentFlagColor: "green",
+        currentConfidencePercent: 90,
+        issuedDate: ISSUED_DATE,
+      }),
     ]);
   });
 });

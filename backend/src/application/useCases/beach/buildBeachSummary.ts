@@ -12,6 +12,8 @@ export interface BeachSummary {
   /** The current (or nearest legal-window) hour's flag color; undefined if today's batch hasn't run yet. */
   currentFlagColor?: FlagColor;
   currentConfidencePercent?: number;
+  /** Sofia-local date (YYYY-MM-DD) the batch actually computed the displayed prediction on; undefined under the same condition currentFlagColor is (ADR 0007's Lead). */
+  issuedDate?: string;
   area: BeachAreas;
   /** True when the beach has no official lifeguard station — frontend should label the flag as a prediction only. */
   isUnguarded: boolean;
@@ -42,6 +44,7 @@ export async function buildBeachSummary(
       : undefined,
     currentFlagColor: hourlyPrediction?.flagColor,
     currentConfidencePercent: hourlyPrediction?.confidence.percent,
+    issuedDate: hourlyPrediction ? dailyPredictions?.issuedDate : undefined,
     area: beach.area,
     isUnguarded: beach.isUnguarded,
   };

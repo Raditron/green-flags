@@ -43,6 +43,8 @@ export function BeachList() {
 
       {beaches.status === "success" && !isFindingArea && (
         <>
+          {beaches.refreshing && <p style={styles.refreshing}>Refreshing…</p>}
+
           <BeachListFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
