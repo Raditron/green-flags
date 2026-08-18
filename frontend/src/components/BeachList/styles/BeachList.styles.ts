@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export function getBeachListStyles(): Record<"list" | "item" | "error" | "empty", CSSProperties> {
+export function getBeachListStyles(): Record<"list" | "item" | "error" | "empty" | "refreshing", CSSProperties> {
   return {
     list: {
       listStyle: "none",
@@ -28,6 +28,12 @@ export function getBeachListStyles(): Record<"list" | "item" | "error" | "empty"
       margin: "24px auto 0",
       maxWidth: 900,
       color: "var(--text)",
+    },
+    refreshing: {
+      margin: "24px auto 0",
+      maxWidth: 900,
+      color: "var(--text)",
+      opacity: 0.7,
     },
   };
 }

@@ -93,9 +93,10 @@ describe("GET /api/beaches", () => {
     const date = todayInSofia(now);
     const hour = currentOrNearestLegalHour(now);
     await db.collection("predictions").insertOne({
-      _id: `varna-central-beach_${date}`,
+      _id: `varna-central-beach_${date}_${date}`,
       beachId: "varna-central-beach",
       date,
+      issuedDate: date,
       hourlyPredictions: [
         {
           hour,
@@ -120,6 +121,7 @@ describe("GET /api/beaches", () => {
     const varna = response.body.beaches.find((beach: { id: string }) => beach.id === "varna-central-beach");
     expect(varna.currentFlagColor).toBe("yellow");
     expect(varna.currentConfidencePercent).toBe(76);
+    expect(varna.issuedDate).toBe(date);
 
     await db.collection("predictions").deleteMany({});
   });
