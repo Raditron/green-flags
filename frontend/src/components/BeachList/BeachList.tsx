@@ -18,11 +18,18 @@ export function BeachList() {
     setSelectedArea,
     isAreaAutoDetected,
     filteredBeaches,
-  } = useBeachFilters(beaches.status === "success" ? beaches.data : [], userLocation);
+    guardedFilter,
+    setGuardedFilter,
+    clearFilters,
+  } = useBeachFilters(
+    beaches.status === "success" ? beaches.data : [],
+    userLocation,
+  );
 
   // Hold the list back behind a brief loading state while geolocation resolves, rather than
   // rendering every beach and then narrowing to Detected Area a moment later — see ADR 0005.
-  const isFindingArea = beaches.status === "success" && userLocation.status === "loading";
+  const isFindingArea =
+    beaches.status === "success" && userLocation.status === "loading";
 
   return (
     <section aria-label="All beaches">
@@ -44,13 +51,16 @@ export function BeachList() {
             selectedArea={selectedArea}
             onAreaChange={setSelectedArea}
             isAreaAutoDetected={isAreaAutoDetected}
+            guardedFilter={guardedFilter}
+            onGuardedFilterChange={setGuardedFilter}
+            onClearFilters={clearFilters}
           />
 
           {filteredBeaches.length === 0 ? (
             <p style={styles.empty}>No beaches match your search.</p>
           ) : (
             <ul style={styles.list}>
-              {filteredBeaches.map(beach => (
+              {filteredBeaches.map((beach) => (
                 <BeachListCard key={beach.id} beach={beach} />
               ))}
             </ul>

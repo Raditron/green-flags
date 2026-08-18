@@ -9,9 +9,13 @@ type BeachListFiltersStyleKey =
   | "searchInput"
   | "flagRow"
   | "areaRow"
-  | "areaHint";
+  | "areaHint"
+  | "guardedRow";
 
-export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CSSProperties> {
+export function getBeachListFiltersStyles(): Record<
+  BeachListFiltersStyleKey,
+  CSSProperties
+> {
   return {
     container: {
       display: "flex",
@@ -60,6 +64,12 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
       gap: 10,
       flex: "0 0 auto",
     },
+    guardedRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      flex: "0 0 auto",
+    },
     // Confirms the area was picked for the visitor rather than by them.
     areaHint: neutralHintTextStyle,
   };
@@ -69,7 +79,10 @@ export function getBeachListFiltersStyles(): Record<BeachListFiltersStyleKey, CS
 // reads at a glance; selecting one fills it, matching the filled treatment
 // the flag-color picker uses when reporting. The chip shows the same flag
 // glyph used in the report popup rather than a color name.
-export function getFlagFilterChipStyle(flagColor: string, isSelected: boolean): CSSProperties {
+export function getFlagFilterChipStyle(
+  flagColor: string,
+  isSelected: boolean,
+): CSSProperties {
   const color = flagColorVar(flagColor);
 
   return {
@@ -87,7 +100,10 @@ export function getFlagFilterChipStyle(flagColor: string, isSelected: boolean): 
   };
 }
 
-export function getFlagFilterIconStyle(flagColor: string, isSelected: boolean): CSSProperties {
+export function getFlagFilterIconStyle(
+  flagColor: string,
+  isSelected: boolean,
+): CSSProperties {
   return {
     width: 16,
     height: 16,
