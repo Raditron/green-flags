@@ -5,6 +5,17 @@ import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
 import { ThemeProvider } from "../theme/ThemeContext";
 import { RootNavigator } from "./RootNavigator";
 
+// The Today tab now renders a real Dashboard (#95) that fetches on mount — stub its data layer so
+// this navigation-focused test never issues a real network request, mirroring how the rest of the
+// suite mocks a screen's data/auth dependencies rather than letting them hit the network.
+jest.mock("../components/Dashboard/data/fetchDailySummary", () => ({
+  fetchDailySummary: jest.fn(async () => ({
+    date: "2026-08-18",
+    averageAttributesBySea: { sampleSize: 0, beachCount: 0 },
+    averageAttributesByArea: [],
+  })),
+}));
+
 function renderApp() {
   // RNTL v14's `render` is async (it wraps the initial render in `act`) — every call site must
   // await it before the `screen` singleton is populated.
@@ -22,10 +33,13 @@ describe("RootNavigator", () => {
     await renderApp();
 
     // NavigationContainer resolves its initial state asynchronously (even with no linking
-    // config), so the tab bar isn't necessarily present the instant `render` resolves.
-    expect(await screen.findByText("Today")).toBeOnTheScreen();
-    expect(screen.getByText("Beaches")).toBeOnTheScreen();
-    expect(screen.getByText("Saved")).toBeOnTheScreen();
+    // config), so the tab bar isn't necessarily present the instant `render` resolves. Queried by
+    // the tab button's own accessibility label rather than plain text: the Today tab's own screen
+    // (#95's Dashboard) also renders a "Today" heading, so an unscoped `findByText("Today")` would
+    // match both it and the tab bar's label.
+    expect(await screen.findByLabelText(/^Today, tab/)).toBeOnTheScreen();
+    expect(screen.getByLabelText(/^Beaches, tab/)).toBeOnTheScreen();
+    expect(screen.getByLabelText(/^Saved, tab/)).toBeOnTheScreen();
   });
 
   it("pushes Beach Detail from the Beaches tab, and back returns to the tab", async () => {
