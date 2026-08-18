@@ -1,12 +1,16 @@
 import type { CSSProperties } from "react";
 
-type AreaSelectStyleKey = "container" | "trigger" | "chevron" | "menu";
+type FieldSelectStyleKey = "container" | "trigger" | "chevron" | "menu";
 
-export function getAreaSelectStyles(): Record<AreaSelectStyleKey, CSSProperties> {
+export function getFieldSelectStyles(): Record<
+  FieldSelectStyleKey,
+  CSSProperties
+> {
   return {
     container: {
       position: "relative",
     },
+
     trigger: {
       display: "flex",
       alignItems: "center",
@@ -20,14 +24,16 @@ export function getAreaSelectStyles(): Record<AreaSelectStyleKey, CSSProperties>
       fontSize: 14,
       cursor: "pointer",
     },
+
     chevron: {
       width: 10,
       height: 10,
       color: "var(--text)",
     },
+
     // Radius matches BeachListCard's outer panel so the two rounded surfaces in the list read
-    // consistently. No max-height/scroll — the list is short enough (13 areas + All) to just
-    // stretch and show everything at once, so it never needs its own scrollbar.
+    // consistently. No max-height/scroll — option lists here are short enough to just stretch and
+    // show everything at once, so the menu never needs its own scrollbar.
     menu: {
       position: "absolute",
       top: "calc(100% + 6px)",
@@ -50,7 +56,7 @@ export function getAreaSelectStyles(): Record<AreaSelectStyleKey, CSSProperties>
 // otherwise). Hovering previews that same fill — same idea as SaveBeachButton's `active = saved ||
 // isHovered` — so the row you're about to click shows itself as "this is what selecting it looks
 // like" rather than a separate hover color.
-export function getAreaSelectOptionStyle({
+export function getFieldSelectOptionStyle({
   selected,
   hovered,
   position,
@@ -64,7 +70,11 @@ export function getAreaSelectOptionStyle({
   // row's bottom corners — otherwise a hovered/selected fill square-cuts past the menu's curve.
   // Corners that don't touch an edge keep the smaller radius the rest of the app's row-pickers use.
   const borderRadius =
-    position === "first" ? "10px 10px 6px 6px" : position === "last" ? "6px 6px 10px 10px" : 6;
+    position === "first"
+      ? "10px 10px 6px 6px"
+      : position === "last"
+        ? "6px 6px 10px 10px"
+        : 6;
 
   return {
     width: "100%",

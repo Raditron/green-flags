@@ -1,13 +1,16 @@
 import type { FlagColor } from "../../../shared/types/Beach";
 import { Tooltip } from "../../Tooltip/Tooltip";
 import type { BeachListFiltersProps } from "./interfaces/BeachListFilters.interface";
-import { AreaSelect } from "./AreaSelect/AreaSelect";
+
 import {
   getBeachListFiltersStyles,
   getFlagFilterChipStyle,
   getFlagFilterIconStyle,
 } from "./styles/BeachListFilters.styles";
 import { FaFlag, FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
+import { AreaSelect } from "./AreaSelect/AreaSelect";
+import { GuardedSelect } from "./GuardedSelect/GuardedSelect";
+import { ClearFilters } from "./ClearFilters/ClearFilters";
 
 const FLAG_OPTIONS: { flagColor: FlagColor; label: string }[] = [
   { flagColor: "green", label: "Green" },
@@ -23,6 +26,9 @@ export function BeachListFilters({
   selectedArea,
   onAreaChange,
   isAreaAutoDetected,
+  guardedFilter,
+  onGuardedFilterChange,
+  onClearFilters,
 }: BeachListFiltersProps) {
   const styles = getBeachListFiltersStyles();
 
@@ -33,7 +39,7 @@ export function BeachListFilters({
         <input
           type="search"
           value={searchQuery}
-          onChange={event => onSearchChange(event.target.value)}
+          onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search beaches by name…"
           aria-label="Search beaches by name"
           style={styles.searchInput}
@@ -45,13 +51,23 @@ export function BeachListFilters({
 
         {isAreaAutoDetected && (
           <span style={styles.areaHint}>
-            <FaLocationDot style={{ verticalAlign: "-1.5px", marginRight: 4 }} />
+            <FaLocationDot
+              style={{ verticalAlign: "-1.5px", marginRight: 4 }}
+            />
             Near you
           </span>
         )}
       </div>
 
-      <div style={styles.flagRow} role="group" aria-label="Filter by flag color">
+      <div style={styles.guardedRow}>
+        <GuardedSelect value={guardedFilter} onChange={onGuardedFilterChange} />
+      </div>
+
+      <div
+        style={styles.flagRow}
+        role="group"
+        aria-label="Filter by flag color"
+      >
         {FLAG_OPTIONS.map(({ flagColor, label }) => {
           const isSelected = selectedFlags.includes(flagColor);
           return (
@@ -68,6 +84,9 @@ export function BeachListFilters({
             </Tooltip>
           );
         })}
+      </div>
+      <div>
+        <ClearFilters onClear={onClearFilters} />
       </div>
     </div>
   );
