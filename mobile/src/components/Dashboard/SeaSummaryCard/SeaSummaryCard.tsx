@@ -1,8 +1,7 @@
 import { Text, View } from "react-native";
 import { useTheme } from "../../../theme/ThemeContext";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
-import { DistributionBar } from "../DistributionBar/DistributionBar";
-import { getConfidenceBasisBar, getFlagColorBar, getRipCurrentRiskBar } from "../DistributionBar/distributionPresets";
+import { AttributeDistributions } from "../DistributionBar/AttributeDistributions";
 import { averageConditionsSentence, isLowSample, readingsFooter } from "../utils/formatAverageAttributes";
 import type { SeaSummaryCardProps } from "./interfaces";
 import { getSeaSummaryCardStyles } from "./styles/SeaSummaryCard.styles";
@@ -50,19 +49,7 @@ export function SeaSummaryCard({ date, attributes }: SeaSummaryCardProps) {
         </View>
       )}
 
-      <View style={styles.distributions}>
-        <DistributionBar label="Flag colors" distribution={attributes.flagColorDistribution} {...getFlagColorBar(tokens)} />
-        <DistributionBar
-          label="Rip current risk"
-          distribution={attributes.ripCurrentRiskDistribution}
-          {...getRipCurrentRiskBar(tokens)}
-        />
-        <DistributionBar
-          label="Confidence basis"
-          distribution={attributes.confidenceBasisDistribution}
-          {...getConfidenceBasisBar(tokens)}
-        />
-      </View>
+      <AttributeDistributions attributes={attributes} style={styles.distributions} />
 
       <View style={styles.stats}>
         <View style={styles.statRow}>

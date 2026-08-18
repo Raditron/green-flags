@@ -1,8 +1,7 @@
 import { Text, View } from "react-native";
 import { useTheme } from "../../../theme/ThemeContext";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
-import { DistributionBar } from "../DistributionBar/DistributionBar";
-import { getConfidenceBasisBar, getFlagColorBar, getRipCurrentRiskBar } from "../DistributionBar/distributionPresets";
+import { AttributeDistributions } from "../DistributionBar/AttributeDistributions";
 import { averageConditionsSentence, isLowSample, readingsFooter } from "../utils/formatAverageAttributes";
 import type { AreaCardProps } from "./interfaces";
 import { getAreaCardStyles } from "./styles/AreaCard.styles";
@@ -45,26 +44,7 @@ export function AreaCard({ attributes }: AreaCardProps) {
 
       <Text style={styles.sentence}>{averageConditionsSentence(attributes)}</Text>
 
-      <View style={styles.distributions}>
-        <DistributionBar
-          compact
-          label="Flag colors"
-          distribution={attributes.flagColorDistribution}
-          {...getFlagColorBar(tokens)}
-        />
-        <DistributionBar
-          compact
-          label="Rip current risk"
-          distribution={attributes.ripCurrentRiskDistribution}
-          {...getRipCurrentRiskBar(tokens)}
-        />
-        <DistributionBar
-          compact
-          label="Confidence basis"
-          distribution={attributes.confidenceBasisDistribution}
-          {...getConfidenceBasisBar(tokens)}
-        />
-      </View>
+      <AttributeDistributions compact attributes={attributes} style={styles.distributions} />
 
       <View style={styles.stats}>
         <Text style={styles.statText}>
