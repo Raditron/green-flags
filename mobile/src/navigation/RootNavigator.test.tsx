@@ -16,6 +16,30 @@ jest.mock("../components/Dashboard/data/fetchDailySummary", () => ({
   })),
 }));
 
+// The Beaches tab now renders a real BeachList (#96) that also fetches on mount and reads device
+// location — stub both data dependencies for the same reason as fetchDailySummary above.
+// useUserLocation is stubbed rather than expo-location directly (mirroring how BeachList.test.tsx
+// mocks it too), settling straight to "unavailable" so this navigation-focused test never depends
+// on geolocation resolving.
+jest.mock("../components/BeachList/data/fetchBeaches", () => ({
+  fetchBeaches: jest.fn(async () => ({
+    beaches: [
+      {
+        id: "placeholder-beach",
+        name: "Placeholder beach",
+        lat: 43.2,
+        long: 27.9,
+        area: "Varna",
+        isUnguarded: false,
+      },
+    ],
+  })),
+}));
+
+jest.mock("../shared/hooks/useUserLocation", () => ({
+  useUserLocation: () => ({ status: "unavailable" }),
+}));
+
 let mockAuthValue: { user: { email: string } | null; loading: boolean };
 
 // Mirrors the auth component-test seam used throughout the auth module (EmailVerificationBanner,

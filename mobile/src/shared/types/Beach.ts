@@ -34,6 +34,8 @@ export interface Beach {
   mapImageDataUrl?: string;
   currentFlagColor?: FlagColor;
   currentConfidencePercent?: number;
+  /** Sofia-local date (YYYY-MM-DD) the batch actually computed the displayed prediction on; mirrors the backend's BeachSummary.issuedDate. Not consumed by any UI yet. */
+  issuedDate?: string;
   area: BeachArea;
   isUnguarded: boolean;
 }
