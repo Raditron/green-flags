@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { BlurView } from "expo-blur";
 import { BORDER_RADIUS } from "../theme/tokens";
 import type { ThemeTokens } from "../theme/tokens";
 import { useTheme } from "../theme/ThemeContext";
@@ -15,7 +16,7 @@ import type { AuthFormMode, AuthScreenProps } from "./interfaces";
  */
 export function AuthScreen({ onClose, onAuthenticated }: AuthScreenProps) {
   const { signUp, logIn } = useAuth();
-  const { tokens } = useTheme();
+  const { tokens, theme } = useTheme();
   const [mode, setMode] = useState<AuthFormMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -62,6 +63,23 @@ export function AuthScreen({ onClose, onAuthenticated }: AuthScreenProps) {
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
+        {/* Matches frontend AuthModal.styles.ts's `backdrop.backdropFilter: blur(6px)`. `intensity`
+            is expo-blur's abstract 1–100 scale, not a px radius, so 30 is a by-eye match rather than
+            a unit conversion. Absolutely positioned + pointerEvents="none" so it's purely decorative
+            behind the card and doesn't interfere with the backdrop Pressable's own touch handling.
+
+            Android note: without a `blurTarget`/`blurMethod` pointing at a `BlurTargetView` wrapping
+            the screen content behind this modal, expo-blur falls back to blurMethod="none" on Android
+            — a flat tint, no actual blur (iOS blurs for real). Getting a true blur-behind would mean
+            wrapping the screens behind AuthScreen in BlurTargetView and likely dropping RN's <Modal>
+            for an in-tree overlay so they share a render tree — deliberately not doing that here;
+            the tint-only fallback is the accepted tradeoff. */}
+        <BlurView
+          intensity={30}
+          tint={theme}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         {/* Empty onPress claims the touch responder so a tap inside the card doesn't bubble up
             to the backdrop's onPress and close the screen — RN's analogue of the web version's
             event.stopPropagation(). */}
@@ -70,6 +88,13 @@ export function AuthScreen({ onClose, onAuthenticated }: AuthScreenProps) {
             <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" style={styles.close}>
               <Text style={styles.closeText}>×</Text>
             </Pressable>
+
+            <View style={styles.kicker}>
+              <Text style={styles.kickerIcon} aria-hidden>
+                ⚑
+              </Text>
+              <Text style={styles.kickerText}>Green Flags</Text>
+            </View>
 
             <Text style={styles.title}>{mode === "signup" ? "Create your account" : "Welcome back"}</Text>
             <Text style={styles.subtitle}>
@@ -166,12 +191,15 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
   return StyleSheet.create({
     backdrop: {
       flex: 1,
-      backgroundColor: "rgba(0, 0, 0, 0.45)",
+      backgroundColor: "rgba(4, 10, 20, 0.6)",
       justifyContent: "center",
       padding: 20,
     },
+    // Matches frontend AuthModal.styles.ts's `modal`: a deliberate Revolut-style deviation from the
+    // standard BORDER_RADIUS, not drift — the whole card (this radius, the pill segment/inputs/
+    // submit below) is one intentional shape language, kept in sync with frontend by eye.
     card: {
-      borderRadius: BORDER_RADIUS,
+      borderRadius: 28,
       backgroundColor: tokens.surface,
       borderWidth: 1,
       borderColor: tokens.border,
@@ -194,38 +222,73 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
       fontSize: 20,
       color: tokens.text,
     },
+    // Matches frontend AuthModal.styles.ts's `kicker`: small uppercase "Green Flags" wordmark above
+    // the title, using the same plain-glyph icon convention as SeaSummaryCard's heroIcon (no icon
+    // library is installed) in place of frontend's FaFlag.
+    kicker: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginBottom: 10,
+    },
+    kickerIcon: {
+      fontSize: 11,
+      color: tokens.flagGreen,
+    },
+    kickerText: {
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 0.9,
+      textTransform: "uppercase",
+      color: tokens.flagGreen,
+    },
     title: {
       fontSize: 20,
-      fontWeight: "700",
+      fontWeight: "800",
+      letterSpacing: -0.4,
       color: tokens.textHeading,
     },
     subtitle: {
       fontSize: 14,
+      lineHeight: 20,
+      opacity: 0.8,
       color: tokens.text,
     },
+    // Matches frontend's getAuthSegmentTabStyle: the active tab floats as a raised `surface`-colored
+    // pill inset within the `bg`-colored track (the padding/gap below is what creates that inset —
+    // without it the active half just abuts the track edge-to-edge), not a flat two-tone split.
     segment: {
       flexDirection: "row",
+      gap: 4,
+      padding: 4,
       borderRadius: 999,
       backgroundColor: tokens.bg,
       borderWidth: 1,
       borderColor: tokens.border,
-      overflow: "hidden",
     },
     segmentTab: {
       flex: 1,
-      paddingVertical: 8,
+      borderRadius: 999,
+      paddingVertical: 9,
       alignItems: "center",
     },
     segmentTabActive: {
-      backgroundColor: tokens.iconChip,
+      backgroundColor: tokens.surface,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      elevation: 2,
     },
     segmentTabText: {
       fontSize: 14,
+      fontWeight: "700",
+      opacity: 0.75,
       color: tokens.text,
     },
     segmentTabTextActive: {
-      color: tokens.iconChipFg,
-      fontWeight: "700",
+      opacity: 1,
+      color: tokens.textHeading,
     },
     field: {
       gap: 4,
@@ -237,7 +300,7 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
     input: {
       borderWidth: 1,
       borderColor: tokens.border,
-      borderRadius: 8,
+      borderRadius: 999,
       paddingVertical: 8,
       paddingHorizontal: 12,
       fontSize: 15,
@@ -247,7 +310,7 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
     errorBanner: {
       borderWidth: 1,
       borderColor: tokens.error,
-      borderRadius: 8,
+      borderRadius: BORDER_RADIUS,
       padding: 10,
     },
     errorText: {
@@ -256,7 +319,7 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
     },
     submit: {
       marginTop: 4,
-      borderRadius: 8,
+      borderRadius: 999,
       paddingVertical: 12,
       alignItems: "center",
       backgroundColor: tokens.flagGreen,

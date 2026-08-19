@@ -28,11 +28,13 @@ export function SeaSummaryCard({ date, attributes }: SeaSummaryCardProps) {
   return (
     <View style={styles.card} accessibilityLabel="Sea-wide summary">
       <View style={styles.hero}>
-        <Text style={styles.heroIcon} aria-hidden>
-          ⚑
-        </Text>
-        <View style={styles.heroText}>
+        <View style={styles.heroTop}>
+          <Text style={styles.heroIcon} aria-hidden>
+            ⚑
+          </Text>
           <Text style={styles.subtitle}>{formattedDate}</Text>
+        </View>
+        <View style={styles.heroText}>
           <Text style={styles.headline}>{headline}</Text>
           <Text style={styles.sentence}>{averageConditionsSentence(attributes)}</Text>
         </View>

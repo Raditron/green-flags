@@ -16,6 +16,15 @@ jest.mock("../components/Dashboard/data/fetchDailySummary", () => ({
   })),
 }));
 
+let mockAuthValue: { user: { email: string } | null; loading: boolean };
+
+// Mirrors the auth component-test seam used throughout the auth module (EmailVerificationBanner,
+// AccountControl, UserMenu): mock AuthContext wholesale rather than the network. RootNavigator
+// only reads user/loading (to gate the Saved tab), so the mock supplies just those fields.
+jest.mock("../auth/AuthContext", () => ({
+  useAuth: () => mockAuthValue,
+}));
+
 function renderApp() {
   // RNTL v14's `render` is async (it wraps the initial render in `act`) — every call site must
   // await it before the `screen` singleton is populated.
@@ -29,7 +38,8 @@ function renderApp() {
 }
 
 describe("RootNavigator", () => {
-  it("renders the bottom tab bar with Today, Beaches, and Saved", async () => {
+  it("renders the bottom tab bar with Today, Beaches, and Saved when signed in", async () => {
+    mockAuthValue = { user: { email: "diver@example.com" }, loading: false };
     await renderApp();
 
     // NavigationContainer resolves its initial state asynchronously (even with no linking
@@ -42,7 +52,25 @@ describe("RootNavigator", () => {
     expect(screen.getByLabelText(/^Saved, tab/)).toBeOnTheScreen();
   });
 
+  it("hides the Saved tab when signed out — there's no saved-beach list for a user we can't identify", async () => {
+    mockAuthValue = { user: null, loading: false };
+    await renderApp();
+
+    expect(await screen.findByLabelText(/^Today, tab/)).toBeOnTheScreen();
+    expect(screen.getByLabelText(/^Beaches, tab/)).toBeOnTheScreen();
+    expect(screen.queryByLabelText(/^Saved, tab/)).toBeNull();
+  });
+
+  it("hides the Saved tab while auth state is still loading, mirroring frontend's Layout gating", async () => {
+    mockAuthValue = { user: null, loading: true };
+    await renderApp();
+
+    expect(await screen.findByLabelText(/^Today, tab/)).toBeOnTheScreen();
+    expect(screen.queryByLabelText(/^Saved, tab/)).toBeNull();
+  });
+
   it("pushes Beach Detail from the Beaches tab, and back returns to the tab", async () => {
+    mockAuthValue = { user: { email: "diver@example.com" }, loading: false };
     await renderApp();
 
     await press(await screen.findByText("Beaches"));

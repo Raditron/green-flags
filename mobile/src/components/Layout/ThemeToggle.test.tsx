@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
-import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
-import { ThemeProvider } from "./ThemeContext";
+import { TEST_SAFE_AREA_METRICS } from "../../test/safeAreaMetrics";
+import { ThemeProvider } from "../../theme/ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
 
 function renderToggle() {

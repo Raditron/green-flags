@@ -1,5 +1,4 @@
 import { ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/ThemeContext";
 import { DashboardSummary } from "./DashboardSummary/DashboardSummary";
 import { useDailySummary } from "./hooks/useDailySummary";
@@ -14,8 +13,7 @@ import { getDashboardStyles } from "./styles/Dashboard.styles";
 export function Dashboard() {
   const summary = useDailySummary();
   const { tokens } = useTheme();
-  const insets = useSafeAreaInsets();
-  const styles = getDashboardStyles(tokens, { insetsTop: insets.top });
+  const styles = getDashboardStyles(tokens);
 
   return (
     <View style={styles.container}>

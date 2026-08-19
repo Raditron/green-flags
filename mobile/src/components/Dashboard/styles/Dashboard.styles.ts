@@ -1,21 +1,21 @@
 import { StyleSheet } from "react-native";
 import type { ThemeTokens } from "../../../theme/tokens";
 
-// RN port of frontend/src/components/Dashboard/styles/Dashboard.styles.ts. Mobile has no header
-// chrome — ThemeToggle/AccountControl instead float as absolutely-positioned chips over the top
-// of every screen (see their own doc comments) — so `scrollContent` reserves headroom for them
-// (chip height 36 + their 8px top offset + a little breathing room) on top of the safe-area inset
-// itself, which frontend's header-based layout never had to think about.
-const CHIP_CLEARANCE = 56;
+// RN port of frontend/src/components/Dashboard/styles/Dashboard.styles.ts. Mobile used to reserve
+// extra `scrollContent` headroom here for ThemeToggle/AccountControl, which floated as
+// absolutely-positioned chips over the top of every screen with no chrome behind them. They now
+// render inside `TopBar` (`components/Layout/TopBar.tsx`), which sits in normal flex flow above
+// this screen and owns the safe-area top inset itself — so, like frontend's header-based layout,
+// this has nothing left to compensate for.
 
-export function getDashboardStyles(tokens: ThemeTokens, { insetsTop }: { insetsTop: number }) {
+export function getDashboardStyles(tokens: ThemeTokens) {
   return StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: tokens.bg,
     },
     scrollContent: {
-      paddingTop: insetsTop + CHIP_CLEARANCE,
+      paddingTop: 16,
       paddingHorizontal: 16,
       paddingBottom: 32,
       width: "100%",

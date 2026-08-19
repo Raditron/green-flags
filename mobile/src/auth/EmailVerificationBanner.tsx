@@ -8,10 +8,10 @@ import type { ResendState } from "./interfaces";
 /**
  * RN port of frontend's Layout/EmailVerificationBanner/EmailVerificationBanner.tsx: same
  * idle → sending → sent/error resend state machine, same "render nothing while loading, signed
- * out, or already verified" guard. Lives flat under auth/ (mirroring theme/ThemeToggle.tsx) rather
- * than under components/, since it's a cross-cutting piece rendered once at App.tsx root — in
- * normal flex flow above RootNavigator, not an absolutely-positioned chip like ThemeToggle/
- * AccountControl, so it doesn't need to account for per-screen safe-area padding.
+ * out, or already verified" guard. Lives flat under auth/ rather than under components/, since
+ * it's a cross-cutting piece rendered once at App.tsx root, in normal flex flow above
+ * RootNavigator — unlike ThemeToggle/AccountControl, which live under components/Layout/ as
+ * TopBar's own children, this has no per-screen safe-area padding of its own to account for.
  */
 export function EmailVerificationBanner() {
   const { user, loading, resendVerificationEmail } = useAuth();

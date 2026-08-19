@@ -24,26 +24,35 @@ export function getSeaSummaryCardStyles(tokens: ThemeTokens, { flagColor }: { fl
     },
     // Colored like the flag itself — this is the one thing a visitor reads before anything else
     // on the page, so it gets the same flag-color treatment.
+    //
+    // Diverges from frontend here: web's row layout (icon beside text) works fine on a wide
+    // viewport, but on a phone-width card it leaves the headline/sentence wrapping inside a
+    // column narrowed by the icon's width + gap. Instead the icon shares a top row with the
+    // date (filling the blank space beside it), and the headline/sentence stack below, using
+    // the hero's full width.
     hero: {
-      flexDirection: "row",
+      flexDirection: "column",
       alignItems: "flex-start",
-      gap: 14,
+      gap: 8,
       padding: 16,
       borderRadius: BORDER_RADIUS,
       backgroundColor: flagVar,
     },
+    heroTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
     heroIcon: {
-      width: 26,
-      marginTop: 3,
-      fontSize: 22,
-      lineHeight: 26,
+      fontSize: 20,
+      lineHeight: 24,
       color: "#fff",
       opacity: 0.9,
     },
     heroText: {
       flexDirection: "column",
       gap: 4,
-      flexShrink: 1,
+      alignSelf: "stretch",
     },
     subtitle: {
       fontSize: 13,

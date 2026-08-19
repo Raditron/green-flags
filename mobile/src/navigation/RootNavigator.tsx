@@ -7,6 +7,7 @@ import { Dashboard } from "../components/Dashboard/Dashboard";
 import { BeachList } from "../components/BeachList/BeachList";
 import { SavedBeaches } from "../components/SavedBeaches/SavedBeaches";
 import { BeachDetail } from "../components/BeachDetail/BeachDetail";
+import { useAuth } from "../auth/AuthContext";
 import { useTheme } from "../theme/ThemeContext";
 import type { ThemeTokens } from "../theme/tokens";
 import type { RootStackParamList, TabParamList } from "./interfaces";
@@ -19,13 +20,20 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
  * see `frontend/src/App.tsx`). Screen order matches the header nav order in
  * `frontend/src/components/Layout/Layout.tsx` (All beaches, Your beaches, Today) as closely as a
  * tab bar's left-to-right convention allows, keeping Today first since it's the app's landing tab.
+ *
+ * The Saved tab is hidden while signed out, mirroring frontend's `Layout` gating "Your beaches"
+ * behind `!loading && user` (`frontend/src/components/Layout/Layout.tsx`) — there's no saved-beach
+ * list to show for a user we can't identify. Held back during the initial `loading` beat too, so
+ * the tab doesn't flash in and then disappear once the signed-out state resolves.
  */
 function MainTabs() {
+  const { user, loading } = useAuth();
+
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Today" component={Dashboard} />
       <Tab.Screen name="Beaches" component={BeachList} />
-      <Tab.Screen name="Saved" component={SavedBeaches} />
+      {!loading && user && <Tab.Screen name="Saved" component={SavedBeaches} />}
     </Tab.Navigator>
   );
 }
