@@ -8,12 +8,12 @@ import { useAuth } from "./AuthContext";
 import type { UserMenuProps } from "./interfaces";
 
 /**
- * RN port of frontend's Layout/UserMenu/UserMenu.tsx. Unlike ThemeToggle, this doesn't position
- * itself on screen — like frontend's `container` (`position: relative`, positioned by its parent
- * header layout), it's a plain chip + dropdown; AccountControl (the root floating control, like
- * ThemeToggle) is what fixes it to a screen corner. The dismissible dropdown uses RN's `<Modal
- * transparent>` with a full-screen backdrop `Pressable` to close on outside-tap, standing in for
- * frontend's DOM-only `useDismissibleMenu` hook (no direct RN equivalent).
+ * RN port of frontend's Layout/UserMenu/UserMenu.tsx. Like frontend's `container`
+ * (`position: relative`, positioned by its parent header layout), this doesn't position itself on
+ * screen — it's a plain chip + dropdown, laid out by AccountControl (`components/Layout/
+ * AccountControl.tsx`), which in turn sits inside TopBar's header row. The dismissible dropdown
+ * uses RN's `<Modal transparent>` with a full-screen backdrop `Pressable` to close on outside-tap,
+ * standing in for frontend's DOM-only `useDismissibleMenu` hook (no direct RN equivalent).
  */
 export function UserMenu({ email, displayName }: UserMenuProps) {
   const { logOut } = useAuth();

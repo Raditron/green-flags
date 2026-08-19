@@ -1,27 +1,25 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ThemeTokens } from "../theme/tokens";
-import { useTheme } from "../theme/ThemeContext";
-import { AuthScreen } from "./AuthScreen";
-import { useAuth } from "./AuthContext";
-import { UserMenu } from "./UserMenu";
+import type { ThemeTokens } from "../../theme/tokens";
+import { useTheme } from "../../theme/ThemeContext";
+import { AuthScreen } from "../../auth/AuthScreen";
+import { useAuth } from "../../auth/AuthContext";
+import { UserMenu } from "../../auth/UserMenu";
 
 /**
  * RN port of frontend's Layout.tsx `rightGroup` (the `UserMenu`/"Sign in" half of it — ThemeToggle
- * is already its own root-rendered control), plus its `titleBlock`'s `greetingName` span — mobile
- * has no separate title area to put a greeting next to, so it's folded in alongside UserMenu here
- * instead, using the same "everything before the @" derivation as frontend's `greetingName`. Like
- * ThemeToggle, mobile has no header chrome to sit in, so this positions itself as a floating chip
- * via useSafeAreaInsets(); it takes the top-left corner since ThemeToggle already occupies
- * top-right. Rendered once at the app root (App.tsx). While signed out, owns the local
- * `authScreenOpen` state that frontend's Layout keeps as `modalOpen`, opening AuthScreen the same
- * way Layout opens AuthModal.
+ * is the other half), plus its `titleBlock`'s `greetingName` span — mobile's title area (TopBar's
+ * `titleBlock`) holds only the wordmark, with no greeting slot of its own, so the greeting stays
+ * folded in alongside UserMenu here instead, using the same "everything before the @" derivation
+ * as frontend's `greetingName`. Rendered inside TopBar
+ * (`components/Layout/TopBar.tsx`), which supplies the header bar's background/border and safe-area
+ * top padding — this component only lays out its own row content, it doesn't position itself on
+ * screen. While signed out, owns the local `authScreenOpen` state that frontend's Layout keeps as
+ * `modalOpen`, opening AuthScreen the same way Layout opens AuthModal.
  */
 export function AccountControl() {
   const { user, loading } = useAuth();
   const { tokens } = useTheme();
-  const insets = useSafeAreaInsets();
   const [authScreenOpen, setAuthScreenOpen] = useState(false);
   const styles = getAccountControlStyles(tokens);
 
@@ -35,7 +33,7 @@ export function AccountControl() {
   const greetingName = user?.email?.split("@")[0] ?? null;
 
   return (
-    <View style={[styles.container, { top: insets.top + 8, left: 16 }]}>
+    <View style={styles.container}>
       {user ? (
         <>
           {greetingName && <Text style={styles.greeting}>Hello, {greetingName}</Text>}
@@ -60,8 +58,6 @@ export function AccountControl() {
 function getAccountControlStyles(tokens: ThemeTokens) {
   return StyleSheet.create({
     container: {
-      position: "absolute",
-      zIndex: 1000,
       flexDirection: "row",
       alignItems: "center",
       gap: 8,

@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { press } from "../test/press";
-import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
-import { ThemeProvider } from "../theme/ThemeContext";
+import { press } from "../../test/press";
+import { TEST_SAFE_AREA_METRICS } from "../../test/safeAreaMetrics";
+import { ThemeProvider } from "../../theme/ThemeContext";
 import { AccountControl } from "./AccountControl";
 
 const mockLogIn = jest.fn();
@@ -17,7 +17,7 @@ let mockAuthValue: {
 // UserMenu, AuthScreen): mock AuthContext wholesale rather than the network. AccountControl
 // renders both UserMenu and AuthScreen depending on auth state, so this mock supplies every
 // field either of them might read off useAuth().
-jest.mock("./AuthContext", () => ({
+jest.mock("../../auth/AuthContext", () => ({
   useAuth: () => ({
     ...mockAuthValue,
     signUp: mockSignUp,
