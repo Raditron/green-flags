@@ -20,6 +20,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Green Flags uses your location to default the beach list to your area and show distances to each beach."
+        }
+      ],
+      "expo-asset"
+    ]
   }
 }
