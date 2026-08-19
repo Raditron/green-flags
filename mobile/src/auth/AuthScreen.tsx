@@ -1,3 +1,4 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { BlurView } from "expo-blur";
@@ -90,9 +91,8 @@ export function AuthScreen({ onClose, onAuthenticated }: AuthScreenProps) {
             </Pressable>
 
             <View style={styles.kicker}>
-              <Text style={styles.kickerIcon} aria-hidden>
-                ⚑
-              </Text>
+              {/* Same icon as frontend's FaFlag (react-icons/fa6) — see AuthModal.tsx's kicker. */}
+              <FontAwesome6 name="flag" solid size={11} color={tokens.flagGreen} />
               <Text style={styles.kickerText}>Green Flags</Text>
             </View>
 
@@ -223,17 +223,12 @@ function getAuthScreenStyles(tokens: ThemeTokens) {
       color: tokens.text,
     },
     // Matches frontend AuthModal.styles.ts's `kicker`: small uppercase "Green Flags" wordmark above
-    // the title, using the same plain-glyph icon convention as SeaSummaryCard's heroIcon (no icon
-    // library is installed) in place of frontend's FaFlag.
+    // the title, with the same FaFlag icon as frontend's AuthModal.tsx.
     kicker: {
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
       marginBottom: 10,
-    },
-    kickerIcon: {
-      fontSize: 11,
-      color: tokens.flagGreen,
     },
     kickerText: {
       fontSize: 11,

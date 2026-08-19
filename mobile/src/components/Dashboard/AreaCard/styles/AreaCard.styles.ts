@@ -6,11 +6,13 @@ import type { ThemeTokens } from "../../../../theme/tokens";
 import type { FlagColor } from "../../interfaces";
 
 // RN port of frontend/src/components/Dashboard/AreaCard/styles/AreaCard.styles.ts. Card width
-// itself is driven by DashboardSummary's flex-wrap grid, not this file (see its styles).
+// itself is driven by DashboardSummary's flex-wrap grid, not this file (see its styles). `flagVar`
+// comes back alongside `styles` so AreaCard.tsx can reuse it for the flag glyph's color prop
+// instead of calling flagColorFor a second time for the same input.
 export function getAreaCardStyles(tokens: ThemeTokens, { flagColor }: { flagColor: FlagColor }) {
   const flagVar = flagColorFor(flagColor, tokens);
 
-  return StyleSheet.create({
+  const styles = StyleSheet.create({
     card: {
       flexDirection: "column",
       gap: 10,
@@ -25,12 +27,10 @@ export function getAreaCardStyles(tokens: ThemeTokens, { flagColor }: { flagColo
       alignItems: "flex-start",
       gap: 8,
     },
+    // Nudges the FontAwesome6 flag icon (size/color passed as props — see AreaCard.tsx) down to
+    // align with headerText's first line, same as before the Fa6 migration.
     flagIcon: {
-      width: 16,
       marginTop: 3,
-      fontSize: 14,
-      lineHeight: 16,
-      color: flagVar,
     },
     headerText: {
       flexDirection: "column",
@@ -61,10 +61,6 @@ export function getAreaCardStyles(tokens: ThemeTokens, { flagColor }: { flagColo
       paddingHorizontal: 8,
       borderRadius: 999,
       backgroundColor: hexToRgba(tokens.flagRed, 16),
-    },
-    stormBadgeIcon: {
-      fontSize: 11,
-      color: tokens.flagRed,
     },
     stormBadgeText: {
       color: tokens.flagRed,
@@ -99,4 +95,6 @@ export function getAreaCardStyles(tokens: ThemeTokens, { flagColor }: { flagColo
       fontStyle: "italic",
     },
   });
+
+  return { styles, flagVar };
 }

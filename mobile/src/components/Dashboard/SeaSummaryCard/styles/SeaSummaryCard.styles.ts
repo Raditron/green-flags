@@ -43,10 +43,9 @@ export function getSeaSummaryCardStyles(tokens: ThemeTokens, { flagColor }: { fl
       alignItems: "center",
       gap: 8,
     },
+    // FontAwesome6's icon (size/color passed as props — see SeaSummaryCard.tsx) keeps only the
+    // opacity here.
     heroIcon: {
-      fontSize: 20,
-      lineHeight: 24,
-      color: "#fff",
       opacity: 0.9,
     },
     heroText: {
@@ -81,10 +80,6 @@ export function getSeaSummaryCardStyles(tokens: ThemeTokens, { flagColor }: { fl
       borderWidth: 1,
       borderColor: hexToRgba(tokens.flagRed, 45),
     },
-    stormIcon: {
-      fontSize: 15,
-      color: tokens.flagRed,
-    },
     stormText: {
       color: tokens.flagRed,
       fontWeight: "700",
@@ -105,9 +100,9 @@ export function getSeaSummaryCardStyles(tokens: ThemeTokens, { flagColor }: { fl
       alignItems: "center",
       gap: 6,
     },
+    // FontAwesome6's icon (size/color passed as props — see SeaSummaryCard.tsx) keeps only the
+    // opacity here.
     statIcon: {
-      fontSize: 14,
-      color: tokens.text,
       opacity: 0.75,
     },
     statText: {
