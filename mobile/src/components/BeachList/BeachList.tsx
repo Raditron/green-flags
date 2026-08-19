@@ -46,7 +46,14 @@ export function BeachList({ navigation }: BeachesTabScreenProps) {
   const isFindingArea = beaches.status === "success" && userLocation.status === "loading";
 
   function handlePressBeach(beach: BeachWithDistance) {
-    navigation.navigate("BeachDetail", { beachId: beach.id });
+    // Passes what this card already has, mirroring frontend's <Link state={...}> — see useBeach,
+    // which prefers these over re-fetching the beach list just to show the same fields again.
+    navigation.navigate("BeachDetail", {
+      beachId: beach.id,
+      name: beach.name,
+      quirkNotes: beach.quirkNotes,
+      isUnguarded: beach.isUnguarded,
+    });
   }
 
   return (

@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { CompositeScreenProps } from "@react-navigation/native";
+import type { BeachDetailRouteParams } from "../../components/BeachDetail/interfaces";
 
 /**
  * The Beaches, Today, Saved bottom tabs — mirrors frontend's `/`, `/beaches`, `/saved` routes
@@ -18,7 +19,7 @@ export type TabParamList = {
  */
 export type RootStackParamList = {
   MainTabs: undefined;
-  BeachDetail: { beachId: string };
+  BeachDetail: BeachDetailRouteParams;
 };
 
 export type BeachesTabScreenProps = CompositeScreenProps<
