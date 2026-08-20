@@ -22,7 +22,9 @@
     "express-rate-limit": "^8.6.2",
     "fast-xml-parser": "5.10.1",
     "firebase-admin": "^14.2.0",
-    "mongodb": "^6.9.0"
+    "mongodb": "^6.9.0",
+    "pdf-parse": "2.4.5",
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
