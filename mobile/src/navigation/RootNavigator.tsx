@@ -8,7 +8,6 @@ import { Dashboard } from "../components/Dashboard/Dashboard";
 import { BeachList } from "../components/BeachList/BeachList";
 import { SavedBeaches } from "../components/SavedBeaches/SavedBeaches";
 import { BeachDetail } from "../components/BeachDetail/BeachDetail";
-import { useAuth } from "../auth/AuthContext";
 import { useTheme } from "../theme/ThemeContext";
 import type { ThemeTokens } from "../theme/tokens";
 import type { RootStackParamList, TabParamList } from "./interfaces";
@@ -22,10 +21,12 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
  * `frontend/src/components/Layout/Layout.tsx` (All beaches, Your beaches, Today) as closely as a
  * tab bar's left-to-right convention allows, keeping Today first since it's the app's landing tab.
  *
- * The Saved tab is hidden while signed out, mirroring frontend's `Layout` gating "Your beaches"
- * behind `!loading && user` (`frontend/src/components/Layout/Layout.tsx`) — there's no saved-beach
- * list to show for a user we can't identify. Held back during the initial `loading` beat too, so
- * the tab doesn't flash in and then disappear once the signed-out state resolves.
+ * Unlike frontend, which hides its "Your beaches" header link entirely while signed out
+ * (`frontend/src/components/Layout/Layout.tsx`'s `!loading && user` gate), the Saved tab is always
+ * present — #100's mobile-specific acceptance criterion (see #91's story 29) wants a signed-out
+ * visitor who reaches it to see a clear sign-in prompt, not a tab that mysteriously doesn't exist.
+ * SavedBeaches itself (`components/SavedBeaches/SavedBeaches.tsx`) owns that gating — this
+ * navigator no longer reads `user`/`loading` at all.
  *
  * Each tab supplies its own `tabBarIcon` (FontAwesome6, same icon system as the rest of mobile —
  * see AreaSelect.tsx's precedent) so the bar shows real icons instead of React Navigation's own
@@ -35,8 +36,6 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
  * frontend's SaveBeachButton.tsx's `FaStar`/`FaRegStar`).
  */
 function MainTabs() {
-  const { user, loading } = useAuth();
-
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
@@ -53,15 +52,13 @@ function MainTabs() {
           tabBarIcon: ({ color, size }) => <FontAwesome6 name="water" solid size={size} color={color} />,
         }}
       />
-      {!loading && user && (
-        <Tab.Screen
-          name="Saved"
-          component={SavedBeaches}
-          options={{
-            tabBarIcon: ({ color, size }) => <FontAwesome6 name="star" solid size={size} color={color} />,
-          }}
-        />
-      )}
+      <Tab.Screen
+        name="Saved"
+        component={SavedBeaches}
+        options={{
+          tabBarIcon: ({ color, size }) => <FontAwesome6 name="star" solid size={size} color={color} />,
+        }}
+      />
     </Tab.Navigator>
   );
 }

@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/ThemeContext";
 import { useToast } from "../../toast/ToastContext";
 import { getBeachHeroImage } from "../../shared/data/images";
+import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
 import { DayOutlook } from "./DayOutlook/DayOutlook";
 import { ForecastStrip } from "./ForecastStrip/ForecastStrip";
 import { Timeline } from "./Timeline/Timeline";
@@ -16,14 +17,19 @@ import type { BeachDetailScreenProps } from "../../navigation/interfaces";
 import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 
 const DISCLAIMER_MESSAGE = "Unofficial estimate — not the lifeguard's flag";
+const SAVED_MESSAGE = "Saved to your beaches";
 
 /**
  * RN port of frontend's BeachDetail.tsx: the Beach Detail screen reachable from a Beach List card
  * — hero photo, Forecast Strip, Timeline (today) or Day Outlook (any other selected day) — #97's
- * acceptance criteria. Omits frontend's back-arrow/title row (native-stack's own header already
- * supplies both — see RootNavigator.tsx, whose title this keeps in sync via `setOptions` below),
- * SaveBeachButton (#100) and CommentSection (#99), and the `#comments` scroll-into-view effect
- * (no counterpart to scroll to yet without CommentSection).
+ * acceptance criteria, plus a save/unsave star (#100). Omits frontend's back-arrow/title row
+ * (native-stack's own header already supplies both — see RootNavigator.tsx, whose title this keeps
+ * in sync via `setOptions` below) and CommentSection (#99), and the `#comments` scroll-into-view
+ * effect (no counterpart to scroll to yet without CommentSection). The star sits in its own row
+ * above the hero image rather than frontend's title row — there's no in-body title here for it to
+ * sit "next to" (the native header already carries the beach name) — and fires a toast on save
+ * (not unsave, mirroring the disclaimer toast's one-shot confirmation) per #100's acceptance
+ * criteria, a deliberate mobile-only addition frontend's own quiet SaveBeachButton doesn't have.
  */
 export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   const { beachId, name, quirkNotes, isUnguarded } = route.params;
@@ -54,9 +60,19 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
     return () => dismissToast(id);
   }, [beachId, showToast, dismissToast]);
 
+  function handleSaveToggle(saved: boolean) {
+    if (saved) {
+      showToast(SAVED_MESSAGE);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView accessibilityLabel="Beach detail" contentContainerStyle={styles.content}>
+        <View style={styles.saveRow}>
+          <SaveBeachButton beachId={beachId} onToggle={handleSaveToggle} />
+        </View>
+
         <View style={styles.heroRow}>
           <View style={styles.imageArea}>
             {heroImage ? (

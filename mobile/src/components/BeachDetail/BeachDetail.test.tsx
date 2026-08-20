@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { press } from "../../test/press";
 import { TEST_SAFE_AREA_METRICS } from "../../test/safeAreaMetrics";
 import { ThemeProvider } from "../../theme/ThemeContext";
 import { ToastProvider } from "../../toast/ToastContext";
@@ -20,6 +21,19 @@ jest.mock("./hooks/usePredictions", () => ({
   usePredictions: () => ({ status: "loading" }) as const,
 }));
 
+const mockIsSaved = jest.fn();
+const mockToggleSave = jest.fn();
+
+// SaveBeachButton (#100) reads both of these contexts — mocked wholesale, same seam as
+// SaveBeachButton.test.tsx, so this stays a rendering test of BeachDetail rather than an
+// end-to-end exercise of the save feature (that's SaveBeachButton's own job).
+jest.mock("../../auth/AuthContext", () => ({
+  useAuth: () => ({ user: { uid: "u1" } }),
+}));
+jest.mock("../../saved/SavedBeachesContext", () => ({
+  useSavedBeaches: () => ({ isSaved: mockIsSaved, toggleSave: mockToggleSave, isReady: true }),
+}));
+
 const mockNavigation = { setOptions: jest.fn(), goBack: jest.fn() } as unknown as BeachDetailScreenProps["navigation"];
 
 function renderDetail(beachId: string) {
@@ -34,6 +48,11 @@ function renderDetail(beachId: string) {
     </SafeAreaProvider>,
   );
 }
+
+beforeEach(() => {
+  mockIsSaved.mockReset();
+  mockToggleSave.mockReset();
+});
 
 describe("BeachDetail", () => {
   it("renders the beach's curated hero photo when one exists", async () => {
@@ -67,5 +86,25 @@ describe("BeachDetail", () => {
 
     expect(await screen.findByText("Loading predictions…")).toBeOnTheScreen();
     expect(screen.queryByText("Loading forecast…")).toBeNull();
+  });
+
+  it("saving the beach toggles it and shows a confirmation toast", async () => {
+    mockIsSaved.mockReturnValue(false);
+    await renderDetail("varna-central-beach");
+
+    await press(screen.getByLabelText("Save beach"));
+
+    expect(mockToggleSave).toHaveBeenCalledWith("varna-central-beach");
+    expect(await screen.findByText("Saved to your beaches")).toBeOnTheScreen();
+  });
+
+  it("unsaving a previously saved beach toggles it without a toast", async () => {
+    mockIsSaved.mockReturnValue(true);
+    await renderDetail("varna-central-beach");
+
+    await press(screen.getByLabelText("Unsave beach"));
+
+    expect(mockToggleSave).toHaveBeenCalledWith("varna-central-beach");
+    expect(screen.queryByText("Saved to your beaches")).toBeNull();
   });
 });

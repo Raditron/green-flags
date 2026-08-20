@@ -4,6 +4,7 @@ import { press } from "../test/press";
 import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
 import { ThemeProvider } from "../theme/ThemeContext";
 import { ToastProvider } from "../toast/ToastContext";
+import { SavedBeachesProvider } from "../saved/SavedBeachesContext";
 import { RootNavigator } from "./RootNavigator";
 
 // The Today tab now renders a real Dashboard (#95) that fetches on mount — stub its data layer so
@@ -48,11 +49,19 @@ jest.mock("../components/BeachDetail/data/fetchPredictions", () => ({
   fetchPredictions: jest.fn(() => new Promise(() => {})),
 }));
 
+// The Saved tab (#100) now renders a real SavedBeaches too, which would fetch the signed-in
+// visitor's saved beaches on mount if its tab were ever pressed — stub it for the same reason as
+// the data mocks above. (bottom-tabs' default `lazy` mounting means none of the current tests
+// actually trigger this, but the stub is here so a future test that does press into Saved stays
+// navigation-focused rather than depending on the network.)
+jest.mock("../saved/data/fetchSavedBeaches", () => ({
+  fetchSavedBeaches: jest.fn(async () => []),
+}));
+
 let mockAuthValue: { user: { email: string } | null; loading: boolean };
 
 // Mirrors the auth component-test seam used throughout the auth module (EmailVerificationBanner,
-// AccountControl, UserMenu): mock AuthContext wholesale rather than the network. RootNavigator
-// only reads user/loading (to gate the Saved tab), so the mock supplies just those fields.
+// AccountControl, UserMenu): mock AuthContext wholesale rather than the network.
 jest.mock("../auth/AuthContext", () => ({
   useAuth: () => mockAuthValue,
 }));
@@ -63,11 +72,16 @@ function renderApp() {
   return render(
     <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
       <ThemeProvider>
-        {/* BeachDetail (#97) shows a disclaimer toast on mount via useToast() — mirrors App.tsx's
-            real provider ordering (ToastProvider inside ThemeProvider) so that doesn't throw. */}
-        <ToastProvider>
-          <RootNavigator />
-        </ToastProvider>
+        {/* Real SavedBeachesProvider (#100), same nesting as App.tsx — its own fetch is stubbed
+            above, so this is safe to leave un-mocked and exercises the real save/unsave wiring
+            SaveBeachButton (on Beach Detail) and the Saved tab both read through. */}
+        <SavedBeachesProvider>
+          {/* BeachDetail (#97) shows a disclaimer toast on mount via useToast() — mirrors App.tsx's
+              real provider ordering (ToastProvider inside ThemeProvider) so that doesn't throw. */}
+          <ToastProvider>
+            <RootNavigator />
+          </ToastProvider>
+        </SavedBeachesProvider>
       </ThemeProvider>
     </SafeAreaProvider>,
   );
@@ -88,21 +102,30 @@ describe("RootNavigator", () => {
     expect(screen.getByLabelText(/^Saved, tab/)).toBeOnTheScreen();
   });
 
-  it("hides the Saved tab when signed out — there's no saved-beach list for a user we can't identify", async () => {
+  it("still shows the Saved tab when signed out — SavedBeaches itself prompts to sign in (#100)", async () => {
     mockAuthValue = { user: null, loading: false };
     await renderApp();
 
     expect(await screen.findByLabelText(/^Today, tab/)).toBeOnTheScreen();
     expect(screen.getByLabelText(/^Beaches, tab/)).toBeOnTheScreen();
-    expect(screen.queryByLabelText(/^Saved, tab/)).toBeNull();
+    expect(screen.getByLabelText(/^Saved, tab/)).toBeOnTheScreen();
   });
 
-  it("hides the Saved tab while auth state is still loading, mirroring frontend's Layout gating", async () => {
+  it("still shows the Saved tab while auth state is still loading", async () => {
     mockAuthValue = { user: null, loading: true };
     await renderApp();
 
     expect(await screen.findByLabelText(/^Today, tab/)).toBeOnTheScreen();
-    expect(screen.queryByLabelText(/^Saved, tab/)).toBeNull();
+    expect(screen.getByLabelText(/^Saved, tab/)).toBeOnTheScreen();
+  });
+
+  it("pressing the Saved tab while signed out shows a sign-in prompt, not a crash or an empty grid", async () => {
+    mockAuthValue = { user: null, loading: false };
+    await renderApp();
+
+    await press(await screen.findByText("Saved"));
+
+    expect(await screen.findByText("Sign in to see your saved beaches")).toBeOnTheScreen();
   });
 
   it("pushes Beach Detail from the Beaches tab, and back returns to the tab", async () => {

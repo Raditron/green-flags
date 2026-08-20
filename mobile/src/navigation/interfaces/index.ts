@@ -27,4 +27,11 @@ export type BeachesTabScreenProps = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
+/** The Saved tab (#100) — same composite shape as BeachesTabScreenProps, so tapping a card in the
+ * Saved grid can push Beach Detail the same way a Beaches tab card does. */
+export type SavedTabScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, "Saved">,
+  NativeStackScreenProps<RootStackParamList>
+>;
+
 export type BeachDetailScreenProps = NativeStackScreenProps<RootStackParamList, "BeachDetail">;
