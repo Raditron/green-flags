@@ -77,8 +77,12 @@ export function RootNavigator() {
         <RootStack.Screen
           name="BeachDetail"
           component={BeachDetail}
-          options={({ navigation }) => ({
-            title: "Beach Detail",
+          options={({ navigation, route }) => ({
+            // Seeds from the route param BeachList already knows (see BeachList's
+            // navigation.navigate call), so the header never flashes a generic title before
+            // BeachDetail's own `setOptions` effect (which also covers a name-less deep link,
+            // once fetchBeach resolves) runs.
+            title: route.params.name ?? "Beach Detail",
             // native-stack's default back chrome is rendered by the native header (UINavigationController
             // / Fragment toolbar) and never enters the JS/RNTL element tree, so it isn't testable under
             // Jest. Supplying our own `headerLeft` keeps back navigation exercisable in tests and gives us

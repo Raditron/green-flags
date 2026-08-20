@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { press } from "../test/press";
 import { TEST_SAFE_AREA_METRICS } from "../test/safeAreaMetrics";
 import { ThemeProvider } from "../theme/ThemeContext";
+import { ToastProvider } from "../toast/ToastContext";
 import { RootNavigator } from "./RootNavigator";
 
 // The Today tab now renders a real Dashboard (#95) that fetches on mount — stub its data layer so
@@ -40,6 +41,13 @@ jest.mock("../shared/hooks/useUserLocation", () => ({
   useUserLocation: () => ({ status: "unavailable" }),
 }));
 
+// Beach Detail (#97) now renders for real too, fetching its own predictions on mount — stub it
+// for the same reason as fetchDailySummary/fetchBeaches above, this being a navigation-focused
+// test rather than one that should ever need to settle a real (or even mocked-resolved) fetch.
+jest.mock("../components/BeachDetail/data/fetchPredictions", () => ({
+  fetchPredictions: jest.fn(() => new Promise(() => {})),
+}));
+
 let mockAuthValue: { user: { email: string } | null; loading: boolean };
 
 // Mirrors the auth component-test seam used throughout the auth module (EmailVerificationBanner,
@@ -55,7 +63,11 @@ function renderApp() {
   return render(
     <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
       <ThemeProvider>
-        <RootNavigator />
+        {/* BeachDetail (#97) shows a disclaimer toast on mount via useToast() — mirrors App.tsx's
+            real provider ordering (ToastProvider inside ThemeProvider) so that doesn't throw. */}
+        <ToastProvider>
+          <RootNavigator />
+        </ToastProvider>
       </ThemeProvider>
     </SafeAreaProvider>,
   );
@@ -100,7 +112,7 @@ describe("RootNavigator", () => {
     await press(await screen.findByText("Beaches"));
     await press(await screen.findByText("Placeholder beach"));
 
-    expect(await screen.findByText("placeholder-beach")).toBeOnTheScreen();
+    expect(await screen.findByLabelText("Beach detail")).toBeOnTheScreen();
 
     await press(screen.getByLabelText("Go back"));
 
