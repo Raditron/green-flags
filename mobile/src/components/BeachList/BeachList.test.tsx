@@ -156,6 +156,11 @@ describe("BeachList", () => {
 
     await press(screen.getByLabelText("Golden Sands"));
 
-    expect(mockNavigate).toHaveBeenCalledWith("BeachDetail", { beachId: "golden-sands" });
+    expect(mockNavigate).toHaveBeenCalledWith("BeachDetail", {
+      beachId: "golden-sands",
+      name: "Golden Sands",
+      quirkNotes: undefined,
+      isUnguarded: false,
+    });
   });
 });
