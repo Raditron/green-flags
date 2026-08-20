@@ -6,6 +6,7 @@ import { useUserLocation } from "../../shared/hooks/useUserLocation";
 import { BeachListCard } from "./BeachListCard/BeachListCard";
 import { BeachListFilters } from "./BeachListFilters/BeachListFilters";
 import { getBeachListStyles } from "./styles/BeachList.styles";
+import { toBeachDetailParams } from "../BeachDetail/interfaces";
 import type { BeachesTabScreenProps } from "../../navigation/interfaces";
 import type { BeachWithDistance } from "../../shared/types/Beach";
 
@@ -48,12 +49,7 @@ export function BeachList({ navigation }: BeachesTabScreenProps) {
   function handlePressBeach(beach: BeachWithDistance) {
     // Passes what this card already has, mirroring frontend's <Link state={...}> — see useBeach,
     // which prefers these over re-fetching the beach list just to show the same fields again.
-    navigation.navigate("BeachDetail", {
-      beachId: beach.id,
-      name: beach.name,
-      quirkNotes: beach.quirkNotes,
-      isUnguarded: beach.isUnguarded,
-    });
+    navigation.navigate("BeachDetail", toBeachDetailParams(beach));
   }
 
   return (

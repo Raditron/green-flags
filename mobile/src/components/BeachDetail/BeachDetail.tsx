@@ -1,5 +1,5 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/ThemeContext";
@@ -49,12 +49,25 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   const today = todayInSofia();
   const heroImage = getBeachHeroImage(beachId);
 
+  // useCallback'd so the setOptions effect below can list it as a dependency without re-running on
+  // every render — otherwise the effect (gated on [navigation, beach.name, beachId]) would close
+  // over whatever showToast reference existed the last time it happened to run, not necessarily the
+  // current one.
+  const handleSaveToggle = useCallback(
+    (saved: boolean) => {
+      if (saved) {
+        showToast(SAVED_MESSAGE);
+      }
+    },
+    [showToast],
+  );
+
   useEffect(() => {
     navigation.setOptions({
       title: beach.name ?? "Beach",
       headerRight: () => <SaveBeachButton beachId={beachId} onToggle={handleSaveToggle} />,
     });
-  }, [navigation, beach.name, beachId]);
+  }, [navigation, beach.name, beachId, handleSaveToggle]);
 
   // Fires on every Beach Detail screen mount, including switching straight from one beach to
   // another (a fresh push, since native-stack doesn't remount on param changes the way frontend's
@@ -63,12 +76,6 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
     const id = showToast(DISCLAIMER_MESSAGE);
     return () => dismissToast(id);
   }, [beachId, showToast, dismissToast]);
-
-  function handleSaveToggle(saved: boolean) {
-    if (saved) {
-      showToast(SAVED_MESSAGE);
-    }
-  }
 
   return (
     <View style={styles.container}>

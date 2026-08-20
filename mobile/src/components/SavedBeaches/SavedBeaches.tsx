@@ -7,6 +7,7 @@ import { AuthScreen } from "../../auth/AuthScreen";
 import { useSavedBeachesList } from "./hooks/useSavedBeachesList";
 import { SavedBeachesGrid } from "./SavedBeachesGrid/SavedBeachesGrid";
 import { getSavedBeachesStyles } from "./styles/SavedBeaches.styles";
+import { toBeachDetailParams } from "../BeachDetail/interfaces";
 import type { SavedTabScreenProps } from "../../navigation/interfaces";
 import type { Beach } from "../../shared/types/Beach";
 
@@ -47,12 +48,7 @@ export function SavedBeaches({ navigation }: SavedTabScreenProps) {
   function handlePressBeach(beach: Beach) {
     // Passes what this card already has, mirroring BeachList.tsx's handlePressBeach — see useBeach,
     // which prefers these over re-fetching the beach list just to show the same fields again.
-    navigation.navigate("BeachDetail", {
-      beachId: beach.id,
-      name: beach.name,
-      quirkNotes: beach.quirkNotes,
-      isUnguarded: beach.isUnguarded,
-    });
+    navigation.navigate("BeachDetail", toBeachDetailParams(beach));
   }
 
   return (

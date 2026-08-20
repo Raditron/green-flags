@@ -1,4 +1,4 @@
-import type { FlagColor } from "../../../shared/types/Beach";
+import type { Beach, FlagColor } from "../../../shared/types/Beach";
 
 export type { FlagColor };
 
@@ -16,6 +16,20 @@ export interface BeachDetailRouteParams {
   name?: string;
   quirkNotes?: string;
   isUnguarded?: boolean;
+}
+
+/**
+ * Builds the params above from a full `Beach` — the one shape BeachList.tsx's and
+ * SavedBeaches.tsx's handlePressBeach both need when pushing BeachDetail, so it lives here next to
+ * the type it constructs rather than being redefined at each call site.
+ */
+export function toBeachDetailParams(beach: Beach): BeachDetailRouteParams {
+  return {
+    beachId: beach.id,
+    name: beach.name,
+    quirkNotes: beach.quirkNotes,
+    isUnguarded: beach.isUnguarded,
+  };
 }
 
 export type RipCurrentRisk = "low" | "moderate" | "high";
