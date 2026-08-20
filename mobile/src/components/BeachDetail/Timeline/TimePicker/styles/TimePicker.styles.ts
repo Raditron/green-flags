@@ -55,10 +55,19 @@ export function getTimePickerStyles(tokens: ThemeTokens) {
       color: tokens.textHeading,
       opacity: 0.7,
     },
-    close: {
+    // `position: absolute` lives on the *button* (the `Pressable` wrapping the "×"), not the glyph
+    // itself: an absolutely-positioned child is sized/positioned against its immediate parent, so
+    // putting it on the inner Text left it pinned to the unstyled Pressable wrapper instead — which
+    // has no intrinsic size of its own (its only child is out of flow) and so sits wherever normal
+    // flow places it, after the ScrollView. Anchoring the Pressable itself to `picker` (its direct,
+    // implicitly-positioned parent) keeps the whole button fixed at the card's top-right corner
+    // regardless of how tall the list renders.
+    closeButton: {
       position: "absolute",
       top: 8,
       right: 12,
+    },
+    closeIcon: {
       fontSize: 20,
       lineHeight: 22,
       color: tokens.text,

@@ -44,8 +44,14 @@ export function TimePicker({ hourlyPredictions, selectedHour, currentHour, onPic
             })}
           </ScrollView>
 
-          <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" hitSlop={8}>
-            <Text style={styles.close}>×</Text>
+          <Pressable
+            style={styles.closeButton}
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            hitSlop={8}
+          >
+            <Text style={styles.closeIcon}>×</Text>
           </Pressable>
         </Pressable>
       </Pressable>
