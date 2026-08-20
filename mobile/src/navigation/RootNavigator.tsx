@@ -3,7 +3,7 @@ import type { Theme as NavigationTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { Pressable, Text } from "react-native";
+import { Pressable } from "react-native";
 import { Dashboard } from "../components/Dashboard/Dashboard";
 import { BeachList } from "../components/BeachList/BeachList";
 import { SavedBeaches } from "../components/SavedBeaches/SavedBeaches";
@@ -110,7 +110,8 @@ export function RootNavigator() {
             // native-stack's default back chrome is rendered by the native header (UINavigationController
             // / Fragment toolbar) and never enters the JS/RNTL element tree, so it isn't testable under
             // Jest. Supplying our own `headerLeft` keeps back navigation exercisable in tests and gives us
-            // a consistent, cross-platform back affordance (incl. on web).
+            // a consistent, cross-platform back affordance (incl. on web). FontAwesome6 `chevron-left`
+            // matches the icon system used elsewhere in mobile (see MainTabs above).
             headerLeft: () => (
               <Pressable
                 accessibilityRole="button"
@@ -118,7 +119,7 @@ export function RootNavigator() {
                 onPress={() => navigation.goBack()}
                 hitSlop={8}
               >
-                <Text>Back</Text>
+                <FontAwesome6 name="chevron-left" solid size={18} color={tokens.text} />
               </Pressable>
             ),
           })}
