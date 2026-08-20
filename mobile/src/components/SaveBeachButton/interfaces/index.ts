@@ -1,7 +1,7 @@
 // Mirrors frontend's SaveBeachButton/interfaces/index.ts, minus `withLabel` — mobile has nowhere
 // yet that needs the labelled ("Save"/"Saved" caption) variant frontend's list-card actions row
-// uses (out of #100's scope; the Beaches tab list card is untouched by this ticket). Revisit if a
-// future ticket adds it there.
+// uses; the Beaches tab list card (BeachListCard.tsx) uses this icon-only variant as a corner
+// overlay instead. Revisit if a future ticket wants the labelled caption on mobile too.
 export interface SaveBeachButtonProps {
   beachId: string;
   /** Fired on every toggle tap (while signed in) with the beach's new saved state. Lets a screen

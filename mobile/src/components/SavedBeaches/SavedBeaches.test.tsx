@@ -10,6 +10,7 @@ import type { SavedTabScreenProps } from "../../navigation/interfaces";
 
 let mockAuthValue: { user: { uid: string } | null; loading: boolean };
 let mockSavedBeachesListState: SavedBeachesListState;
+const mockRefetch = jest.fn();
 
 jest.mock("../../auth/AuthContext", () => ({
   useAuth: () => mockAuthValue,
@@ -18,7 +19,7 @@ jest.mock("../../auth/AuthContext", () => ({
 // Mirrors BeachList.test.tsx's seam: mock the colocated data hook wholesale rather than the
 // network, per #100's "component-level test mocking the colocated hook" acceptance criterion.
 jest.mock("./hooks/useSavedBeachesList", () => ({
-  useSavedBeachesList: () => mockSavedBeachesListState,
+  useSavedBeachesList: () => ({ ...mockSavedBeachesListState, refetch: mockRefetch }),
 }));
 
 // SavedBeachesGrid (rendered for real below) and each card's SaveBeachButton both read this
@@ -29,6 +30,11 @@ jest.mock("../../saved/SavedBeachesContext", () => ({
 }));
 
 const mockNavigate = jest.fn();
+let focusListener: (() => void) | undefined;
+const mockAddListener = jest.fn((event: string, callback: () => void) => {
+  if (event === "focus") focusListener = callback;
+  return jest.fn(); // unsubscribe
+});
 
 const GOLDEN_SANDS: Beach = {
   id: "golden-sands",
@@ -47,7 +53,9 @@ function renderScreen() {
     <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
       <ThemeProvider>
         <SavedBeaches
-          navigation={{ navigate: mockNavigate } as unknown as SavedTabScreenProps["navigation"]}
+          navigation={
+            { navigate: mockNavigate, addListener: mockAddListener } as unknown as SavedTabScreenProps["navigation"]
+          }
           route={{} as SavedTabScreenProps["route"]}
         />
       </ThemeProvider>
@@ -57,6 +65,9 @@ function renderScreen() {
 
 beforeEach(() => {
   mockNavigate.mockReset();
+  mockAddListener.mockClear();
+  mockRefetch.mockReset();
+  focusListener = undefined;
 });
 
 describe("SavedBeaches", () => {
@@ -112,6 +123,19 @@ describe("SavedBeaches", () => {
     await renderScreen();
 
     expect(screen.getByText("Golden Sands")).toBeOnTheScreen();
+  });
+
+  it("refetches the saved list when the Saved tab regains focus", async () => {
+    mockAuthValue = { user: { uid: "u1" }, loading: false };
+    mockSavedBeachesListState = { status: "success", data: [GOLDEN_SANDS] };
+    await renderScreen();
+
+    expect(mockAddListener).toHaveBeenCalledWith("focus", expect.any(Function));
+    expect(mockRefetch).not.toHaveBeenCalled();
+
+    focusListener?.();
+
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
   it("navigates to Beach Detail when a card in the grid is tapped", async () => {

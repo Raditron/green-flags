@@ -2,17 +2,15 @@ import { FlatList, Text, View } from "react-native";
 import { useTheme } from "../../../theme/ThemeContext";
 import { useSavedBeaches } from "../../../saved/SavedBeachesContext";
 import { BeachListCard } from "../../BeachList/BeachListCard/BeachListCard";
-import { SaveBeachButton } from "../../SaveBeachButton/SaveBeachButton";
 import { getBeachListStyles } from "../../BeachList/styles/BeachList.styles";
-import { getSavedBeachesGridStyles } from "./styles/SavedBeachesGrid.styles";
 import type { SavedBeachesGridProps } from "./interfaces";
 
 /**
  * RN port of frontend's SavedBeachesGrid.tsx: the signed-in visitor's saved Beaches, reusing
  * BeachListCard in the same layout as the Beaches tab's list — #100's acceptance criteria. Each
- * card carries its own unsave star (SaveBeachButton, overlaid via styles — see
- * SavedBeachesGrid.styles.ts) so a Beach can be unsaved right here, without visiting its detail
- * page.
+ * card carries its own unsave star (BeachListCard's own SaveBeachButton corner overlay — see
+ * BeachListCard.styles.ts — rather than a second one layered on top here) so a Beach can be
+ * unsaved right here, without visiting its detail page.
  *
  * Filtered against the live SavedBeachesContext, not `beaches` (this tab's own fetch snapshot), so
  * unsaving a Beach right here drops the card immediately, without a refetch — same reasoning as
@@ -25,7 +23,6 @@ export function SavedBeachesGrid({ beaches, onPressBeach }: SavedBeachesGridProp
   const { tokens } = useTheme();
   const { isSaved, isReady } = useSavedBeaches();
   const listStyles = getBeachListStyles(tokens);
-  const gridStyles = getSavedBeachesGridStyles(tokens);
 
   const stillSaved = isReady ? beaches.filter((beach) => isSaved(beach.id)) : beaches;
 
@@ -42,12 +39,7 @@ export function SavedBeachesGrid({ beaches, onPressBeach }: SavedBeachesGridProp
       data={stillSaved}
       keyExtractor={(beach) => beach.id}
       renderItem={({ item: beach }) => (
-        <View style={gridStyles.item}>
-          <BeachListCard beach={beach} onPress={() => onPressBeach(beach)} />
-          <View style={gridStyles.unsaveButton}>
-            <SaveBeachButton beachId={beach.id} />
-          </View>
-        </View>
+        <BeachListCard beach={beach} onPress={() => onPressBeach(beach)} />
       )}
       ItemSeparatorComponent={() => <View style={listStyles.separator} />}
       contentContainerStyle={listStyles.listContent}

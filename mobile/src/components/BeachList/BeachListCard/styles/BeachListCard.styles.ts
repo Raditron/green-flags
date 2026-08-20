@@ -73,6 +73,21 @@ export function getBeachListCardStyles(
       color: tokens.text,
       opacity: 0.75,
     },
+    // Bottom-right corner (top-right is confidenceBadge's territory) — the same pill treatment
+    // SavedBeachesGrid.tsx used to layer on top of this card as a sibling before the star moved
+    // in here for #100; now a plain nested child works fine since it's a Pressable of its own and
+    // claims its own taps without fighting `card`'s onPress. `right`/`bottom` match `card`'s own
+    // `padding` (14) rather than an arbitrary small inset — confidenceBadge sits in normal flow
+    // inset by that same padding, so this keeps both corner pills flush to the same edge.
+    saveButton: {
+      position: "absolute",
+      bottom: 14,
+      right: 14,
+      borderRadius: 999,
+      backgroundColor: tokens.bg,
+      borderWidth: 1,
+      borderColor: tokens.border,
+    },
   });
 
   return { styles, flagVar };

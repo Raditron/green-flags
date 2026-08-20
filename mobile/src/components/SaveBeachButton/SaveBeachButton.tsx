@@ -44,13 +44,13 @@ export function SaveBeachButton({ beachId, onToggle }: SaveBeachButtonProps) {
         accessibilityRole="button"
         accessibilityLabel={saved ? "Unsave beach" : "Save beach"}
         accessibilityState={{ selected: saved }}
-        hitSlop={8}
+        hitSlop={11}
         style={styles.button}
       >
         <FontAwesome6
           name="star"
           solid={saved}
-          size={16}
+          size={14}
           color={saveBeachButtonIconColor(tokens, active)}
         />
       </Pressable>

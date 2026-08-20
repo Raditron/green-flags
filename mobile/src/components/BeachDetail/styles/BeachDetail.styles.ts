@@ -35,15 +35,6 @@ export function getBeachDetailStyles(tokens: ThemeTokens, insetBottom: number) {
       paddingBottom: 16 + insetBottom,
       gap: 16,
     },
-    // Holds the save star (#100). Right-aligned, its own row above heroRow — the closest mobile
-    // equivalent of frontend's title row without an in-body title to sit next to (see BeachDetail
-    // .tsx's class doc); a negative bottom margin pulls heroRow back up so this doesn't add extra
-    // gap on top of `content`'s own 16px `gap` between rows.
-    saveRow: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      marginBottom: -8,
-    },
     heroRow: {
       gap: 16,
     },

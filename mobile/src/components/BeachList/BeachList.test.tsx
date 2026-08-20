@@ -22,6 +22,16 @@ jest.mock("../../shared/hooks/useUserLocation", () => ({
   useUserLocation: () => mockUserLocationState,
 }));
 
+// Each BeachListCard now renders its own SaveBeachButton corner overlay (#100), which reads both
+// of these contexts — mocked here the same way SaveBeachButton.test.tsx does, rather than
+// standing up a real AuthProvider/SavedBeachesProvider just to satisfy the star.
+jest.mock("../../auth/AuthContext", () => ({
+  useAuth: () => ({ user: { uid: "u1" } }),
+}));
+jest.mock("../../saved/SavedBeachesContext", () => ({
+  useSavedBeaches: () => ({ isSaved: () => false, toggleSave: jest.fn(), isReady: true }),
+}));
+
 const mockNavigate = jest.fn();
 
 // Golden Sands sits in Varna, right where VARNA_COORDS below is — well within

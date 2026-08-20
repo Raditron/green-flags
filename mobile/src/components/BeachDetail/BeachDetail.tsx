@@ -25,10 +25,11 @@ const SAVED_MESSAGE = "Saved to your beaches";
  * acceptance criteria, plus a save/unsave star (#100). Omits frontend's back-arrow/title row
  * (native-stack's own header already supplies both — see RootNavigator.tsx, whose title this keeps
  * in sync via `setOptions` below) and CommentSection (#99), and the `#comments` scroll-into-view
- * effect (no counterpart to scroll to yet without CommentSection). The star sits in its own row
- * above the hero image rather than frontend's title row — there's no in-body title here for it to
- * sit "next to" (the native header already carries the beach name) — and fires a toast on save
- * (not unsave, mirroring the disclaimer toast's one-shot confirmation) per #100's acceptance
+ * effect (no counterpart to scroll to yet without CommentSection). The star lives in the native
+ * header's `headerRight` (set via `setOptions`, same as the title) rather than frontend's title
+ * row — there's no in-body title here for it to sit "next to" (the native header already carries
+ * the beach name), so it sits alongside the back chevron and name instead — and fires a toast on
+ * save (not unsave, mirroring the disclaimer toast's one-shot confirmation) per #100's acceptance
  * criteria, a deliberate mobile-only addition frontend's own quiet SaveBeachButton doesn't have.
  */
 export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
@@ -49,8 +50,11 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   const heroImage = getBeachHeroImage(beachId);
 
   useEffect(() => {
-    navigation.setOptions({ title: beach.name ?? "Beach" });
-  }, [navigation, beach.name]);
+    navigation.setOptions({
+      title: beach.name ?? "Beach",
+      headerRight: () => <SaveBeachButton beachId={beachId} onToggle={handleSaveToggle} />,
+    });
+  }, [navigation, beach.name, beachId]);
 
   // Fires on every Beach Detail screen mount, including switching straight from one beach to
   // another (a fresh push, since native-stack doesn't remount on param changes the way frontend's
@@ -69,10 +73,6 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   return (
     <View style={styles.container}>
       <ScrollView accessibilityLabel="Beach detail" contentContainerStyle={styles.content}>
-        <View style={styles.saveRow}>
-          <SaveBeachButton beachId={beachId} onToggle={handleSaveToggle} />
-        </View>
-
         <View style={styles.heroRow}>
           <View style={styles.imageArea}>
             {heroImage ? (

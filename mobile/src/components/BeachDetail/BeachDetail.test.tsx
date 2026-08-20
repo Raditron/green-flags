@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { press } from "../../test/press";
@@ -34,16 +36,40 @@ jest.mock("../../saved/SavedBeachesContext", () => ({
   useSavedBeaches: () => ({ isSaved: mockIsSaved, toggleSave: mockToggleSave, isReady: true }),
 }));
 
-const mockNavigation = { setOptions: jest.fn(), goBack: jest.fn() } as unknown as BeachDetailScreenProps["navigation"];
-
+// BeachDetail hands the save star to native-stack via `navigation.setOptions({ headerRight })`
+// (see BeachDetail.tsx) rather than rendering it inline, so — unlike a real native-stack header,
+// which calls `headerRight()` itself and mounts the result — this harness has to do that job:
+// a real, stateful `setOptions` mock that stashes the latest `headerRight` and renders it itself,
+// standing in for the native header the same way RootNavigator.tsx's real one would.
 function renderDetail(beachId: string) {
   const route = { key: "BeachDetail", name: "BeachDetail", params: { beachId } } as unknown as BeachDetailScreenProps["route"];
+
+  function Harness() {
+    const [headerRight, setHeaderRight] = useState<(() => ReactNode) | null>(null);
+    const navigation = useMemo(
+      () =>
+        ({
+          setOptions: (options: { headerRight?: () => ReactNode }) => {
+            const nextHeaderRight = options.headerRight;
+            if (nextHeaderRight) setHeaderRight(() => nextHeaderRight);
+          },
+          goBack: jest.fn(),
+        }) as unknown as BeachDetailScreenProps["navigation"],
+      [],
+    );
+
+    return (
+      <ToastProvider>
+        {headerRight?.()}
+        <BeachDetail route={route} navigation={navigation} />
+      </ToastProvider>
+    );
+  }
+
   return render(
     <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
       <ThemeProvider>
-        <ToastProvider>
-          <BeachDetail route={route} navigation={mockNavigation} />
-        </ToastProvider>
+        <Harness />
       </ThemeProvider>
     </SafeAreaProvider>,
   );
