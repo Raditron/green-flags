@@ -122,6 +122,9 @@ export function RootNavigator() {
                 accessibilityLabel="Go back"
                 onPress={() => navigation.goBack()}
                 hitSlop={8}
+                // Native-stack butts headerLeft directly against the title with no gap of its own,
+                // so the chevron needs its own trailing space to keep it from crowding the beach name.
+                style={{ paddingRight: 12 }}
               >
                 <FontAwesome6 name="chevron-left" solid size={18} color={tokens.text} />
               </Pressable>
