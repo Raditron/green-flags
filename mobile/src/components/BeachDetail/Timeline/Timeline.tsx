@@ -17,7 +17,12 @@ import { getTimelineStyles } from "./styles/Timeline.styles";
  * #97's acceptance criteria. Omits frontend's report-the-flag entry point (ReportFlagPanel,
  * ReportedTodayNotice, useReportFlag, AuthModal) — that's #98's job, blocked on this ticket.
  */
-export function Timeline({ hourlyPredictions, desaturated = false, currentHour = null, isUnguarded }: TimelineProps) {
+export function Timeline({
+  hourlyPredictions,
+  desaturated = false,
+  currentHour = null,
+  isUnguarded,
+}: TimelineProps) {
   const { tokens } = useTheme();
   // null = still tracking "now" as the live clock ticks; the moment the visitor manually picks
   // an hour from TimePicker, this locks in and stops following the clock.
@@ -29,8 +34,13 @@ export function Timeline({ hourlyPredictions, desaturated = false, currentHour =
   // there's no "now" to track at all — same off-hours behavior the old strip had.
   const trackedHour = currentHour !== null ? liveClock.hour : null;
   const selectedHour = manualHour ?? trackedHour;
-  const selectedPrediction = hourlyPredictions.find((prediction) => prediction.hour === selectedHour);
-  const styles = getTimelineStyles(tokens, { desaturated, flagColor: selectedPrediction?.flagColor });
+  const selectedPrediction = hourlyPredictions.find(
+    prediction => prediction.hour === selectedHour,
+  );
+  const styles = getTimelineStyles(tokens, {
+    desaturated,
+    flagColor: selectedPrediction?.flagColor,
+  });
 
   return (
     <>
@@ -38,25 +48,31 @@ export function Timeline({ hourlyPredictions, desaturated = false, currentHour =
 
       {isUnguarded && <UnguardedNotice />}
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16, alignItems: "stretch" }}>
-        <View style={styles.card}>
-          <Text style={styles.liveClock}>{liveClock.label}</Text>
+      <View style={styles.detailColumn}>
+        <View style={styles.topRow}>
+          <View style={styles.card}>
+            <Text style={styles.liveClock}>{liveClock.label}</Text>
 
-          <Pressable
-            onPress={() => setPickerOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel="Choose prediction hour"
-          >
-            <Text style={styles.selectedTime}>
-              {selectedHour !== null ? `${String(selectedHour).padStart(2, "0")}:00` : "Select hour"}
-            </Text>
-          </Pressable>
+            <View style={styles.selectedTimeWrap}>
+              <Pressable
+                onPress={() => setPickerOpen(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Choose prediction hour"
+              >
+                <Text style={styles.selectedTime}>
+                  {selectedHour !== null
+                    ? `${String(selectedHour).padStart(2, "0")}:00`
+                    : "Select hour"}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+          {selectedPrediction && <HourDetail prediction={selectedPrediction} />}
         </View>
         {selectedPrediction && (
-          <>
-            <HourDetail prediction={selectedPrediction} />
+          <View style={styles.seaConditionsRow}>
             <SeaConditions prediction={selectedPrediction} />
-          </>
+          </View>
         )}
       </View>
 
@@ -65,7 +81,7 @@ export function Timeline({ hourlyPredictions, desaturated = false, currentHour =
           hourlyPredictions={hourlyPredictions}
           selectedHour={selectedHour}
           currentHour={trackedHour}
-          onPick={(hour) => {
+          onPick={hour => {
             setManualHour(hour);
             setPickerOpen(false);
           }}

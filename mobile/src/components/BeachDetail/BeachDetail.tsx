@@ -1,6 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/ThemeContext";
 import { useToast } from "../../toast/ToastContext";
 import { getBeachHeroImage } from "../../shared/data/images";
@@ -27,7 +28,8 @@ const DISCLAIMER_MESSAGE = "Unofficial estimate — not the lifeguard's flag";
 export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   const { beachId, name, quirkNotes, isUnguarded } = route.params;
   const { tokens } = useTheme();
-  const styles = getBeachDetailStyles(tokens);
+  const insets = useSafeAreaInsets();
+  const styles = getBeachDetailStyles(tokens, insets.bottom);
   const { show: showToast, dismiss: dismissToast } = useToast();
   const beach = useBeach(beachId, { name, quirkNotes, isUnguarded });
   const predictions = usePredictions(beachId);
@@ -53,53 +55,55 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   }, [beachId, showToast, dismissToast]);
 
   return (
-    <ScrollView accessibilityLabel="Beach detail" contentContainerStyle={styles.content}>
-      <View style={styles.heroRow}>
-        <View style={styles.imageArea}>
-          {heroImage ? (
-            <Image source={heroImage} style={styles.image} resizeMode="cover" accessibilityLabel="Beach photo" />
-          ) : (
-            <View style={styles.iconChip}>
-              <FontAwesome6 name="water" size={64} color={tokens.iconChipFg} />
-            </View>
-          )}
+    <View style={styles.container}>
+      <ScrollView accessibilityLabel="Beach detail" contentContainerStyle={styles.content}>
+        <View style={styles.heroRow}>
+          <View style={styles.imageArea}>
+            {heroImage ? (
+              <Image source={heroImage} style={styles.image} resizeMode="cover" accessibilityLabel="Beach photo" />
+            ) : (
+              <View style={styles.iconChip}>
+                <FontAwesome6 name="water" size={64} color={tokens.iconChipFg} />
+              </View>
+            )}
+          </View>
+
+        {beach.quirkNotes && <Text style={styles.description}>{beach.quirkNotes}</Text>}
+
+          <View style={styles.badges}>
+            <ForecastStrip
+              beachId={beachId}
+              selectedDate={selectedDate ?? today}
+              onSelect={(date) => setSelectedDate(date === today ? null : date)}
+            />
+
+            {selectedDate ? (
+              <DayOutlook beachId={beachId} date={selectedDate} isUnguarded={beach.isUnguarded} />
+            ) : (
+              predictions.status === "success" && (
+                <>
+                  {outsideLegalWindow && <Text style={styles.offWindow}>No lifeguard on duty — estimate only</Text>}
+                  <Timeline
+                    hourlyPredictions={predictions.data.hourlyPredictions}
+                    desaturated={outsideLegalWindow}
+                    currentHour={currentHour}
+                    isUnguarded={beach.isUnguarded}
+                  />
+                  <Text style={styles.meta}>Predictions for {predictions.data.date}</Text>
+                </>
+              )
+            )}
+          </View>
         </View>
 
-        <View style={styles.badges}>
-          <ForecastStrip
-            beachId={beachId}
-            selectedDate={selectedDate ?? today}
-            onSelect={(date) => setSelectedDate(date === today ? null : date)}
-          />
+        {selectedDate === null && predictions.status === "loading" && (
+          <Text style={styles.meta}>Loading predictions…</Text>
+        )}
 
-          {selectedDate ? (
-            <DayOutlook beachId={beachId} date={selectedDate} isUnguarded={beach.isUnguarded} />
-          ) : (
-            predictions.status === "success" && (
-              <>
-                {outsideLegalWindow && <Text style={styles.offWindow}>No lifeguard on duty — estimate only</Text>}
-                <Timeline
-                  hourlyPredictions={predictions.data.hourlyPredictions}
-                  desaturated={outsideLegalWindow}
-                  currentHour={currentHour}
-                  isUnguarded={beach.isUnguarded}
-                />
-                <Text style={styles.meta}>Predictions for {predictions.data.date}</Text>
-              </>
-            )
-          )}
-        </View>
-      </View>
-
-      {beach.quirkNotes && <Text style={styles.description}>{beach.quirkNotes}</Text>}
-
-      {selectedDate === null && predictions.status === "loading" && (
-        <Text style={styles.meta}>Loading predictions…</Text>
-      )}
-
-      {selectedDate === null && predictions.status === "error" && (
-        <Text style={styles.error}>Could not load predictions: {predictions.message}</Text>
-      )}
-    </ScrollView>
+        {selectedDate === null && predictions.status === "error" && (
+          <Text style={styles.error}>Could not load predictions: {predictions.message}</Text>
+        )}
+      </ScrollView>
+    </View>
   );
 }

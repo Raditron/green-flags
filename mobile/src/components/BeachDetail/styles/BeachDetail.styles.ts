@@ -12,10 +12,27 @@ import type { ThemeTokens } from "../../../theme/tokens";
 const IMAGE_ASPECT_RATIO = 12 / 5;
 const IMAGE_MAX_HEIGHT = 400;
 
-export function getBeachDetailStyles(tokens: ThemeTokens) {
+export function getBeachDetailStyles(tokens: ThemeTokens, insetBottom: number) {
   return StyleSheet.create({
+    // Unlike `content` (the ScrollView's contentContainerStyle, sized to fit its children), this
+    // wraps the ScrollView itself so it inherits the screen's actual height from the navigator.
+    // Without it, the ScrollView's own frame collapses to its content's height instead of the
+    // viewport's — same flex:1-container-around-a-bare-ScrollView pattern Dashboard.tsx and
+    // BeachList.tsx use — and anything past the physical screen height becomes both invisible and
+    // unreachable: the ScrollView never sees an overflow to scroll, so it doesn't scroll at all.
+    container: {
+      flex: 1,
+      backgroundColor: tokens.bg,
+    },
     content: {
       padding: 16,
+      // This screen is pushed on RootStack above (not inside) the bottom tab navigator (see
+      // RootNavigator.tsx), so unlike Dashboard/BeachList — whose content sits above a tab bar
+      // that already reserves the bottom safe area — there's nothing here to absorb the home
+      // indicator / gesture-nav inset. Add it on top of the base 16 so the last bit of content
+      // (e.g. the Sea panel) doesn't end up scrolled-to-the-bottom yet still hidden under it,
+      // same reasoning ToastViewport.tsx's insets.bottom + fixed-offset pattern gives.
+      paddingBottom: 16 + insetBottom,
       gap: 16,
     },
     heroRow: {
@@ -47,6 +64,7 @@ export function getBeachDetailStyles(tokens: ThemeTokens) {
       fontSize: 14,
       lineHeight: 21,
       color: tokens.text,
+      justifyContent: "center",
     },
     error: {
       fontSize: 14,

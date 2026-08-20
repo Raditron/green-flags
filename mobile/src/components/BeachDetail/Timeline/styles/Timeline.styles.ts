@@ -15,11 +15,31 @@ export function getTimelineStyles(tokens: ThemeTokens, { desaturated, flagColor 
   const textColor = hasFlagColor ? "#fff" : tokens.textHeading;
 
   return StyleSheet.create({
+    // Time card + HourDetail's confidence ring stay side by side (both roughly square, both
+    // sized for a narrow phone width); SeaConditions goes on its own full-width row below rather
+    // than joining that row's flex-wrap, since on phone widths the old three-way row wrapped it
+    // in a way that squeezed both its cards down to an unreadable sliver. See DayOutlook.styles.ts'
+    // `detailColumn`/`seaConditionsRow` for the future-day counterpart of this same split.
+    detailColumn: {
+      flexDirection: "column",
+      gap: 16,
+    },
+    topRow: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    // Its own bordered row (rather than leaving SeaConditions' own two card borders as the only
+    // framing) so the block reads as one grouped unit at a glance, matching the time/ring row
+    // above it.
+    seaConditionsRow: {
+      borderColor: tokens.border,
+      borderRadius: BORDER_RADIUS,
+    },
     card: {
       flex: 1,
       minWidth: 160,
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
       gap: 6,
       paddingVertical: 20,
       paddingHorizontal: 16,
@@ -36,6 +56,13 @@ export function getTimelineStyles(tokens: ThemeTokens, { desaturated, flagColor 
       textTransform: "uppercase",
       color: textColor,
       opacity: 0.85,
+    },
+    // Fills the card's remaining height below liveClock so selectedTime can center in that space
+    // while liveClock itself stays pinned to the top.
+    selectedTimeWrap: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
     },
     selectedTime: {
       fontSize: 36,

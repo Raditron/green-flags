@@ -13,7 +13,7 @@ export function getHourDetailStyles(tokens: ThemeTokens) {
       borderWidth: 1,
       borderColor: tokens.border,
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
     },
     hour: {
       fontWeight: "600",

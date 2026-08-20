@@ -36,6 +36,11 @@ export function DayOutlook({ beachId, date, isUnguarded }: DayOutlookProps) {
     return <Text style={styles.status}>No forecast yet for this day</Text>;
   }
 
+  // worst is only ever non-null when predictions.status === "success" (see above), so this is
+  // always the API's date for the day rather than re-deriving it from the `date` prop — same
+  // source of truth Timeline's "Predictions for {date}" meta line uses.
+  const predictionsDate = predictions.status === "success" ? predictions.data.date : null;
+
   return (
     <>
       <Verdict prediction={worst} />
@@ -43,10 +48,16 @@ export function DayOutlook({ beachId, date, isUnguarded }: DayOutlookProps) {
 
       {isUnguarded && <UnguardedNotice />}
 
-      <View style={styles.detailRow}>
-        <HourDetail prediction={worst} />
-        <SeaConditions prediction={worst} />
+      <View style={styles.detailColumn}>
+        <View style={styles.topRow}>
+          <HourDetail prediction={worst} />
+        </View>
+        <View style={styles.seaConditionsRow}>
+          <SeaConditions prediction={worst} />
+        </View>
       </View>
+
+      <Text style={styles.meta}>Predictions for {predictionsDate}</Text>
     </>
   );
 }
