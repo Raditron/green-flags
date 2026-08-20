@@ -1,8 +1,23 @@
 import { render, screen } from "@testing-library/react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { press } from "../../../test/press";
+import { TEST_SAFE_AREA_METRICS } from "../../../test/safeAreaMetrics";
 import { ThemeProvider } from "../../../theme/ThemeContext";
 import { BeachListCard } from "./BeachListCard";
 import type { BeachWithDistance } from "../../../shared/types/Beach";
+
+const mockIsSaved = jest.fn();
+const mockToggleSave = jest.fn();
+
+// BeachListCard renders its own SaveBeachButton corner overlay (#100), which reads both of these
+// contexts — mocked here the same way SaveBeachButton.test.tsx does, rather than standing up a
+// real AuthProvider/SavedBeachesProvider just to satisfy the star.
+jest.mock("../../../auth/AuthContext", () => ({
+  useAuth: () => ({ user: { uid: "u1" } }),
+}));
+jest.mock("../../../saved/SavedBeachesContext", () => ({
+  useSavedBeaches: () => ({ isSaved: mockIsSaved, toggleSave: mockToggleSave, isReady: true }),
+}));
 
 const BASE_BEACH: BeachWithDistance = {
   id: "beach-a",
@@ -18,11 +33,18 @@ const BASE_BEACH: BeachWithDistance = {
 function renderCard(beach: BeachWithDistance, onPress?: () => void) {
   // RNTL v14's `render` is async (it wraps the initial render in `act`) — callers must await it.
   return render(
-    <ThemeProvider>
-      <BeachListCard beach={beach} onPress={onPress} />
-    </ThemeProvider>,
+    <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+      <ThemeProvider>
+        <BeachListCard beach={beach} onPress={onPress} />
+      </ThemeProvider>
+    </SafeAreaProvider>,
   );
 }
+
+beforeEach(() => {
+  mockIsSaved.mockReset();
+  mockToggleSave.mockReset();
+});
 
 describe("BeachListCard", () => {
   it("renders the beach name, Area, flag status, and confidence", async () => {
@@ -64,5 +86,16 @@ describe("BeachListCard", () => {
     await press(screen.getByLabelText("Golden Sands"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders its own save star, and tapping it saves without triggering onPress", async () => {
+    mockIsSaved.mockReturnValue(false);
+    const onPress = jest.fn();
+    await renderCard(BASE_BEACH, onPress);
+
+    await press(screen.getByLabelText("Save beach"));
+
+    expect(mockToggleSave).toHaveBeenCalledWith("beach-a");
+    expect(onPress).not.toHaveBeenCalled();
   });
 });
