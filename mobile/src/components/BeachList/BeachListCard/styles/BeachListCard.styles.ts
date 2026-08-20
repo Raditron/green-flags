@@ -5,14 +5,16 @@ import type { ThemeTokens } from "../../../../theme/tokens";
 import type { FlagColor } from "../../../../shared/types/Beach";
 
 // Mirrors AreaCard.styles.ts's shape: a flagColorFor-derived accent color threaded through both
-// the flag glyph and the status line, everything else themed off `tokens`.
+// the flag glyph and the status line, everything else themed off `tokens`. `flagVar` comes back
+// alongside `styles` so BeachListCard.tsx can reuse it for the flag glyph's color prop instead of
+// calling flagColorFor a second time for the same input.
 export function getBeachListCardStyles(
   tokens: ThemeTokens,
   { flagColor }: { flagColor: FlagColor | undefined },
 ) {
   const flagVar = flagColorFor(flagColor, tokens);
 
-  return StyleSheet.create({
+  const styles = StyleSheet.create({
     card: {
       flexDirection: "column",
       gap: 6,
@@ -27,12 +29,10 @@ export function getBeachListCardStyles(
       alignItems: "flex-start",
       gap: 8,
     },
+    // Nudges the FontAwesome6 flag icon (size/color passed as props — see BeachListCard.tsx) down
+    // to align with headerText's first line, same as before the Fa6 migration.
     flagIcon: {
-      width: 16,
       marginTop: 3,
-      fontSize: 14,
-      lineHeight: 16,
-      color: flagVar,
     },
     headerText: {
       flexDirection: "column",
@@ -74,4 +74,6 @@ export function getBeachListCardStyles(
       opacity: 0.75,
     },
   });
+
+  return { styles, flagVar };
 }

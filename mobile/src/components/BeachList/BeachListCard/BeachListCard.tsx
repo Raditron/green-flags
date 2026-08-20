@@ -1,3 +1,4 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Pressable, Text, View } from "react-native";
 import { useTheme } from "../../../theme/ThemeContext";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
@@ -18,7 +19,7 @@ import { getBeachListCardStyles } from "./styles/BeachListCard.styles";
  */
 export function BeachListCard({ beach, onPress }: BeachListCardProps) {
   const { tokens } = useTheme();
-  const styles = getBeachListCardStyles(tokens, { flagColor: beach.currentFlagColor });
+  const { styles, flagVar } = getBeachListCardStyles(tokens, { flagColor: beach.currentFlagColor });
   const flagStatusText = getFlagStatusText(beach.currentFlagColor);
 
   return (
@@ -29,9 +30,8 @@ export function BeachListCard({ beach, onPress }: BeachListCardProps) {
       accessibilityLabel={beach.name}
     >
       <View style={styles.header}>
-        <Text style={styles.flagIcon} aria-hidden>
-          ⚑
-        </Text>
+        {/* Same icon as frontend's FaFlag (react-icons/fa6) — see frontend BeachListCard.tsx. */}
+        <FontAwesome6 name="flag" solid size={14} color={flagVar} style={styles.flagIcon} />
         <View style={styles.headerText}>
           <Text style={styles.name} numberOfLines={1}>
             {beach.name}

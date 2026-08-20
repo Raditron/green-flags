@@ -2,7 +2,8 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/
 import type { Theme as NavigationTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Pressable, Text } from "react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { Pressable } from "react-native";
 import { Dashboard } from "../components/Dashboard/Dashboard";
 import { BeachList } from "../components/BeachList/BeachList";
 import { SavedBeaches } from "../components/SavedBeaches/SavedBeaches";
@@ -25,15 +26,42 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
  * behind `!loading && user` (`frontend/src/components/Layout/Layout.tsx`) — there's no saved-beach
  * list to show for a user we can't identify. Held back during the initial `loading` beat too, so
  * the tab doesn't flash in and then disappear once the signed-out state resolves.
+ *
+ * Each tab supplies its own `tabBarIcon` (FontAwesome6, same icon system as the rest of mobile —
+ * see AreaSelect.tsx's precedent) so the bar shows real icons instead of React Navigation's own
+ * "tofu" placeholder glyph. Frontend has no equivalent nav to crib icon choices from (its nav is
+ * text-only pills), so these are picked fresh: `calendar-day` for Today (today's date, the landing
+ * tab), `water` for Beaches (matches the sea/beach subject matter), `star` for Saved (matches
+ * frontend's SaveBeachButton.tsx's `FaStar`/`FaRegStar`).
  */
 function MainTabs() {
   const { user, loading } = useAuth();
 
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Today" component={Dashboard} />
-      <Tab.Screen name="Beaches" component={BeachList} />
-      {!loading && user && <Tab.Screen name="Saved" component={SavedBeaches} />}
+      <Tab.Screen
+        name="Today"
+        component={Dashboard}
+        options={{
+          tabBarIcon: ({ color, size }) => <FontAwesome6 name="calendar-day" solid size={size} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Beaches"
+        component={BeachList}
+        options={{
+          tabBarIcon: ({ color, size }) => <FontAwesome6 name="water" solid size={size} color={color} />,
+        }}
+      />
+      {!loading && user && (
+        <Tab.Screen
+          name="Saved"
+          component={SavedBeaches}
+          options={{
+            tabBarIcon: ({ color, size }) => <FontAwesome6 name="star" solid size={size} color={color} />,
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 }
@@ -86,15 +114,19 @@ export function RootNavigator() {
             // native-stack's default back chrome is rendered by the native header (UINavigationController
             // / Fragment toolbar) and never enters the JS/RNTL element tree, so it isn't testable under
             // Jest. Supplying our own `headerLeft` keeps back navigation exercisable in tests and gives us
-            // a consistent, cross-platform back affordance (incl. on web).
+            // a consistent, cross-platform back affordance (incl. on web). FontAwesome6 `chevron-left`
+            // matches the icon system used elsewhere in mobile (see MainTabs above).
             headerLeft: () => (
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Go back"
                 onPress={() => navigation.goBack()}
                 hitSlop={8}
+                // Native-stack butts headerLeft directly against the title with no gap of its own,
+                // so the chevron needs its own trailing space to keep it from crowding the beach name.
+                style={{ paddingRight: 12 }}
               >
-                <Text>Back</Text>
+                <FontAwesome6 name="chevron-left" solid size={18} color={tokens.text} />
               </Pressable>
             ),
           })}

@@ -1,3 +1,4 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Text, View } from "react-native";
 import { useTheme } from "../../../theme/ThemeContext";
 import { getFlagStatusText } from "../../../shared/styles/flagColor";
@@ -12,16 +13,15 @@ import { getAreaCardStyles } from "./styles/AreaCard.styles";
 // same trust signals apply at every level of the summary.
 export function AreaCard({ attributes }: AreaCardProps) {
   const { tokens } = useTheme();
-  const styles = getAreaCardStyles(tokens, { flagColor: attributes.dominantFlagColor });
+  const { styles, flagVar } = getAreaCardStyles(tokens, { flagColor: attributes.dominantFlagColor });
   const headline = getFlagStatusText(attributes.dominantFlagColor) ?? "Conditions estimate";
   const lowSample = isLowSample(attributes);
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.flagIcon} aria-hidden>
-          ⚑
-        </Text>
+        {/* Same icon as frontend's FaFlag (react-icons/fa6) — see frontend AreaCard.tsx. */}
+        <FontAwesome6 name="flag" solid size={14} color={flagVar} style={styles.flagIcon} />
         <View style={styles.headerText}>
           <Text style={styles.areaName} numberOfLines={1}>
             {attributes.area}
@@ -34,9 +34,8 @@ export function AreaCard({ attributes }: AreaCardProps) {
             role="alert"
             accessibilityLabel={`Storm warning active for ${attributes.stormWarningActivePercent}% of today's readings`}
           >
-            <Text style={styles.stormBadgeIcon} aria-hidden>
-              ☈
-            </Text>
+            {/* Same icon as frontend's FaCloudBolt (react-icons/fa6) — see frontend AreaCard.tsx. */}
+            <FontAwesome6 name="cloud-bolt" solid size={11} color={tokens.flagRed} />
             <Text style={styles.stormBadgeText}>{attributes.stormWarningActivePercent}%</Text>
           </View>
         )}
