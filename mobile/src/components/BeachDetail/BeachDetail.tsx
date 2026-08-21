@@ -6,6 +6,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { useToast } from "../../toast/ToastContext";
 import { getBeachHeroImage } from "../../shared/data/images";
 import { SaveBeachButton } from "../SaveBeachButton/SaveBeachButton";
+import { CommentSection } from "./CommentSection/CommentSection";
 import { DayOutlook } from "./DayOutlook/DayOutlook";
 import { ForecastStrip } from "./ForecastStrip/ForecastStrip";
 import { Timeline } from "./Timeline/Timeline";
@@ -23,17 +24,18 @@ const REPORT_SUBMITTED_MESSAGE = "Thanks for reporting the flag";
 /**
  * RN port of frontend's BeachDetail.tsx: the Beach Detail screen reachable from a Beach List card
  * — hero photo, Forecast Strip, Timeline (today, including its report-the-flag flow — #98) or Day
- * Outlook (any other selected day) — #97's acceptance criteria, plus a save/unsave star (#100).
- * Omits frontend's back-arrow/title row (native-stack's own header already supplies both — see
- * RootNavigator.tsx, whose title this keeps in sync via `setOptions` below) and CommentSection
- * (#99), and the `#comments` scroll-into-view effect (no counterpart to scroll to yet without
- * CommentSection). The star lives in the native header's `headerRight` (set via `setOptions`, same
- * as the title) rather than frontend's title row — there's no in-body title here for it to sit
- * "next to" (the native header already carries the beach name), so it sits alongside the back
- * chevron and name instead — and fires a toast on save (not unsave, mirroring the disclaimer
- * toast's one-shot confirmation) per #100's acceptance criteria, a deliberate mobile-only addition
- * frontend's own quiet SaveBeachButton doesn't have. The report-submitted toast below is the same
- * kind of deliberate addition, this time on top of frontend's own report flow (see Timeline's
+ * Outlook (any other selected day) — #97's acceptance criteria, plus a save/unsave star (#100) and
+ * Comments (#99). Omits frontend's back-arrow/title row (native-stack's own header already
+ * supplies both — see RootNavigator.tsx, whose title this keeps in sync via `setOptions` below)
+ * and the `#comments` scroll-into-view effect (no route hash to react to here — there's nothing
+ * else on this screen to scroll past to reach it, so CommentSection just always renders at the
+ * bottom). The star lives in the native header's `headerRight` (set via `setOptions`, same as the
+ * title) rather than frontend's title row — there's no in-body title here for it to sit "next to"
+ * (the native header already carries the beach name), so it sits alongside the back chevron and
+ * name instead — and fires a toast on save (not unsave, mirroring the disclaimer toast's one-shot
+ * confirmation) per #100's acceptance criteria, a deliberate mobile-only addition frontend's own
+ * quiet SaveBeachButton doesn't have. The report-submitted toast below is the same kind of
+ * deliberate addition, this time on top of frontend's own report flow (see Timeline's
  * onReportSubmitted and useReportFlag.ts's doc comment for why frontend itself doesn't toast here).
  */
 export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
@@ -136,6 +138,9 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
         {selectedDate === null && predictions.status === "error" && (
           <Text style={styles.error}>Could not load predictions: {predictions.message}</Text>
         )}
+
+        {/* Lives under the rest of the screen, always visible (YouTube-style) — see #99. */}
+        <CommentSection beachId={beachId} />
       </ScrollView>
     </View>
   );

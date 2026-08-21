@@ -36,6 +36,13 @@ jest.mock("../../saved/SavedBeachesContext", () => ({
   useSavedBeaches: () => ({ isSaved: mockIsSaved, toggleSave: mockToggleSave, isReady: true }),
 }));
 
+// CommentSection is its own feature with its own tests (#99) — mocked out here, same as
+// frontend's BeachDetail.test.tsx, so this file stays focused on hero image sourcing and the
+// Forecast Strip <-> Timeline/Day Outlook swap.
+jest.mock("./CommentSection/CommentSection", () => ({
+  CommentSection: () => null,
+}));
+
 // BeachDetail hands the save star to native-stack via `navigation.setOptions({ headerRight })`
 // (see BeachDetail.tsx) rather than rendering it inline, so — unlike a real native-stack header,
 // which calls `headerRight()` itself and mounts the result — this harness has to do that job:
