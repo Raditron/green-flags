@@ -1,5 +1,6 @@
 import { Collection, Db } from "mongodb";
 import { Beach, BeachAreas, BeachMapImage, BeachRepository } from "../../domain/ports/beach/beachRepository";
+import { WaterQualityRating } from "../../domain/rules/evaluateWaterQualityRating";
 
 interface BeachDocument {
   _id: string;
@@ -12,6 +13,7 @@ interface BeachDocument {
   onshoreWindDirectionDeg: number;
   area: BeachAreas;
   isUnguarded?: boolean;
+  waterQualityRating?: WaterQualityRating;
 }
 
 export class MongoBeachRepository implements BeachRepository {
@@ -30,6 +32,10 @@ export class MongoBeachRepository implements BeachRepository {
     const doc = await this.collection.findOne({ _id: beachId });
     return doc ? toBeach(doc) : null;
   }
+
+  async updateWaterQualityRating(beachId: string, rating: WaterQualityRating): Promise<void> {
+    await this.collection.updateOne({ _id: beachId }, { $set: { waterQualityRating: rating } });
+  }
 }
 
 function toBeach(doc: BeachDocument): Beach {
@@ -44,5 +50,6 @@ function toBeach(doc: BeachDocument): Beach {
     area: doc.area,
     // Defaults false for existing/not-yet-curated documents that predate this field.
     isUnguarded: doc.isUnguarded ?? false,
+    waterQualityRating: doc.waterQualityRating,
   };
 }

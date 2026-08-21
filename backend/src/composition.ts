@@ -8,6 +8,9 @@ import { MongoUserRepository } from "./infrastructure/repositories/mongoUserRepo
 import { MongoCommentRepository } from "./infrastructure/repositories/mongoCommentRepository";
 import { OpenMeteoForecastClient } from "./infrastructure/openMeteo/openMeteoForecastClient";
 import { MeteoalarmStormWarningClient } from "./infrastructure/meteoalarm/meteoalarmStormWarningClient";
+import { RziWaterQualityProvider } from "./infrastructure/rzi/rziWaterQualityProvider";
+import { RziVarnaClient } from "./infrastructure/rzi/rziVarnaClient";
+import { RziBurgasClient } from "./infrastructure/rzi/rziBurgasClient";
 import { initializeFirebaseAdminApp } from "./infrastructure/firebase/firebaseAdminApp";
 import { FirebaseAdminAuthVerifier } from "./infrastructure/firebase/firebaseAdminAuthVerifier";
 import { AppDependencies } from "./presentation/app";
@@ -34,6 +37,7 @@ export async function buildDependencies(config: CompositionConfig): Promise<AppD
     commentRepository: new MongoCommentRepository(db),
     forecastProvider: new OpenMeteoForecastClient(),
     stormWarningProvider: new MeteoalarmStormWarningClient(),
+    waterQualityProvider: new RziWaterQualityProvider({ varna: new RziVarnaClient(), burgas: new RziBurgasClient() }),
     authTokenVerifier: new FirebaseAdminAuthVerifier(firebaseApp),
     batchTriggerSecret: config.batchTriggerSecret,
   };

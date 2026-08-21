@@ -122,6 +122,7 @@ describe("POST /api/batch", () => {
       reportRepository: new MongoReportRepository(db),
       forecastProvider: new OpenMeteoForecastClient(),
       stormWarningProvider: new MeteoalarmStormWarningClient(),
+      waterQualityProvider: { fetchLatestSample: async () => null },
       batchTriggerSecret: BATCH_SECRET,
     });
   }

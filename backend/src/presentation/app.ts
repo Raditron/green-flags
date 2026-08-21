@@ -4,6 +4,7 @@ import { HealthcheckRepository } from "../domain/ports/health/healthcheckReposit
 import { BeachRepository } from "../domain/ports/beach/beachRepository";
 import { ForecastProvider } from "../domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../domain/ports/batch/stormWarningProvider";
+import { WaterQualityProvider } from "../domain/ports/batch/waterQualityProvider";
 import { PredictionRepository } from "../domain/ports/prediction/predictionRepository";
 import { SelfConsistencyRepository } from "../domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../domain/ports/report/reportRepository";
@@ -23,6 +24,7 @@ export interface AppDependencies {
   beachRepository: BeachRepository;
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
+  waterQualityProvider: WaterQualityProvider;
   predictionRepository: PredictionRepository;
   selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
@@ -79,6 +81,7 @@ export function createApp(dependencies: AppDependencies, frontendUrl?: string): 
       beachRepository: dependencies.beachRepository,
       forecastProvider: dependencies.forecastProvider,
       stormWarningProvider: dependencies.stormWarningProvider,
+      waterQualityProvider: dependencies.waterQualityProvider,
       predictionRepository: dependencies.predictionRepository,
       selfConsistencyRepository: dependencies.selfConsistencyRepository,
       reportRepository: dependencies.reportRepository,

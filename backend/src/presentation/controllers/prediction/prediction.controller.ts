@@ -42,6 +42,7 @@ export function createPredictionController(
       try {
         const predictions = await getBeachPredictions(
           dependencies.predictionRepository,
+          dependencies.beachRepository,
           req.params.beachId,
           date,
         );

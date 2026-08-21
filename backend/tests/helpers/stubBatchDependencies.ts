@@ -1,5 +1,6 @@
 import { ForecastProvider } from "../../src/domain/ports/batch/forecastProvider";
 import { StormWarningProvider } from "../../src/domain/ports/batch/stormWarningProvider";
+import { WaterQualityProvider } from "../../src/domain/ports/batch/waterQualityProvider";
 import { PredictionRepository } from "../../src/domain/ports/prediction/predictionRepository";
 import { SelfConsistencyRepository } from "../../src/domain/ports/prediction/selfConsistencyRepository";
 import { ReportRepository } from "../../src/domain/ports/report/reportRepository";
@@ -11,6 +12,7 @@ import { CommentRepository } from "../../src/domain/ports/comment/commentReposit
 export function stubBatchDependencies(): {
   forecastProvider: ForecastProvider;
   stormWarningProvider: StormWarningProvider;
+  waterQualityProvider: WaterQualityProvider;
   predictionRepository: PredictionRepository;
   selfConsistencyRepository: SelfConsistencyRepository;
   reportRepository: ReportRepository;
@@ -25,6 +27,9 @@ export function stubBatchDependencies(): {
     },
     stormWarningProvider: {
       checkActiveStormWarning: async () => false,
+    },
+    waterQualityProvider: {
+      fetchLatestSample: async () => null,
     },
     predictionRepository: {
       saveDailyPredictions: async () => {},
