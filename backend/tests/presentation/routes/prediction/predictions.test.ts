@@ -91,6 +91,42 @@ describe("GET /api/beaches/:beachId/predictions", () => {
     });
   });
 
+  it("includes the beach's stored water-quality rating alongside the hourly predictions", async () => {
+    await db.collection("beaches").updateOne(
+      { _id: BEACH_ID },
+      { $set: { waterQualityRating: { band: "good", sampleDate: "2026-08-18" } } }
+    );
+    await db.collection("predictions").insertOne({
+      _id: `${BEACH_ID}_${DATE}_${DATE}`,
+      beachId: BEACH_ID,
+      date: DATE,
+      issuedDate: DATE,
+      hourlyPredictions: HOURLY_PREDICTIONS,
+      computedAt: new Date(),
+    });
+
+    const response = await request(buildApp()).get(`/api/beaches/${BEACH_ID}/predictions?date=${DATE}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.waterQualityRating).toEqual({ band: "good", sampleDate: "2026-08-18" });
+  });
+
+  it("returns waterQualityRating: null when the beach has no stored rating yet", async () => {
+    await db.collection("predictions").insertOne({
+      _id: `${BEACH_ID}_${DATE}_${DATE}`,
+      beachId: BEACH_ID,
+      date: DATE,
+      issuedDate: DATE,
+      hourlyPredictions: HOURLY_PREDICTIONS,
+      computedAt: new Date(),
+    });
+
+    const response = await request(buildApp()).get(`/api/beaches/${BEACH_ID}/predictions?date=${DATE}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.waterQualityRating).toBeNull();
+  });
+
   it("returns the freshest (smallest-Lead) Prediction when several Leads exist for the same date", async () => {
     await db.collection("predictions").insertOne({
       _id: `${BEACH_ID}_${DATE}_2026-08-02`,

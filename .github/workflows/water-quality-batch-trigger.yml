@@ -1,0 +1,34 @@
+name: Water-quality batch trigger
+
+# RZI republishes its per-zone samples roughly every two weeks in-season (issue #122), far less often
+# than the daily weather batch (daily-batch-trigger.yml) — this runs on the 1st and 15th of each
+# month (05:00 UTC, an hour after the daily trigger) as the simplest reasonable stand-in for "every
+# two weeks", since cron can't express a real 14-day cadence directly.
+on:
+  schedule:
+    - cron: "0 5 1,15 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-water-quality-batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call POST /api/batch/water-quality
+        env:
+          WATER_QUALITY_BATCH_TRIGGER_URL: ${{ secrets.WATER_QUALITY_BATCH_TRIGGER_URL }}
+          BATCH_TRIGGER_SECRET: ${{ secrets.BATCH_TRIGGER_SECRET }}
+        run: |
+          # Same cold-start-tolerant retry policy as daily-batch-trigger.yml — Render's free tier
+          # spins the service down when idle.
+          curl --request POST "$WATER_QUALITY_BATCH_TRIGGER_URL" \
+            --header "X-Batch-Secret: $BATCH_TRIGGER_SECRET" \
+            --fail-with-body \
+            --silent --show-error \
+            --max-time 120 \
+            --retry 5 \
+            --retry-all-errors \
+            --retry-delay 15
