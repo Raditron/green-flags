@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaFlag } from "react-icons/fa6";
+import { FaFlag, FaNewspaper, FaStar, FaUmbrellaBeach } from "react-icons/fa6";
 import { useAuth } from "../../auth/AuthContext";
 import { AuthModal } from "../Auth/AuthModal/AuthModal";
 import { UserMenu } from "./UserMenu/UserMenu";
@@ -36,9 +36,20 @@ export function Layout({ children }: LayoutProps) {
   // unit but can never split from each other internally (see Layout.styles.ts's navGroup).
   const navGroup = (
     <nav style={styles.navGroup} aria-label="Primary">
-      <NavLink to="/beaches">All beaches</NavLink>
-      {!loading && user && <NavLink to="/saved">Your beaches</NavLink>}
-      <NavLink to="/">Today</NavLink>
+      <NavLink to="/beaches">
+        <FaUmbrellaBeach style={styles.navIcon} aria-hidden="true" />
+        All beaches
+      </NavLink>
+      {!loading && user && (
+        <NavLink to="/saved">
+          <FaStar style={styles.navIcon} aria-hidden="true" />
+          Your beaches
+        </NavLink>
+      )}
+      <NavLink to="/">
+        <FaNewspaper style={styles.navIcon} aria-hidden="true" />
+        Today
+      </NavLink>
     </nav>
   );
 

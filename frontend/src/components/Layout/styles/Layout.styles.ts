@@ -11,6 +11,7 @@ type LayoutStyleKey =
   | "rightGroup"
   | "title"
   | "titleIcon"
+  | "navIcon"
   | "greeting"
   | "signInButton"
   | "main";
@@ -80,6 +81,13 @@ export function getLayoutStyles(): Record<LayoutStyleKey, CSSProperties> {
       textDecoration: "none",
     },
     titleIcon: {
+      width: 14,
+      height: 14,
+    },
+    // Leading icon inside each nav pill — sized to match titleIcon so the pills and the
+    // "Green Flags" title read as the same icon+label pattern. Color comes for free from the
+    // pill's own `color` via the icon's default currentColor fill.
+    navIcon: {
       width: 14,
       height: 14,
     },
