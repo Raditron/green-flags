@@ -18,19 +18,23 @@ import { getBeachDetailStyles } from "./styles/BeachDetail.styles";
 
 const DISCLAIMER_MESSAGE = "Unofficial estimate — not the lifeguard's flag";
 const SAVED_MESSAGE = "Saved to your beaches";
+const REPORT_SUBMITTED_MESSAGE = "Thanks for reporting the flag";
 
 /**
  * RN port of frontend's BeachDetail.tsx: the Beach Detail screen reachable from a Beach List card
- * — hero photo, Forecast Strip, Timeline (today) or Day Outlook (any other selected day) — #97's
- * acceptance criteria, plus a save/unsave star (#100). Omits frontend's back-arrow/title row
- * (native-stack's own header already supplies both — see RootNavigator.tsx, whose title this keeps
- * in sync via `setOptions` below) and CommentSection (#99), and the `#comments` scroll-into-view
- * effect (no counterpart to scroll to yet without CommentSection). The star lives in the native
- * header's `headerRight` (set via `setOptions`, same as the title) rather than frontend's title
- * row — there's no in-body title here for it to sit "next to" (the native header already carries
- * the beach name), so it sits alongside the back chevron and name instead — and fires a toast on
- * save (not unsave, mirroring the disclaimer toast's one-shot confirmation) per #100's acceptance
- * criteria, a deliberate mobile-only addition frontend's own quiet SaveBeachButton doesn't have.
+ * — hero photo, Forecast Strip, Timeline (today, including its report-the-flag flow — #98) or Day
+ * Outlook (any other selected day) — #97's acceptance criteria, plus a save/unsave star (#100).
+ * Omits frontend's back-arrow/title row (native-stack's own header already supplies both — see
+ * RootNavigator.tsx, whose title this keeps in sync via `setOptions` below) and CommentSection
+ * (#99), and the `#comments` scroll-into-view effect (no counterpart to scroll to yet without
+ * CommentSection). The star lives in the native header's `headerRight` (set via `setOptions`, same
+ * as the title) rather than frontend's title row — there's no in-body title here for it to sit
+ * "next to" (the native header already carries the beach name), so it sits alongside the back
+ * chevron and name instead — and fires a toast on save (not unsave, mirroring the disclaimer
+ * toast's one-shot confirmation) per #100's acceptance criteria, a deliberate mobile-only addition
+ * frontend's own quiet SaveBeachButton doesn't have. The report-submitted toast below is the same
+ * kind of deliberate addition, this time on top of frontend's own report flow (see Timeline's
+ * onReportSubmitted and useReportFlag.ts's doc comment for why frontend itself doesn't toast here).
  */
 export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
   const { beachId, name, quirkNotes, isUnguarded } = route.params;
@@ -61,6 +65,10 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
     },
     [showToast],
   );
+
+  const handleReportSubmitted = useCallback(() => {
+    showToast(REPORT_SUBMITTED_MESSAGE);
+  }, [showToast]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -107,10 +115,12 @@ export function BeachDetail({ route, navigation }: BeachDetailScreenProps) {
                 <>
                   {outsideLegalWindow && <Text style={styles.offWindow}>No lifeguard on duty — estimate only</Text>}
                   <Timeline
+                    beachId={beachId}
                     hourlyPredictions={predictions.data.hourlyPredictions}
                     desaturated={outsideLegalWindow}
                     currentHour={currentHour}
                     isUnguarded={beach.isUnguarded}
+                    onReportSubmitted={handleReportSubmitted}
                   />
                   <Text style={styles.meta}>Predictions for {predictions.data.date}</Text>
                 </>
