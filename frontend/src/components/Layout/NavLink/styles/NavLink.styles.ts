@@ -13,6 +13,9 @@ export function getNavLinkStyles({
   const isRaised = isHovered || isFocused;
 
   return {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
     color: "var(--text)",
     fontSize: 14,
     fontWeight: 700,
